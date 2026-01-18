@@ -8,6 +8,7 @@ import { useFunctions } from "@/hooks/useFunctions";
 import { useShifts, ShiftData } from "@/hooks/useShifts";
 import { useWageSupplements, calculateDayCost } from "@/hooks/useWageSupplements";
 import { useShiftTemplates, ShiftTemplate } from "@/hooks/useShiftTemplates";
+import { useWorkTimeViolations } from "@/hooks/useWorkTimeRules";
 import { useAuth } from "@/contexts/AuthContext";
 import { CreateShiftModal } from "@/components/schedule/CreateShiftModal";
 import { ShiftDetailModal } from "@/components/schedule/ShiftDetailModal";
@@ -17,6 +18,7 @@ import { ShiftTemplatesDropdown } from "@/components/schedule/ShiftTemplatesDrop
 import { SaveTemplateModal } from "@/components/schedule/SaveTemplateModal";
 import { RolloutTemplateModal } from "@/components/schedule/RolloutTemplateModal";
 import { ManageTemplatesModal } from "@/components/schedule/ManageTemplatesModal";
+import { WorkTimeAlertsPanel } from "@/components/schedule/WorkTimeAlertsPanel";
 import {
   ChevronLeft,
   ChevronRight,
@@ -28,6 +30,7 @@ import {
   CalendarDays,
   Settings,
   Moon,
+  AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -41,6 +44,7 @@ export default function SchedulePage() {
   const [rolloutModalOpen, setRolloutModalOpen] = useState(false);
   const [manageTemplatesModalOpen, setManageTemplatesModalOpen] = useState(false);
   const [selectedTemplateForRollout, setSelectedTemplateForRollout] = useState<ShiftTemplate | undefined>();
+  const [showAlerts, setShowAlerts] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedFunctionId, setSelectedFunctionId] = useState<string | null>(null);
   const [selectedShift, setSelectedShift] = useState<ShiftData | null>(null);
@@ -66,6 +70,7 @@ export default function SchedulePage() {
   const endDate = weekDays[6].toISOString().split("T")[0];
 
   const { data: shifts = [], isLoading: loadingShifts } = useShifts(startDate, endDate);
+  const { violations, criticalCount, warningCount } = useWorkTimeViolations(shifts);
 
   const dayNames = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"];
 
@@ -185,7 +190,29 @@ export default function SchedulePage() {
             <CalendarDays className="mr-1 h-3 w-3" />
             {shifts.filter(s => s.status === 'published').length} publiserte vakter
           </Badge>
+          {(criticalCount > 0 || warningCount > 0) && (
+            <Badge 
+              variant={criticalCount > 0 ? "destructive" : "secondary"} 
+              className={cn(
+                "cursor-pointer",
+                criticalCount === 0 && warningCount > 0 && "bg-warning text-warning-foreground"
+              )}
+              onClick={() => setShowAlerts(!showAlerts)}
+            >
+              <AlertCircle className="mr-1 h-3 w-3" />
+              {criticalCount > 0 ? `${criticalCount} kritiske` : `${warningCount} advarsler`}
+            </Badge>
+          )}
         </div>
+
+        {/* Work Time Alerts */}
+        {showAlerts && violations.length > 0 && (
+          <WorkTimeAlertsPanel 
+            violations={violations} 
+            onDismiss={() => setShowAlerts(false)}
+            compact
+          />
+        )}
 
         {/* Schedule Grid */}
         <Card>

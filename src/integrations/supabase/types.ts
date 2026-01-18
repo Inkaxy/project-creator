@@ -715,6 +715,81 @@ export type Database = {
         }
         Relationships: []
       }
+      work_time_rules: {
+        Row: {
+          averaging_period_weeks: number
+          break_required_after_hours: number
+          break_required_after_hours_long: number
+          created_at: string
+          id: string
+          is_active: boolean
+          max_hours_per_day: number
+          max_hours_per_day_extended: number
+          max_hours_per_week: number
+          max_hours_per_week_average: number
+          max_overtime_per_week: number
+          max_overtime_per_year: number
+          min_break_minutes: number
+          min_break_minutes_long: number
+          min_rest_between_shifts: number
+          name: string
+          overtime_threshold_100_daily: number
+          overtime_threshold_daily: number
+          require_sunday_off: boolean
+          sunday_off_frequency_weeks: number
+          updated_at: string
+          warn_at_percent_of_max: number
+        }
+        Insert: {
+          averaging_period_weeks?: number
+          break_required_after_hours?: number
+          break_required_after_hours_long?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          max_hours_per_day?: number
+          max_hours_per_day_extended?: number
+          max_hours_per_week?: number
+          max_hours_per_week_average?: number
+          max_overtime_per_week?: number
+          max_overtime_per_year?: number
+          min_break_minutes?: number
+          min_break_minutes_long?: number
+          min_rest_between_shifts?: number
+          name?: string
+          overtime_threshold_100_daily?: number
+          overtime_threshold_daily?: number
+          require_sunday_off?: boolean
+          sunday_off_frequency_weeks?: number
+          updated_at?: string
+          warn_at_percent_of_max?: number
+        }
+        Update: {
+          averaging_period_weeks?: number
+          break_required_after_hours?: number
+          break_required_after_hours_long?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          max_hours_per_day?: number
+          max_hours_per_day_extended?: number
+          max_hours_per_week?: number
+          max_hours_per_week_average?: number
+          max_overtime_per_week?: number
+          max_overtime_per_year?: number
+          min_break_minutes?: number
+          min_break_minutes_long?: number
+          min_rest_between_shifts?: number
+          name?: string
+          overtime_threshold_100_daily?: number
+          overtime_threshold_daily?: number
+          require_sunday_off?: boolean
+          sunday_off_frequency_weeks?: number
+          updated_at?: string
+          warn_at_percent_of_max?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
