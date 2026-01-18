@@ -19,6 +19,8 @@ import { SaveTemplateModal } from "@/components/schedule/SaveTemplateModal";
 import { RolloutTemplateModal } from "@/components/schedule/RolloutTemplateModal";
 import { ManageTemplatesModal } from "@/components/schedule/ManageTemplatesModal";
 import { WorkTimeAlertsPanel } from "@/components/schedule/WorkTimeAlertsPanel";
+import { OpenShiftsPanel } from "@/components/schedule/OpenShiftsPanel";
+import { ShiftSwapsPanel } from "@/components/schedule/ShiftSwapsPanel";
 import {
   ChevronLeft,
   ChevronRight,
@@ -213,6 +215,12 @@ export default function SchedulePage() {
             compact
           />
         )}
+
+        {/* Open Shifts and Swap Requests */}
+        <div className="grid gap-4 md:grid-cols-2">
+          <OpenShiftsPanel startDate={startDate} endDate={endDate} compact />
+          <ShiftSwapsPanel compact />
+        </div>
 
         {/* Schedule Grid */}
         <Card>
