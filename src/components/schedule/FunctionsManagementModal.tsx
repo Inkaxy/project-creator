@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -25,8 +25,9 @@ import {
   useDeleteFunction,
   FunctionData,
 } from "@/hooks/useFunctions";
+import { useUpdateFunctionOrder } from "@/hooks/useUpdateFunctionOrder";
 import { useDepartments } from "@/hooks/useEmployees";
-import { Edit2, GripVertical, Plus, Trash2, X } from "lucide-react";
+import { Edit2, GripVertical, Plus, Trash2, X, Building2 } from "lucide-react";
 
 interface FunctionsManagementModalProps {
   open: boolean;
@@ -41,10 +42,13 @@ const CATEGORY_OPTIONS = [
 ];
 
 const COLOR_OPTIONS = [
+  { value: "#DC2626", label: "Mørk rød" },
   { value: "#EF4444", label: "Rød" },
   { value: "#F97316", label: "Oransje" },
   { value: "#EAB308", label: "Gul" },
   { value: "#22C55E", label: "Grønn" },
+  { value: "#10B981", label: "Smaragd" },
+  { value: "#06B6D4", label: "Cyan" },
   { value: "#3B82F6", label: "Blå" },
   { value: "#8B5CF6", label: "Lilla" },
   { value: "#EC4899", label: "Rosa" },
@@ -56,12 +60,14 @@ export function FunctionsManagementModal({
 }: FunctionsManagementModalProps) {
   const [showForm, setShowForm] = useState(false);
   const [editingFunction, setEditingFunction] = useState<FunctionData | null>(null);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
 
   const { data: functions, isLoading } = useAllFunctions();
   const { data: departments } = useDepartments();
   const createFunction = useCreateFunction();
   const updateFunction = useUpdateFunction();
   const deleteFunction = useDeleteFunction();
+  const updateFunctionOrder = useUpdateFunctionOrder();
 
   // Form state
   const [name, setName] = useState("");
@@ -74,6 +80,7 @@ export function FunctionsManagementModal({
   const [defaultEnd, setDefaultEnd] = useState("15:00");
   const [breakMinutes, setBreakMinutes] = useState(30);
   const [minStaff, setMinStaff] = useState(1);
+  const [maxStaff, setMaxStaff] = useState(5);
   const [isActive, setIsActive] = useState(true);
 
   const resetForm = () => {
@@ -87,6 +94,7 @@ export function FunctionsManagementModal({
     setDefaultEnd("15:00");
     setBreakMinutes(30);
     setMinStaff(1);
+    setMaxStaff(5);
     setIsActive(true);
     setEditingFunction(null);
     setShowForm(false);
@@ -104,6 +112,7 @@ export function FunctionsManagementModal({
     setDefaultEnd(func.default_end?.slice(0, 5) || "15:00");
     setBreakMinutes(func.default_break_minutes || 30);
     setMinStaff(func.min_staff || 1);
+    setMaxStaff(func.max_staff || 5);
     setIsActive(func.is_active !== false);
     setShowForm(true);
   };
@@ -122,6 +131,7 @@ export function FunctionsManagementModal({
       default_end: defaultEnd,
       default_break_minutes: breakMinutes,
       min_staff: minStaff,
+      max_staff: maxStaff,
       is_active: isActive,
     };
 
@@ -140,13 +150,62 @@ export function FunctionsManagementModal({
     }
   };
 
-  // Group functions by category
-  const groupedFunctions = functions?.reduce((acc, func) => {
-    const cat = func.category || "Uten kategori";
-    if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(func);
+  // Drag and drop handlers
+  const handleDragStart = useCallback((e: React.DragEvent, id: string) => {
+    setDraggedId(id);
+    e.dataTransfer.effectAllowed = "move";
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent, targetId: string, departmentId: string | null) => {
+    e.preventDefault();
+    if (!draggedId || draggedId === targetId || !functions) return;
+
+    // Get functions in the same department
+    const deptFunctions = functions.filter(f => f.department_id === departmentId);
+    const draggedIndex = deptFunctions.findIndex(f => f.id === draggedId);
+    const targetIndex = deptFunctions.findIndex(f => f.id === targetId);
+
+    if (draggedIndex === -1 || targetIndex === -1) return;
+
+    // Create new order
+    const reordered = [...deptFunctions];
+    const [removed] = reordered.splice(draggedIndex, 1);
+    reordered.splice(targetIndex, 0, removed);
+
+    // Update sort_order for all items
+    const updates = reordered.map((func, index) => ({
+      id: func.id,
+      sort_order: index,
+    }));
+
+    updateFunctionOrder.mutate(updates);
+    setDraggedId(null);
+  }, [draggedId, functions, updateFunctionOrder]);
+
+  const handleDragEnd = useCallback(() => {
+    setDraggedId(null);
+  }, []);
+
+  // Group functions by department
+  const groupedByDepartment = functions?.reduce((acc, func) => {
+    const deptId = func.department_id || "no-department";
+    const deptName = func.departments?.name || "Uten avdeling";
+    if (!acc[deptId]) {
+      acc[deptId] = { name: deptName, functions: [], color: func.departments?.name ? (departments?.find(d => d.id === func.department_id)?.color || "#6B7280") : "#6B7280" };
+    }
+    acc[deptId].functions.push(func);
     return acc;
-  }, {} as Record<string, FunctionData[]>) || {};
+  }, {} as Record<string, { name: string; functions: FunctionData[]; color: string }>) || {};
+
+  // Sort functions within each department by sort_order
+  Object.values(groupedByDepartment).forEach(group => {
+    group.functions.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -188,15 +247,21 @@ export function FunctionsManagementModal({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="category">Kategori</Label>
-                <Select value={category} onValueChange={setCategory}>
+                <Label htmlFor="department">Avdeling *</Label>
+                <Select value={departmentId} onValueChange={setDepartmentId}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Velg kategori" />
+                    <SelectValue placeholder="Velg avdeling" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORY_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
+                  <SelectContent className="bg-popover">
+                    {departments?.map((dept) => (
+                      <SelectItem key={dept.id} value={dept.id}>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="h-3 w-3 rounded-full"
+                            style={{ backgroundColor: dept.color || "#3B82F6" }}
+                          />
+                          {dept.name}
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -204,15 +269,15 @@ export function FunctionsManagementModal({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="department">Avdeling</Label>
-                <Select value={departmentId} onValueChange={setDepartmentId}>
+                <Label htmlFor="category">Kategori</Label>
+                <Select value={category} onValueChange={setCategory}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Velg avdeling" />
+                    <SelectValue placeholder="Velg kategori" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {departments?.map((dept) => (
-                      <SelectItem key={dept.id} value={dept.id}>
-                        {dept.name}
+                  <SelectContent className="bg-popover">
+                    {CATEGORY_OPTIONS.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -235,7 +300,7 @@ export function FunctionsManagementModal({
                       </div>
                     </SelectValue>
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-popover">
                     {COLOR_OPTIONS.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value}>
                         <div className="flex items-center gap-2">
@@ -294,16 +359,29 @@ export function FunctionsManagementModal({
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="minStaff">Min. bemanning</Label>
-                <Input
-                  id="minStaff"
-                  type="number"
-                  value={minStaff}
-                  onChange={(e) => setMinStaff(parseInt(e.target.value) || 1)}
-                  min={1}
-                  max={20}
-                />
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  <Label htmlFor="minStaff">Min. bemanning</Label>
+                  <Input
+                    id="minStaff"
+                    type="number"
+                    value={minStaff}
+                    onChange={(e) => setMinStaff(parseInt(e.target.value) || 1)}
+                    min={1}
+                    max={20}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="maxStaff">Maks bemanning</Label>
+                  <Input
+                    id="maxStaff"
+                    type="number"
+                    value={maxStaff}
+                    onChange={(e) => setMaxStaff(parseInt(e.target.value) || 1)}
+                    min={1}
+                    max={50}
+                  />
+                </div>
               </div>
             </div>
 
@@ -332,7 +410,7 @@ export function FunctionsManagementModal({
           <>
             <div className="flex justify-between">
               <p className="text-sm text-muted-foreground">
-                {functions?.length || 0} funksjoner
+                {functions?.length || 0} funksjoner • Dra for å endre rekkefølge
               </p>
               <Button onClick={() => setShowForm(true)}>
                 <Plus className="mr-2 h-4 w-4" />
@@ -343,24 +421,37 @@ export function FunctionsManagementModal({
             <ScrollArea className="h-[400px] pr-4">
               {isLoading ? (
                 <p className="text-center text-muted-foreground">Laster...</p>
-              ) : Object.keys(groupedFunctions).length === 0 ? (
+              ) : Object.keys(groupedByDepartment).length === 0 ? (
                 <p className="text-center text-muted-foreground">
                   Ingen funksjoner ennå. Klikk "Ny funksjon" for å opprette.
                 </p>
               ) : (
-                <div className="space-y-4">
-                  {Object.entries(groupedFunctions).map(([category, funcs]) => (
-                    <div key={category}>
-                      <h4 className="mb-2 text-sm font-semibold text-muted-foreground">
-                        {category}
-                      </h4>
-                      <div className="space-y-2">
-                        {funcs.map((func) => (
+                <div className="space-y-6">
+                  {Object.entries(groupedByDepartment).map(([deptId, group]) => (
+                    <div key={deptId}>
+                      <div className="flex items-center gap-2 mb-3">
+                        <Building2 className="h-4 w-4 text-muted-foreground" />
+                        <h4 className="text-sm font-semibold text-foreground">
+                          {group.name}
+                        </h4>
+                        <Badge variant="secondary" className="ml-auto">
+                          {group.functions.length}
+                        </Badge>
+                      </div>
+                      <div className="space-y-2 ml-2 border-l-2 border-muted pl-4">
+                        {group.functions.map((func) => (
                           <div
                             key={func.id}
-                            className="flex items-center gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-muted/50"
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, func.id)}
+                            onDragOver={handleDragOver}
+                            onDrop={(e) => handleDrop(e, func.id, func.department_id)}
+                            onDragEnd={handleDragEnd}
+                            className={`flex items-center gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-muted/50 cursor-move ${
+                              draggedId === func.id ? "opacity-50" : ""
+                            }`}
                           >
-                            <GripVertical className="h-4 w-4 cursor-move text-muted-foreground" />
+                            <GripVertical className="h-4 w-4 text-muted-foreground" />
                             <div
                               className="h-4 w-4 rounded"
                               style={{ backgroundColor: func.color || "#3B82F6" }}
@@ -368,11 +459,11 @@ export function FunctionsManagementModal({
                             {func.icon && (
                               <span className="text-lg">{func.icon}</span>
                             )}
-                            <div className="flex-1">
-                              <p className="font-medium">{func.name}</p>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium truncate">{func.name}</p>
                               <p className="text-xs text-muted-foreground">
                                 {func.default_start?.slice(0, 5)} - {func.default_end?.slice(0, 5)}
-                                {func.departments?.name && ` • ${func.departments.name}`}
+                                {func.category && ` • ${func.category}`}
                               </p>
                             </div>
                             {!func.is_active && (

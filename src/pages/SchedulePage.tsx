@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useFunctions } from "@/hooks/useFunctions";
+import { useDepartments } from "@/hooks/useEmployees";
 import { useShifts, ShiftData, useUpdateShift, useCreateShift } from "@/hooks/useShifts";
 import { useWageSupplements, calculateDayCost } from "@/hooks/useWageSupplements";
 import { useShiftTemplates, ShiftTemplate } from "@/hooks/useShiftTemplates";
@@ -25,11 +26,12 @@ import { ShiftSwapsPanel } from "@/components/schedule/ShiftSwapsPanel";
 import { DraggableShiftCard } from "@/components/schedule/DraggableShiftCard";
 import { DroppableScheduleCell } from "@/components/schedule/DroppableScheduleCell";
 import { ShiftDropModal } from "@/components/schedule/ShiftDropModal";
+import { DepartmentFilter } from "@/components/schedule/DepartmentFilter";
+import { FunctionFilterButtons } from "@/components/schedule/FunctionFilterButtons";
 import {
   ChevronLeft,
   ChevronRight,
   Plus,
-  Filter,
   Clock,
   DollarSign,
   CalendarDays,
@@ -43,6 +45,10 @@ import { toast } from "sonner";
 
 export default function SchedulePage() {
   const [currentDate, setCurrentDate] = useState(new Date(2026, 0, 19));
+  // Department and function filter state
+  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
+  const [activeFunctionIds, setActiveFunctionIds] = useState<string[]>([]);
+  const [showOnlyDepartmentEmployees, setShowOnlyDepartmentEmployees] = useState(false);
   const [viewType, setViewType] = useState<"day" | "week" | "month">("week");
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
@@ -73,8 +79,33 @@ export default function SchedulePage() {
 
   const { isAdminOrManager } = useAuth();
   const { data: functions = [], isLoading: loadingFunctions } = useFunctions();
+  const { data: departments = [] } = useDepartments();
   const { data: supplements = [] } = useWageSupplements();
   const { data: templates = [], isLoading: loadingTemplates } = useShiftTemplates();
+
+  // Filter functions based on selected department
+  const filteredFunctions = useMemo(() => {
+    if (!selectedDepartment) return functions;
+    return functions.filter((f) => f.department_id === selectedDepartment);
+  }, [functions, selectedDepartment]);
+
+  // Filter to only show active functions (when specific functions selected)
+  const displayedFunctions = useMemo(() => {
+    if (activeFunctionIds.length === 0) return filteredFunctions;
+    return filteredFunctions.filter((f) => activeFunctionIds.includes(f.id));
+  }, [filteredFunctions, activeFunctionIds]);
+
+  const handleFunctionToggle = (functionId: string) => {
+    setActiveFunctionIds((prev) =>
+      prev.includes(functionId)
+        ? prev.filter((id) => id !== functionId)
+        : [...prev, functionId]
+    );
+  };
+
+  const handleToggleAllFunctions = () => {
+    setActiveFunctionIds([]);
+  };
   
   const updateShift = useUpdateShift();
   const createShift = useCreateShift();
@@ -216,7 +247,11 @@ export default function SchedulePage() {
         <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-center sm:justify-between lg:pl-0">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Vaktplan</h1>
-            <p className="text-muted-foreground">Produksjon & Butikk</p>
+            <p className="text-muted-foreground">
+              {selectedDepartment
+                ? departments.find((d) => d.id === selectedDepartment)?.name
+                : "Alle avdelinger"}
+            </p>
           </div>
           <div className="flex gap-2">
             {isAdminOrManager() && (
@@ -237,17 +272,55 @@ export default function SchedulePage() {
                 </Button>
               </>
             )}
-            <Button variant="outline" size="icon">
-              <Filter className="h-4 w-4" />
-            </Button>
-            <Button onClick={() => { setSelectedDate(new Date()); setSelectedFunctionId(functions[0]?.id || null); setCreateModalOpen(true); }}>
+            <Button onClick={() => { setSelectedDate(new Date()); setSelectedFunctionId(displayedFunctions[0]?.id || null); setCreateModalOpen(true); }}>
               <Plus className="mr-2 h-4 w-4" />
               Ny vakt
             </Button>
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation with Department Filter */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <DepartmentFilter
+              selectedDepartment={selectedDepartment}
+              onDepartmentChange={setSelectedDepartment}
+              departments={departments}
+            />
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="icon" onClick={() => navigateWeek(-1)}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" onClick={goToToday}>I dag</Button>
+              <Button variant="outline" size="icon" onClick={() => navigateWeek(1)}>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <span className="ml-2 text-lg font-semibold text-foreground">
+                Uke {Math.ceil((currentDate.getDate() + new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay()) / 7)},{" "}
+                {currentDate.toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}
+              </span>
+            </div>
+          </div>
+          <div className="flex rounded-lg border border-border bg-muted p-1">
+            {(["day", "week", "month"] as const).map((type) => (
+              <Button key={type} variant={viewType === type ? "default" : "ghost"} size="sm" onClick={() => setViewType(type)} className={cn("px-4", viewType === type && "shadow-sm")}>
+                {type === "day" ? "Dag" : type === "week" ? "Uke" : "Måned"}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* Function Filter Buttons */}
+        <FunctionFilterButtons
+          functions={filteredFunctions}
+          activeFunctions={activeFunctionIds}
+          onToggle={handleFunctionToggle}
+          onToggleAll={handleToggleAllFunctions}
+          showAllActive={activeFunctionIds.length === 0}
+          showOnlyDepartmentEmployees={showOnlyDepartmentEmployees}
+          onToggleDepartmentFilter={() => setShowOnlyDepartmentEmployees(!showOnlyDepartmentEmployees)}
+          hasDepartmentSelected={selectedDepartment !== null}
+        />
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" onClick={() => navigateWeek(-1)}>
@@ -355,17 +428,24 @@ export default function SchedulePage() {
               </div>
 
               {/* Function Rows */}
-              {functions.length === 0 ? (
+              {displayedFunctions.length === 0 ? (
                 <div className="p-8 text-center text-muted-foreground">
-                  Ingen funksjoner opprettet ennå. Klikk "Funksjoner" for å legge til.
+                  {functions.length === 0
+                    ? "Ingen funksjoner opprettet ennå. Klikk \"Funksjoner\" for å legge til."
+                    : "Ingen funksjoner matcher valgt filter."}
                 </div>
               ) : (
-                functions.map((func) => (
+                displayedFunctions.map((func) => (
                   <div key={func.id} className="grid min-w-[800px] grid-cols-[200px_repeat(7,1fr)] border-b border-border last:border-b-0">
                     <div className="flex items-center gap-2 border-r border-border bg-muted/30 p-3">
                       <div className="h-3 w-3 rounded" style={{ backgroundColor: func.color || "#3B82F6" }} />
                       {func.icon && <span>{func.icon}</span>}
-                      <span className="text-sm font-medium text-foreground">{func.name}</span>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-foreground">{func.name}</span>
+                        {func.departments?.name && (
+                          <span className="text-xs text-muted-foreground">{func.departments.name}</span>
+                        )}
+                      </div>
                     </div>
                     {weekDays.map((day, i) => {
                       const dayShifts = getShiftsForDayAndFunction(day, func.id);

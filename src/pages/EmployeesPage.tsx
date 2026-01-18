@@ -9,8 +9,16 @@ import { Label } from "@/components/ui/label";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEmployees, EmployeeProfile } from "@/hooks/useEmployees";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useEmployees, useDepartments, EmployeeProfile } from "@/hooks/useEmployees";
 import { useEmployeeFunctions, useDeleteEmployeeFunction } from "@/hooks/useEmployeeFunctions";
+import { useUpdateEmployeeDepartment } from "@/hooks/useUpdateEmployeeDepartment";
 import { EmployeeFunctionModal } from "@/components/employees/EmployeeFunctionModal";
 import {
   Search,
@@ -45,8 +53,10 @@ export default function EmployeesPage() {
   const [functionModalOpen, setFunctionModalOpen] = useState(false);
 
   const { data: employees = [], isLoading } = useEmployees(showInactive);
+  const { data: departments = [] } = useDepartments();
   const { data: employeeFunctions = [] } = useEmployeeFunctions(selectedEmployee?.id);
   const deleteEmployeeFunction = useDeleteEmployeeFunction();
+  const updateDepartment = useUpdateEmployeeDepartment();
 
   const filteredEmployees = employees.filter((employee) => {
     const matchesSearch =
@@ -255,7 +265,7 @@ export default function EmployeesPage() {
                   </div>
                 </div>
 
-                {/* Employment Info */}
+                {/* Employment Info with Editable Department */}
                 <div className="space-y-3">
                   <h4 className="text-sm font-semibold text-foreground">Ansettelse</h4>
                   <div className="grid grid-cols-2 gap-3 text-sm">
@@ -273,12 +283,43 @@ export default function EmployeesPage() {
                         </p>
                       </div>
                     )}
-                    <div>
-                      <p className="text-muted-foreground">Avdeling</p>
-                      <p className="font-medium text-foreground">
-                        {selectedEmployee.departments?.name || "-"}
-                      </p>
-                    </div>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-sm mb-1">Avdeling</p>
+                    <Select
+                      value={selectedEmployee.department_id || "none"}
+                      onValueChange={(value) => {
+                        updateDepartment.mutate({
+                          employeeId: selectedEmployee.id,
+                          departmentId: value === "none" ? null : value,
+                          employeeName: selectedEmployee.full_name,
+                        });
+                        // Update local state
+                        setSelectedEmployee({
+                          ...selectedEmployee,
+                          department_id: value === "none" ? null : value,
+                          departments: value === "none" ? null : departments.find(d => d.id === value) || null,
+                        });
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Velg avdeling" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        <SelectItem value="none">Ingen avdeling</SelectItem>
+                        {departments.map((dept) => (
+                          <SelectItem key={dept.id} value={dept.id}>
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="h-3 w-3 rounded-full"
+                                style={{ backgroundColor: dept.color || "#3B82F6" }}
+                              />
+                              {dept.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
