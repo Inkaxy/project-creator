@@ -396,6 +396,51 @@ export type Database = {
         }
         Relationships: []
       }
+      wage_supplements: {
+        Row: {
+          amount: number
+          applies_to: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          priority: number | null
+          supplement_type: string
+          time_end: string | null
+          time_start: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          applies_to: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          priority?: number | null
+          supplement_type: string
+          time_end?: string | null
+          time_start?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          applies_to?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          priority?: number | null
+          supplement_type?: string
+          time_end?: string | null
+          time_start?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

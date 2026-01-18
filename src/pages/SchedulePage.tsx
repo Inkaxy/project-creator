@@ -6,10 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { useFunctions } from "@/hooks/useFunctions";
 import { useShifts, ShiftData } from "@/hooks/useShifts";
+import { useWageSupplements, calculateDayCost } from "@/hooks/useWageSupplements";
 import { useAuth } from "@/contexts/AuthContext";
 import { CreateShiftModal } from "@/components/schedule/CreateShiftModal";
 import { ShiftDetailModal } from "@/components/schedule/ShiftDetailModal";
 import { FunctionsManagementModal } from "@/components/schedule/FunctionsManagementModal";
+import { CostSummaryTooltip } from "@/components/schedule/CostSummaryTooltip";
 import {
   ChevronLeft,
   ChevronRight,
@@ -20,6 +22,7 @@ import {
   DollarSign,
   CalendarDays,
   Settings,
+  Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +38,7 @@ export default function SchedulePage() {
 
   const { isAdminOrManager } = useAuth();
   const { data: functions = [], isLoading: loadingFunctions } = useFunctions();
+  const { data: supplements = [] } = useWageSupplements();
 
   // Calculate week range
   const getWeekDays = (date: Date) => {
@@ -84,14 +88,12 @@ export default function SchedulePage() {
 
   const calculateDayStats = (date: Date) => {
     const dayShifts = shifts.filter((s) => s.date === formatDate(date));
-    const hours = dayShifts.reduce((acc, shift) => {
-      const [startH, startM] = shift.planned_start.split(":").map(Number);
-      const [endH, endM] = shift.planned_end.split(":").map(Number);
-      let duration = (endH * 60 + endM - startH * 60 - startM) / 60;
-      if (duration < 0) duration += 24;
-      return acc + duration - (shift.planned_break_minutes || 0) / 60;
-    }, 0);
-    return { hours: hours.toFixed(1), salary: Math.round(hours * 250), shifts: dayShifts.length };
+    const costs = calculateDayCost(dayShifts, supplements);
+    return { 
+      hours: costs.totalHours.toFixed(1), 
+      costs,
+      shifts: dayShifts.length 
+    };
   };
 
   const selectedFunction = functions.find((f) => f.id === selectedFunctionId) || null;
@@ -247,17 +249,26 @@ export default function SchedulePage() {
                 {weekDays.map((day, i) => {
                   const stats = calculateDayStats(day);
                   const isToday = formatDate(day) === "2026-01-19";
+                  const hasSupplements = stats.costs.totalSupplements > 0;
                   return (
-                    <div key={i} className={cn("border-r border-border p-2 text-xs last:border-r-0", isToday && "bg-primary/10")}>
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-1 text-muted-foreground">
-                          <Clock className="h-3 w-3" /><span>{stats.hours}t</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-muted-foreground">
-                          <DollarSign className="h-3 w-3" /><span>{stats.salary.toLocaleString("nb-NO")} kr</span>
+                    <CostSummaryTooltip key={i} costs={stats.costs}>
+                      <div className={cn("cursor-pointer border-r border-border p-2 text-xs last:border-r-0 transition-colors hover:bg-muted", isToday && "bg-primary/10")}>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <Clock className="h-3 w-3" /><span>{stats.hours}t</span>
+                          </div>
+                          <div className="flex items-center gap-1 font-medium text-foreground">
+                            <DollarSign className="h-3 w-3" /><span>{stats.costs.totalCost.toLocaleString("nb-NO")} kr</span>
+                          </div>
+                          {hasSupplements && (
+                            <div className="flex items-center gap-1 text-destructive">
+                              <Moon className="h-3 w-3" />
+                              <span>+{stats.costs.totalSupplements.toLocaleString("nb-NO")} kr</span>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </div>
+                    </CostSummaryTooltip>
                   );
                 })}
               </div>
