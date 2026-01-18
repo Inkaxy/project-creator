@@ -3,11 +3,13 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useFunctions } from "@/hooks/useFunctions";
 import { useShifts, ShiftData, useUpdateShift, useCreateShift } from "@/hooks/useShifts";
 import { useWageSupplements, calculateDayCost } from "@/hooks/useWageSupplements";
 import { useShiftTemplates, ShiftTemplate } from "@/hooks/useShiftTemplates";
 import { useWorkTimeViolations } from "@/hooks/useWorkTimeRules";
+import { useApprovedAbsences, getAbsencesForDate } from "@/hooks/useApprovedAbsences";
 import { useAuth } from "@/contexts/AuthContext";
 import { CreateShiftModal } from "@/components/schedule/CreateShiftModal";
 import { ShiftDetailModal } from "@/components/schedule/ShiftDetailModal";
@@ -34,6 +36,7 @@ import {
   Settings,
   Moon,
   AlertCircle,
+  Palmtree,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -93,6 +96,7 @@ export default function SchedulePage() {
 
   const { data: shifts = [], isLoading: loadingShifts } = useShifts(startDate, endDate);
   const { violations, criticalCount, warningCount } = useWorkTimeViolations(shifts);
+  const { data: approvedAbsences = [] } = useApprovedAbsences(startDate, endDate);
 
   const dayNames = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"];
 
@@ -313,11 +317,37 @@ export default function SchedulePage() {
                 </div>
                 {weekDays.map((day, i) => {
                   const isToday = formatDate(day) === "2026-01-19";
+                  const dayAbsences = getAbsencesForDate(approvedAbsences, formatDate(day));
                   return (
                     <div key={i} className={cn("border-r border-border p-3 last:border-r-0", isToday && "bg-primary/5")}>
                       <div className="text-center">
                         <p className="text-sm text-muted-foreground">{dayNames[i]}</p>
                         <p className={cn("text-lg font-semibold", isToday ? "text-primary" : "text-foreground")}>{day.getDate()}</p>
+                        {dayAbsences.length > 0 && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="mt-1 flex items-center justify-center gap-1">
+                                <Palmtree className="h-3 w-3 text-success" />
+                                <span className="text-xs text-success font-medium">{dayAbsences.length}</span>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs">
+                              <p className="font-medium mb-1">Fravær denne dagen:</p>
+                              <ul className="text-xs space-y-1">
+                                {dayAbsences.map((absence) => (
+                                  <li key={absence.id} className="flex items-center gap-2">
+                                    <span 
+                                      className="w-2 h-2 rounded-full" 
+                                      style={{ backgroundColor: absence.absence_types?.color || '#6B7280' }}
+                                    />
+                                    <span>{absence.profiles?.full_name}</span>
+                                    <span className="text-muted-foreground">({absence.absence_types?.name})</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
                       </div>
                     </div>
                   );
@@ -405,6 +435,7 @@ export default function SchedulePage() {
           <div className="flex items-center gap-2"><div className="h-4 w-4 rounded bg-primary/10" /><span className="text-sm text-muted-foreground">Dagskift</span></div>
           <div className="flex items-center gap-2"><div className="h-4 w-4 rounded bg-destructive/10" /><span className="text-sm text-muted-foreground">Nattskift</span></div>
           <div className="flex items-center gap-2"><div className="h-4 w-4 rounded border-2 border-dashed border-primary bg-primary/10" /><span className="text-sm text-muted-foreground">Ledig vakt</span></div>
+          <div className="flex items-center gap-2"><Palmtree className="h-4 w-4 text-success" /><span className="text-sm text-muted-foreground">Fravær</span></div>
         </div>
       </div>
 
