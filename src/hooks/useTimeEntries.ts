@@ -365,7 +365,7 @@ export function useSubmitTimesheet() {
   });
 }
 
-// Approve time entries (managers only)
+// Approve time entries (managers only) - with notification
 export function useApproveTimeEntries() {
   const queryClient = useQueryClient();
 
@@ -377,6 +377,15 @@ export function useApproveTimeEntries() {
       timeEntryIds: string[];
       approverId: string;
     }) => {
+      // First, get the time entries to know who to notify
+      const { data: entries, error: fetchError } = await supabase
+        .from("time_entries")
+        .select("id, employee_id, date")
+        .in("id", timeEntryIds);
+
+      if (fetchError) throw fetchError;
+
+      // Update the time entries
       const { error } = await supabase
         .from("time_entries")
         .update({ 
@@ -387,9 +396,30 @@ export function useApproveTimeEntries() {
         .in("id", timeEntryIds);
 
       if (error) throw error;
+
+      // Create notifications for each unique employee
+      const uniqueEmployees = [...new Set(entries?.map(e => e.employee_id) || [])];
+      
+      for (const employeeId of uniqueEmployees) {
+        const employeeEntries = entries?.filter(e => e.employee_id === employeeId) || [];
+        const entryCount = employeeEntries.length;
+        
+        await supabase.from("notifications").insert({
+          user_id: employeeId,
+          type: "timesheet_approved",
+          title: "Timeliste godkjent",
+          message: entryCount === 1 
+            ? `Din timeliste for ${new Date(employeeEntries[0].date).toLocaleDateString("nb-NO")} er godkjent.`
+            : `${entryCount} timelister er godkjent.`,
+          link: "/timelister",
+        });
+      }
+
+      return entries;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["time_entries"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
       toast.success("Timelister godkjent");
     },
     onError: (error) => {
@@ -398,7 +428,7 @@ export function useApproveTimeEntries() {
   });
 }
 
-// Reject time entry (managers only)
+// Reject time entry (managers only) - with notification
 export function useRejectTimeEntry() {
   const queryClient = useQueryClient();
 
@@ -410,6 +440,16 @@ export function useRejectTimeEntry() {
       timeEntryId: string;
       managerNotes: string;
     }) => {
+      // First, get the time entry to know who to notify
+      const { data: entry, error: fetchError } = await supabase
+        .from("time_entries")
+        .select("id, employee_id, date")
+        .eq("id", timeEntryId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // Update the time entry
       const { error } = await supabase
         .from("time_entries")
         .update({ 
@@ -419,9 +459,21 @@ export function useRejectTimeEntry() {
         .eq("id", timeEntryId);
 
       if (error) throw error;
+
+      // Create notification for the employee
+      await supabase.from("notifications").insert({
+        user_id: entry.employee_id,
+        type: "timesheet_rejected",
+        title: "Timeliste avvist",
+        message: `Din timeliste for ${new Date(entry.date).toLocaleDateString("nb-NO")} er avvist. Grunn: ${managerNotes}`,
+        link: "/timelister",
+      });
+
+      return entry;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["time_entries"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
       toast.success("Timeliste avvist");
     },
     onError: (error) => {

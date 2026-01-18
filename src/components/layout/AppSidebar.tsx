@@ -20,7 +20,6 @@ import {
   CalendarClock,
   Calculator,
   BarChart3,
-  Bell,
   Menu,
   X,
   LogOut,
@@ -29,6 +28,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 import crewplanLogo from "@/assets/crewplan-logo-v2.png";
 
 interface NavSection {
@@ -196,9 +196,7 @@ export function AppSidebar() {
             </p>
           </div>
           <div className="flex gap-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Bell className="h-4 w-4 text-muted-foreground" />
-            </Button>
+            <NotificationBell />
             <Button 
               variant="ghost" 
               size="icon" 
