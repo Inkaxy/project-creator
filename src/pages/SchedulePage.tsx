@@ -15,6 +15,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { CreateShiftModal } from "@/components/schedule/CreateShiftModal";
 import { ShiftDetailModal } from "@/components/schedule/ShiftDetailModal";
 import { FunctionsManagementModal } from "@/components/schedule/FunctionsManagementModal";
+import { DepartmentsManagementModal } from "@/components/schedule/DepartmentsManagementModal";
 import { CostSummaryTooltip } from "@/components/schedule/CostSummaryTooltip";
 import { ShiftTemplatesDropdown } from "@/components/schedule/ShiftTemplatesDropdown";
 import { SaveTemplateModal } from "@/components/schedule/SaveTemplateModal";
@@ -41,6 +42,7 @@ import {
   Moon,
   AlertCircle,
   Palmtree,
+  Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -56,6 +58,7 @@ export default function SchedulePage() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [functionsModalOpen, setFunctionsModalOpen] = useState(false);
+  const [departmentsModalOpen, setDepartmentsModalOpen] = useState(false);
   const [saveTemplateModalOpen, setSaveTemplateModalOpen] = useState(false);
   const [rolloutModalOpen, setRolloutModalOpen] = useState(false);
   const [manageTemplatesModalOpen, setManageTemplatesModalOpen] = useState(false);
@@ -276,6 +279,10 @@ export default function SchedulePage() {
                   }}
                   onManage={() => setManageTemplatesModalOpen(true)}
                 />
+              <Button variant="outline" onClick={() => setDepartmentsModalOpen(true)}>
+                  <Building2 className="mr-2 h-4 w-4" />
+                  Avdelinger
+                </Button>
                 <Button variant="outline" onClick={() => setFunctionsModalOpen(true)}>
                   <Settings className="mr-2 h-4 w-4" />
                   Funksjoner
@@ -547,6 +554,10 @@ export default function SchedulePage() {
           setSelectedTemplateForRollout(template);
           setRolloutModalOpen(true);
         }}
+      />
+      <DepartmentsManagementModal
+        open={departmentsModalOpen}
+        onOpenChange={setDepartmentsModalOpen}
       />
       <ShiftDropModal
         open={dropModalOpen}
