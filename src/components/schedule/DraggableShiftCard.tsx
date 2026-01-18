@@ -23,17 +23,20 @@ export function DraggableShiftCard({ shift, onShiftClick, isAdminOrManager }: Dr
       originalEmployeeId: shift.employee_id,
       plannedStart: shift.planned_start,
       plannedEnd: shift.planned_end,
+      employeeName: shift.profiles?.full_name || null,
     }));
     e.dataTransfer.effectAllowed = "copyMove";
     
     // Add visual feedback
     const target = e.target as HTMLElement;
     target.style.opacity = "0.5";
+    target.classList.add("scale-105", "shadow-lg");
   };
 
   const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     target.style.opacity = "1";
+    target.classList.remove("scale-105", "shadow-lg");
   };
 
   return (
