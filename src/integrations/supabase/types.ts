@@ -14,6 +14,163 @@ export type Database = {
   }
   public: {
     Tables: {
+      absence_requests: {
+        Row: {
+          absence_type_id: string
+          approved_at: string | null
+          approved_by: string | null
+          comment: string | null
+          created_at: string
+          employee_id: string
+          end_date: string
+          id: string
+          overlapping_shift_action: string | null
+          rejection_reason: string | null
+          start_date: string
+          status: string
+          total_days: number
+          updated_at: string
+        }
+        Insert: {
+          absence_type_id: string
+          approved_at?: string | null
+          approved_by?: string | null
+          comment?: string | null
+          created_at?: string
+          employee_id: string
+          end_date: string
+          id?: string
+          overlapping_shift_action?: string | null
+          rejection_reason?: string | null
+          start_date: string
+          status?: string
+          total_days: number
+          updated_at?: string
+        }
+        Update: {
+          absence_type_id?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          comment?: string | null
+          created_at?: string
+          employee_id?: string
+          end_date?: string
+          id?: string
+          overlapping_shift_action?: string | null
+          rejection_reason?: string | null
+          start_date?: string
+          status?: string
+          total_days?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "absence_requests_absence_type_id_fkey"
+            columns: ["absence_type_id"]
+            isOneToOne: false
+            referencedRelation: "absence_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "absence_requests_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "absence_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      absence_types: {
+        Row: {
+          affects_salary: boolean | null
+          color: string | null
+          created_at: string
+          from_account: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          requires_documentation: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          affects_salary?: boolean | null
+          color?: string | null
+          created_at?: string
+          from_account?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          requires_documentation?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          affects_salary?: boolean | null
+          color?: string | null
+          created_at?: string
+          from_account?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          requires_documentation?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      account_transactions: {
+        Row: {
+          account_id: string
+          amount: number
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          reference_id: string | null
+          reference_type: string | null
+        }
+        Insert: {
+          account_id: string
+          amount: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          reference_type?: string | null
+        }
+        Update: {
+          account_id?: string
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          reference_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_transactions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "employee_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_transactions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       approval_requests: {
         Row: {
           created_at: string
@@ -102,6 +259,50 @@ export type Database = {
             columns: ["location_id"]
             isOneToOne: false
             referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_accounts: {
+        Row: {
+          account_type: string
+          balance: number | null
+          carried_over: number | null
+          created_at: string
+          employee_id: string
+          id: string
+          updated_at: string
+          used: number | null
+          year: number
+        }
+        Insert: {
+          account_type: string
+          balance?: number | null
+          carried_over?: number | null
+          created_at?: string
+          employee_id: string
+          id?: string
+          updated_at?: string
+          used?: number | null
+          year: number
+        }
+        Update: {
+          account_type?: string
+          balance?: number | null
+          carried_over?: number | null
+          created_at?: string
+          employee_id?: string
+          id?: string
+          updated_at?: string
+          used?: number | null
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_accounts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

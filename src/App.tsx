@@ -13,6 +13,7 @@ import TimesheetsPage from "./pages/TimesheetsPage";
 import CalendarPage from "./pages/CalendarPage";
 import MyPage from "./pages/MyPage";
 import WageSupplementsPage from "./pages/WageSupplementsPage";
+import AbsencePage from "./pages/AbsencePage";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/kalender" element={<ProtectedRoute><CalendarPage /></ProtectedRoute>} />
             <Route path="/min-side" element={<ProtectedRoute><MyPage /></ProtectedRoute>} />
             <Route path="/lonnssatser" element={<ProtectedRoute><WageSupplementsPage /></ProtectedRoute>} />
+            <Route path="/fravaer" element={<ProtectedRoute><AbsencePage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
