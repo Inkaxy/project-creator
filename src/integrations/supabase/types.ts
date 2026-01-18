@@ -372,6 +372,39 @@ export type Database = {
           },
         ]
       }
+      shift_templates: {
+        Row: {
+          category: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_default: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_default?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_default?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       shifts: {
         Row: {
           actual_break_minutes: number | null
@@ -472,6 +505,64 @@ export type Database = {
             columns: ["published_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      template_shifts: {
+        Row: {
+          break_minutes: number
+          created_at: string
+          day_of_week: number
+          employee_id: string | null
+          end_time: string
+          function_id: string
+          id: string
+          start_time: string
+          template_id: string
+        }
+        Insert: {
+          break_minutes?: number
+          created_at?: string
+          day_of_week: number
+          employee_id?: string | null
+          end_time: string
+          function_id: string
+          id?: string
+          start_time: string
+          template_id: string
+        }
+        Update: {
+          break_minutes?: number
+          created_at?: string
+          day_of_week?: number
+          employee_id?: string | null
+          end_time?: string
+          function_id?: string
+          id?: string
+          start_time?: string
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_shifts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "template_shifts_function_id_fkey"
+            columns: ["function_id"]
+            isOneToOne: false
+            referencedRelation: "functions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "template_shifts_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "shift_templates"
             referencedColumns: ["id"]
           },
         ]

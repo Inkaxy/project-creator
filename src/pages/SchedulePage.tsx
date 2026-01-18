@@ -7,11 +7,16 @@ import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { useFunctions } from "@/hooks/useFunctions";
 import { useShifts, ShiftData } from "@/hooks/useShifts";
 import { useWageSupplements, calculateDayCost } from "@/hooks/useWageSupplements";
+import { useShiftTemplates, ShiftTemplate } from "@/hooks/useShiftTemplates";
 import { useAuth } from "@/contexts/AuthContext";
 import { CreateShiftModal } from "@/components/schedule/CreateShiftModal";
 import { ShiftDetailModal } from "@/components/schedule/ShiftDetailModal";
 import { FunctionsManagementModal } from "@/components/schedule/FunctionsManagementModal";
 import { CostSummaryTooltip } from "@/components/schedule/CostSummaryTooltip";
+import { ShiftTemplatesDropdown } from "@/components/schedule/ShiftTemplatesDropdown";
+import { SaveTemplateModal } from "@/components/schedule/SaveTemplateModal";
+import { RolloutTemplateModal } from "@/components/schedule/RolloutTemplateModal";
+import { ManageTemplatesModal } from "@/components/schedule/ManageTemplatesModal";
 import {
   ChevronLeft,
   ChevronRight,
@@ -32,6 +37,10 @@ export default function SchedulePage() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [functionsModalOpen, setFunctionsModalOpen] = useState(false);
+  const [saveTemplateModalOpen, setSaveTemplateModalOpen] = useState(false);
+  const [rolloutModalOpen, setRolloutModalOpen] = useState(false);
+  const [manageTemplatesModalOpen, setManageTemplatesModalOpen] = useState(false);
+  const [selectedTemplateForRollout, setSelectedTemplateForRollout] = useState<ShiftTemplate | undefined>();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedFunctionId, setSelectedFunctionId] = useState<string | null>(null);
   const [selectedShift, setSelectedShift] = useState<ShiftData | null>(null);
@@ -39,6 +48,7 @@ export default function SchedulePage() {
   const { isAdminOrManager } = useAuth();
   const { data: functions = [], isLoading: loadingFunctions } = useFunctions();
   const { data: supplements = [] } = useWageSupplements();
+  const { data: templates = [], isLoading: loadingTemplates } = useShiftTemplates();
 
   // Calculate week range
   const getWeekDays = (date: Date) => {
@@ -119,10 +129,22 @@ export default function SchedulePage() {
           </div>
           <div className="flex gap-2">
             {isAdminOrManager() && (
-              <Button variant="outline" onClick={() => setFunctionsModalOpen(true)}>
-                <Settings className="mr-2 h-4 w-4" />
-                Funksjoner
-              </Button>
+              <>
+                <ShiftTemplatesDropdown
+                  templates={templates}
+                  isLoading={loadingTemplates}
+                  onSaveTemplate={() => setSaveTemplateModalOpen(true)}
+                  onRollout={(template) => {
+                    setSelectedTemplateForRollout(template);
+                    setRolloutModalOpen(true);
+                  }}
+                  onManage={() => setManageTemplatesModalOpen(true)}
+                />
+                <Button variant="outline" onClick={() => setFunctionsModalOpen(true)}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  Funksjoner
+                </Button>
+              </>
             )}
             <Button variant="outline" size="icon">
               <Filter className="h-4 w-4" />
@@ -288,6 +310,26 @@ export default function SchedulePage() {
       <CreateShiftModal open={createModalOpen} onOpenChange={setCreateModalOpen} date={selectedDate} selectedFunction={selectedFunction} functions={functions} />
       <ShiftDetailModal open={detailModalOpen} onOpenChange={setDetailModalOpen} shift={selectedShift} />
       <FunctionsManagementModal open={functionsModalOpen} onOpenChange={setFunctionsModalOpen} />
+      <SaveTemplateModal 
+        open={saveTemplateModalOpen} 
+        onOpenChange={setSaveTemplateModalOpen} 
+        currentWeekDate={currentDate} 
+        shifts={shifts} 
+      />
+      <RolloutTemplateModal 
+        open={rolloutModalOpen} 
+        onOpenChange={setRolloutModalOpen} 
+        currentWeekDate={currentDate}
+        preselectedTemplate={selectedTemplateForRollout}
+      />
+      <ManageTemplatesModal 
+        open={manageTemplatesModalOpen} 
+        onOpenChange={setManageTemplatesModalOpen}
+        onRollout={(template) => {
+          setSelectedTemplateForRollout(template);
+          setRolloutModalOpen(true);
+        }}
+      />
     </MainLayout>
   );
 }
