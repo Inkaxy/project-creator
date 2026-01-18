@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -32,7 +32,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useQualifiedEmployees } from "@/hooks/useEmployeeFunctions";
 import { useUpdateShift, useDeleteShift, ShiftData } from "@/hooks/useShifts";
-import { Clock, Star, Trash2, Users } from "lucide-react";
+import { useWageSupplements, calculateShiftCost } from "@/hooks/useWageSupplements";
+import { Clock, Star, Trash2, Users, Moon, Sun, Calendar, DollarSign } from "lucide-react";
 
 interface ShiftDetailModalProps {
   open: boolean;
@@ -52,8 +53,26 @@ export function ShiftDetailModal({
   const [notes, setNotes] = useState("");
 
   const { data: qualifiedEmployees } = useQualifiedEmployees(shift?.function_id || "");
+  const { data: supplements = [] } = useWageSupplements();
   const updateShift = useUpdateShift();
   const deleteShift = useDeleteShift();
+
+  // Calculate costs for current shift
+  const shiftCosts = useMemo(() => {
+    if (!shift) return null;
+    return calculateShiftCost(
+      {
+        planned_start: startTime,
+        planned_end: endTime,
+        planned_break_minutes: breakMinutes,
+        date: shift.date,
+        is_night_shift: shift.is_night_shift,
+        is_weekend: shift.is_weekend,
+        is_holiday: shift.is_holiday,
+      },
+      supplements
+    );
+  }, [shift, startTime, endTime, breakMinutes, supplements]);
 
   useEffect(() => {
     if (shift) {
@@ -258,6 +277,63 @@ export function ShiftDetailModal({
                 <span>
                   Ut: <strong>{shift.actual_end?.slice(0, 5) || "-"}</strong>
                 </span>
+              </div>
+            </div>
+          )}
+
+          {/* Cost breakdown */}
+          {shiftCosts && (
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
+              <div className="mb-2 flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-primary" />
+                <p className="text-sm font-medium">Kostnadsberegning</p>
+              </div>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Grunnlønn ({shiftCosts.baseHours.toFixed(1)}t)</span>
+                  <span>{shiftCosts.baseCost.toLocaleString("nb-NO")} kr</span>
+                </div>
+                
+                {shiftCosts.nightSupplement > 0 && (
+                  <div className="flex justify-between text-destructive">
+                    <span className="flex items-center gap-1">
+                      <Moon className="h-3 w-3" /> Nattillegg ({shiftCosts.nightHours.toFixed(1)}t)
+                    </span>
+                    <span>+{shiftCosts.nightSupplement.toLocaleString("nb-NO")} kr</span>
+                  </div>
+                )}
+                
+                {shiftCosts.eveningSupplement > 0 && (
+                  <div className="flex justify-between text-warning">
+                    <span className="flex items-center gap-1">
+                      <Sun className="h-3 w-3" /> Kveldstillegg ({shiftCosts.eveningHours.toFixed(1)}t)
+                    </span>
+                    <span>+{shiftCosts.eveningSupplement.toLocaleString("nb-NO")} kr</span>
+                  </div>
+                )}
+                
+                {shiftCosts.weekendSupplement > 0 && (
+                  <div className="flex justify-between text-primary">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" /> Helgetillegg
+                    </span>
+                    <span>+{shiftCosts.weekendSupplement.toLocaleString("nb-NO")} kr</span>
+                  </div>
+                )}
+                
+                {shiftCosts.holidaySupplement > 0 && (
+                  <div className="flex justify-between text-accent">
+                    <span className="flex items-center gap-1">
+                      <Star className="h-3 w-3" /> Helligdagstillegg
+                    </span>
+                    <span>+{shiftCosts.holidaySupplement.toLocaleString("nb-NO")} kr</span>
+                  </div>
+                )}
+                
+                <div className="mt-2 flex justify-between border-t border-primary/20 pt-2 font-semibold">
+                  <span>Totalkostnad</span>
+                  <span className="text-primary">{shiftCosts.totalCost.toLocaleString("nb-NO")} kr</span>
+                </div>
               </div>
             </div>
           )}
