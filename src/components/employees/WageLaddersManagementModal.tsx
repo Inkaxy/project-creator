@@ -519,7 +519,7 @@ export function WageLaddersManagementModal({
                   <Label htmlFor="competence">Kompetansenivå *</Label>
                   <Select
                     value={ladderForm.competence_level}
-                    onValueChange={(value) => setLadderForm({ ...ladderForm, competence_level: value })}
+                    onValueChange={(value) => setLadderForm({ ...ladderForm, competence_level: value as "ufaglaert" | "faglaert" | "laerling" })}
                   >
                     <SelectTrigger>
                       <SelectValue />
