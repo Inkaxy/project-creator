@@ -14,16 +14,223 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      departments: {
+        Row: {
+          color: string | null
+          created_at: string
+          id: string
+          location_id: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          location_id?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          location_id?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "departments_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      functions: {
+        Row: {
+          color: string | null
+          created_at: string
+          default_end: string | null
+          default_start: string | null
+          department_id: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          default_end?: string | null
+          default_start?: string | null
+          department_id?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          default_end?: string | null
+          default_start?: string | null
+          department_id?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "functions_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          address: string | null
+          created_at: string
+          gps_lat: number | null
+          gps_lng: number | null
+          gps_radius: number | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          gps_lat?: number | null
+          gps_lng?: number | null
+          gps_radius?: number | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          gps_lat?: number | null
+          gps_lng?: number | null
+          gps_radius?: number | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          department_id: string | null
+          email: string
+          employee_type: Database["public"]["Enums"]["employee_type"] | null
+          full_name: string
+          function_id: string | null
+          id: string
+          is_active: boolean | null
+          phone: string | null
+          pin_code: string | null
+          start_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          department_id?: string | null
+          email: string
+          employee_type?: Database["public"]["Enums"]["employee_type"] | null
+          full_name: string
+          function_id?: string | null
+          id: string
+          is_active?: boolean | null
+          phone?: string | null
+          pin_code?: string | null
+          start_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          department_id?: string | null
+          email?: string
+          employee_type?: Database["public"]["Enums"]["employee_type"] | null
+          full_name?: string
+          function_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          phone?: string | null
+          pin_code?: string | null
+          start_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_function_id_fkey"
+            columns: ["function_id"]
+            isOneToOne: false
+            referencedRelation: "functions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_department_id: { Args: { _user_id: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_admin_or_manager: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "superadmin" | "daglig_leder" | "avdelingsleder" | "ansatt"
+      employee_type:
+        | "fast"
+        | "deltid"
+        | "tilkalling"
+        | "vikar"
+        | "laerling"
+        | "sesong"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +357,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["superadmin", "daglig_leder", "avdelingsleder", "ansatt"],
+      employee_type: [
+        "fast",
+        "deltid",
+        "tilkalling",
+        "vikar",
+        "laerling",
+        "sesong",
+      ],
+    },
   },
 } as const

@@ -1,17 +1,15 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Calendar,
   Users,
   CheckCircle,
   ClipboardList,
   Settings,
-  FileText,
   Shield,
   GraduationCap,
   AlertTriangle,
   Flame,
-  MessageSquare,
   DollarSign,
   Clock,
   Home,
@@ -25,10 +23,12 @@ import {
   Bell,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface NavSection {
   title: string;
@@ -92,6 +92,8 @@ const navigation: NavSection[] = [
 
 export function AppSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { profile, roles, signOut } = useAuth();
   const [expandedSections, setExpandedSections] = useState<string[]>(["DAGLIG BRUK", "PERSONAL & ADMIN"]);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -99,6 +101,27 @@ export function AppSidebar() {
     setExpandedSections((prev) =>
       prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title]
     );
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const getRoleDisplay = (roles: string[]) => {
+    if (roles.includes('superadmin')) return 'Superadmin';
+    if (roles.includes('daglig_leder')) return 'Daglig leder';
+    if (roles.includes('avdelingsleder')) return 'Avdelingsleder';
+    return 'Ansatt';
   };
 
   const SidebarContent = () => (
@@ -163,13 +186,30 @@ export function AppSidebar() {
       <div className="border-t border-sidebar-border p-3">
         <div className="flex items-center gap-3 rounded-lg p-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-            AB
+            {profile?.full_name ? getInitials(profile.full_name) : '??'}
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="truncate text-sm font-medium text-foreground">Anders Bakke</p>
-            <p className="truncate text-xs text-muted-foreground">Daglig leder</p>
+            <p className="truncate text-sm font-medium text-foreground">
+              {profile?.full_name || 'Laster...'}
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              {getRoleDisplay(roles)}
+            </p>
           </div>
-          <Bell className="h-5 w-5 text-muted-foreground" />
+          <div className="flex gap-1">
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Bell className="h-4 w-4 text-muted-foreground" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8"
+              onClick={handleSignOut}
+              title="Logg ut"
+            >
+              <LogOut className="h-4 w-4 text-muted-foreground" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>
