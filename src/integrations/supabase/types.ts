@@ -49,35 +49,120 @@ export type Database = {
           },
         ]
       }
-      functions: {
+      employee_functions: {
         Row: {
-          color: string | null
+          certified_by: string | null
+          certified_date: string | null
           created_at: string
-          default_end: string | null
-          default_start: string | null
-          department_id: string | null
+          employee_id: string
+          function_id: string
           id: string
-          name: string
+          is_active: boolean | null
+          notes: string | null
+          proficiency_level: string
           updated_at: string
         }
         Insert: {
-          color?: string | null
+          certified_by?: string | null
+          certified_date?: string | null
           created_at?: string
-          default_end?: string | null
-          default_start?: string | null
-          department_id?: string | null
+          employee_id: string
+          function_id: string
           id?: string
-          name: string
+          is_active?: boolean | null
+          notes?: string | null
+          proficiency_level?: string
           updated_at?: string
         }
         Update: {
+          certified_by?: string | null
+          certified_date?: string | null
+          created_at?: string
+          employee_id?: string
+          function_id?: string
+          id?: string
+          is_active?: boolean | null
+          notes?: string | null
+          proficiency_level?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_functions_certified_by_fkey"
+            columns: ["certified_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_functions_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_functions_function_id_fkey"
+            columns: ["function_id"]
+            isOneToOne: false
+            referencedRelation: "functions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      functions: {
+        Row: {
+          category: string | null
+          color: string | null
+          created_at: string
+          default_break_minutes: number | null
+          default_end: string | null
+          default_start: string | null
+          department_id: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          max_staff: number | null
+          min_staff: number | null
+          name: string
+          short_name: string | null
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
           color?: string | null
           created_at?: string
+          default_break_minutes?: number | null
           default_end?: string | null
           default_start?: string | null
           department_id?: string | null
+          icon?: string | null
           id?: string
+          is_active?: boolean | null
+          max_staff?: number | null
+          min_staff?: number | null
+          name: string
+          short_name?: string | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          color?: string | null
+          created_at?: string
+          default_break_minutes?: number | null
+          default_end?: string | null
+          default_start?: string | null
+          department_id?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_staff?: number | null
+          min_staff?: number | null
           name?: string
+          short_name?: string | null
+          sort_order?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -182,6 +267,110 @@ export type Database = {
             columns: ["function_id"]
             isOneToOne: false
             referencedRelation: "functions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shifts: {
+        Row: {
+          actual_break_minutes: number | null
+          actual_end: string | null
+          actual_start: string | null
+          created_at: string
+          created_by: string | null
+          date: string
+          employee_id: string | null
+          function_id: string | null
+          id: string
+          internal_notes: string | null
+          is_holiday: boolean | null
+          is_night_shift: boolean | null
+          is_weekend: boolean | null
+          notes: string | null
+          planned_break_minutes: number | null
+          planned_end: string
+          planned_start: string
+          published_at: string | null
+          published_by: string | null
+          shift_type: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          actual_break_minutes?: number | null
+          actual_end?: string | null
+          actual_start?: string | null
+          created_at?: string
+          created_by?: string | null
+          date: string
+          employee_id?: string | null
+          function_id?: string | null
+          id?: string
+          internal_notes?: string | null
+          is_holiday?: boolean | null
+          is_night_shift?: boolean | null
+          is_weekend?: boolean | null
+          notes?: string | null
+          planned_break_minutes?: number | null
+          planned_end: string
+          planned_start: string
+          published_at?: string | null
+          published_by?: string | null
+          shift_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          actual_break_minutes?: number | null
+          actual_end?: string | null
+          actual_start?: string | null
+          created_at?: string
+          created_by?: string | null
+          date?: string
+          employee_id?: string | null
+          function_id?: string | null
+          id?: string
+          internal_notes?: string | null
+          is_holiday?: boolean | null
+          is_night_shift?: boolean | null
+          is_weekend?: boolean | null
+          notes?: string | null
+          planned_break_minutes?: number | null
+          planned_end?: string
+          planned_start?: string
+          published_at?: string | null
+          published_by?: string | null
+          shift_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shifts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_function_id_fkey"
+            columns: ["function_id"]
+            isOneToOne: false
+            referencedRelation: "functions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_published_by_fkey"
+            columns: ["published_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
