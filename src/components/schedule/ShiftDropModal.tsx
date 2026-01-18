@@ -64,6 +64,12 @@ export function ShiftDropModal({
 
   const certifiedEmployees = employees.filter(e => certifiedEmployeeIds.includes(e.id));
   const otherEmployees = employees.filter(e => !certifiedEmployeeIds.includes(e.id));
+  
+  // Combined list for keyboard navigation
+  const allSelectableEmployees = useMemo(() => 
+    [...certifiedEmployees, ...otherEmployees],
+    [certifiedEmployees, otherEmployees]
+  );
 
   // Check for time overlap between two shifts
   const hasTimeOverlap = (start1: string, end1: string, start2: string, end2: string): boolean => {
@@ -131,7 +137,7 @@ export function ShiftDropModal({
     onOpenChange(false);
   }, [onOpenChange]);
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts including arrow navigation
   useEffect(() => {
     if (!open) return;
 
@@ -142,12 +148,29 @@ export function ShiftDropModal({
       } else if (e.key === "Escape") {
         e.preventDefault();
         handleCancel();
+      } else if (selectedOption === "change" && allSelectableEmployees.length > 0) {
+        // Arrow key navigation for employee list
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+          e.preventDefault();
+          const currentIndex = selectedEmployeeId 
+            ? allSelectableEmployees.findIndex(emp => emp.id === selectedEmployeeId)
+            : -1;
+          
+          let newIndex: number;
+          if (e.key === "ArrowDown") {
+            newIndex = currentIndex < allSelectableEmployees.length - 1 ? currentIndex + 1 : 0;
+          } else {
+            newIndex = currentIndex > 0 ? currentIndex - 1 : allSelectableEmployees.length - 1;
+          }
+          
+          setSelectedEmployeeId(allSelectableEmployees[newIndex].id);
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open, handleConfirm, handleCancel, canConfirm]);
+  }, [open, handleConfirm, handleCancel, canConfirm, selectedOption, selectedEmployeeId, allSelectableEmployees]);
 
   if (!dropData) return null;
 
