@@ -41,6 +41,7 @@ import { Moon, Sun, Calendar, Star, Plus, Pencil, Trash2, DollarSign, Percent, T
 import { cn } from "@/lib/utils";
 import { WageLaddersManagementModal } from "@/components/employees/WageLaddersManagementModal";
 import { WageAdjustmentsPanel } from "@/components/employees/WageAdjustmentsPanel";
+import { WageLadderHistoryPanel } from "@/components/employees/WageLadderHistoryPanel";
 import { useWageLadders } from "@/hooks/useWageLadders";
 import { useWageAdjustments } from "@/hooks/useWageAdjustments";
 
