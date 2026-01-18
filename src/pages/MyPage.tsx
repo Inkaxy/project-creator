@@ -5,7 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ClockInOutCard } from "@/components/timesheet/ClockInOutCard";
+import { ClockHistoryCard } from "@/components/timesheet/ClockHistoryCard";
+import { useAuth } from "@/contexts/AuthContext";
+import { useShifts } from "@/hooks/useShifts";
+import { format, addDays, startOfWeek, endOfWeek } from "date-fns";
+import { nb } from "date-fns/locale";
 import {
   Clock,
   Calendar,
@@ -13,9 +18,6 @@ import {
   GraduationCap,
   TrendingUp,
   Wallet,
-  PlayCircle,
-  PauseCircle,
-  LogOut,
   Sun,
   Moon,
   Target,
@@ -23,12 +25,21 @@ import {
 } from "lucide-react";
 
 export default function MyPage() {
-  // Mock user data
-  const user = {
-    name: "Maria Hansen",
-    role: "Baker",
-    department: "Produksjon",
-    status: "active" as const,
+  const { user, profile } = useAuth();
+  
+  // Get upcoming shifts for the user
+  const today = new Date();
+  const weekStart = format(startOfWeek(today, { weekStartsOn: 1 }), "yyyy-MM-dd");
+  const nextWeekEnd = format(endOfWeek(addDays(today, 7), { weekStartsOn: 1 }), "yyyy-MM-dd");
+  
+  const { data: shifts } = useShifts(weekStart, nextWeekEnd);
+  const userShifts = shifts?.filter((s) => s.employee_id === user?.id) || [];
+  const upcomingShifts = userShifts
+    .filter((s) => new Date(s.date) >= today)
+    .slice(0, 3);
+
+  // Mock additional user data (would come from profile in production)
+  const userData = {
     hoursThisWeek: 32,
     hoursPlanned: 40,
     timeAccount: 12.5,
@@ -43,19 +54,6 @@ export default function MyPage() {
     },
   };
 
-  const todayShift = {
-    function: "Stek Natt",
-    time: "01:30 - 09:00",
-    isNight: true,
-    status: "planned",
-  };
-
-  const upcomingShifts = [
-    { date: "Man 20. jan", function: "Baker", time: "06:00 - 14:00", isNight: false },
-    { date: "Tir 21. jan", function: "Stek Natt", time: "01:30 - 09:00", isNight: true },
-    { date: "Ons 22. jan", function: "Vekkgjøring", time: "04:00 - 12:00", isNight: true },
-  ];
-
   const courses = [
     { name: "Brannvern grunnkurs", status: "completed", date: "2025-12-15" },
     { name: "IK-Mat hygiene", status: "in_progress", progress: 60 },
@@ -63,7 +61,7 @@ export default function MyPage() {
   ];
 
   const seniorityProgress =
-    ((user.seniority.currentHours - 1950) / (user.seniority.nextLevelHours - 1950)) * 100;
+    ((userData.seniority.currentHours - 1950) / (userData.seniority.nextLevelHours - 1950)) * 100;
 
   return (
     <MainLayout>
@@ -71,44 +69,19 @@ export default function MyPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-start sm:justify-between lg:pl-0">
           <div className="flex items-center gap-4">
-            <AvatarWithInitials name={user.name} size="lg" />
+            <AvatarWithInitials name={profile?.full_name || "Bruker"} size="lg" />
             <div>
-              <h1 className="text-3xl font-bold text-foreground">{user.name}</h1>
+              <h1 className="text-3xl font-bold text-foreground">{profile?.full_name || "Bruker"}</h1>
               <p className="text-muted-foreground">
-                {user.role} • {user.department}
+                {profile?.employee_type || "Ansatt"}
               </p>
-              <StatusBadge status={user.status} className="mt-2" />
+              <StatusBadge status="active" className="mt-2" />
             </div>
           </div>
         </div>
 
-        {/* Today's Shift / Clock In */}
-        <Card className="border-primary/20 bg-gradient-to-r from-primary-light to-background">
-          <CardContent className="p-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
-                  {todayShift.isNight ? (
-                    <Moon className="h-7 w-7 text-primary" />
-                  ) : (
-                    <Sun className="h-7 w-7 text-primary" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Dagens vakt</p>
-                  <p className="text-xl font-semibold text-foreground">{todayShift.function}</p>
-                  <p className="text-muted-foreground">{todayShift.time}</p>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button size="lg" className="gap-2">
-                  <PlayCircle className="h-5 w-5" />
-                  Stemple inn
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Clock In/Out Card - Functional! */}
+        <ClockInOutCard />
 
         {/* Stats Grid */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -121,7 +94,7 @@ export default function MyPage() {
                 <div>
                   <p className="text-xs text-muted-foreground">Timer denne uken</p>
                   <p className="text-xl font-bold text-foreground">
-                    {user.hoursThisWeek}/{user.hoursPlanned}t
+                    {userData.hoursThisWeek}/{userData.hoursPlanned}t
                   </p>
                 </div>
               </div>
@@ -135,7 +108,7 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Tidskonto</p>
-                  <p className="text-xl font-bold text-foreground">+{user.timeAccount}t</p>
+                  <p className="text-xl font-bold text-foreground">+{userData.timeAccount}t</p>
                 </div>
               </div>
             </CardContent>
@@ -148,7 +121,7 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Natt-konto</p>
-                  <p className="text-xl font-bold text-foreground">+{user.nightAccount}t</p>
+                  <p className="text-xl font-bold text-foreground">+{userData.nightAccount}t</p>
                 </div>
               </div>
             </CardContent>
@@ -161,7 +134,7 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Feriedager</p>
-                  <p className="text-xl font-bold text-foreground">{user.vacationDays} dager</p>
+                  <p className="text-xl font-bold text-foreground">{userData.vacationDays} dager</p>
                 </div>
               </div>
             </CardContent>
@@ -170,47 +143,10 @@ export default function MyPage() {
 
         {/* Main Content Grid */}
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* Upcoming Shifts */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-primary" />
-                Kommende vakter
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {upcomingShifts.map((shift, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between rounded-lg border border-border p-4 transition-colors hover:bg-muted/50"
-                >
-                  <div className="flex items-center gap-4">
-                    <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-                        shift.isNight ? "bg-night-light" : "bg-primary-light"
-                      }`}
-                    >
-                      {shift.isNight ? (
-                        <Moon className={`h-5 w-5 text-night`} />
-                      ) : (
-                        <Sun className={`h-5 w-5 text-primary`} />
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">{shift.function}</p>
-                      <p className="text-sm text-muted-foreground">{shift.date}</p>
-                    </div>
-                  </div>
-                  <Badge variant={shift.isNight ? "destructive" : "default"}>
-                    {shift.time}
-                  </Badge>
-                </div>
-              ))}
-              <Button variant="outline" className="w-full">
-                Se hele vaktplanen
-              </Button>
-            </CardContent>
-          </Card>
+          {/* Clock History - Real data! */}
+          <div className="lg:col-span-2">
+            <ClockHistoryCard />
+          </div>
 
           {/* Seniority / Gamification */}
           <Card>
@@ -219,14 +155,14 @@ export default function MyPage() {
                 <Award className="h-5 w-5 text-primary" />
                 Din ansiennitet
               </CardTitle>
-              <CardDescription>Nivå {user.seniority.currentLevel} - Faglært Baker</CardDescription>
+              <CardDescription>Nivå {userData.seniority.currentLevel}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Fremgang til Nivå 3</span>
                   <span className="font-medium text-foreground">
-                    {user.seniority.currentHours}/{user.seniority.nextLevelHours}t
+                    {userData.seniority.currentHours}/{userData.seniority.nextLevelHours}t
                   </span>
                 </div>
                 <Progress value={seniorityProgress} className="h-3" />
@@ -236,25 +172,74 @@ export default function MyPage() {
                 <div className="flex items-center gap-2 text-primary">
                   <Target className="h-4 w-4" />
                   <span className="font-medium">
-                    {user.seniority.nextLevelHours - user.seniority.currentHours} timer til Nivå 3!
+                    {userData.seniority.nextLevelHours - userData.seniority.currentHours} timer til Nivå 3!
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">📅 Estimert: April 2026</p>
                 <p className="text-sm text-muted-foreground">
-                  💰 = +{user.seniority.nextHourlyRate - user.seniority.hourlyRate} kr/time (ca. 1400
-                  kr/mnd)
+                  💰 = +{userData.seniority.nextHourlyRate - userData.seniority.hourlyRate} kr/time
                 </p>
               </div>
 
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Nåværende timelønn</span>
                 <span className="text-lg font-bold text-foreground">
-                  {user.seniority.hourlyRate} kr/t
+                  {userData.seniority.hourlyRate} kr/t
                 </span>
               </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Upcoming Shifts */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-primary" />
+              Kommende vakter
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {upcomingShifts.length === 0 ? (
+              <p className="text-center text-muted-foreground py-4">
+                Ingen planlagte vakter
+              </p>
+            ) : (
+              upcomingShifts.map((shift) => (
+                <div
+                  key={shift.id}
+                  className="flex items-center justify-between rounded-lg border border-border p-4 transition-colors hover:bg-muted/50"
+                >
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                        shift.is_night_shift ? "bg-night-light" : "bg-primary-light"
+                      }`}
+                    >
+                      {shift.is_night_shift ? (
+                        <Moon className="h-5 w-5 text-night" />
+                      ) : (
+                        <Sun className="h-5 w-5 text-primary" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">{shift.functions?.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {format(new Date(shift.date), "EEEE d. MMMM", { locale: nb })}
+                      </p>
+                    </div>
+                  </div>
+                  <Badge variant={shift.is_night_shift ? "destructive" : "default"}>
+                    {shift.planned_start} - {shift.planned_end}
+                  </Badge>
+                </div>
+              ))
+            )}
+            <Button variant="outline" className="w-full" asChild>
+              <a href="/schedule">Se hele vaktplanen</a>
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Courses */}
         <Card>
