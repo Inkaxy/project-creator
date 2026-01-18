@@ -3,9 +3,8 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { useFunctions } from "@/hooks/useFunctions";
-import { useShifts, ShiftData } from "@/hooks/useShifts";
+import { useShifts, ShiftData, useUpdateShift, useCreateShift } from "@/hooks/useShifts";
 import { useWageSupplements, calculateDayCost } from "@/hooks/useWageSupplements";
 import { useShiftTemplates, ShiftTemplate } from "@/hooks/useShiftTemplates";
 import { useWorkTimeViolations } from "@/hooks/useWorkTimeRules";
@@ -21,12 +20,13 @@ import { ManageTemplatesModal } from "@/components/schedule/ManageTemplatesModal
 import { WorkTimeAlertsPanel } from "@/components/schedule/WorkTimeAlertsPanel";
 import { OpenShiftsPanel } from "@/components/schedule/OpenShiftsPanel";
 import { ShiftSwapsPanel } from "@/components/schedule/ShiftSwapsPanel";
+import { DraggableShiftCard } from "@/components/schedule/DraggableShiftCard";
+import { DroppableScheduleCell } from "@/components/schedule/DroppableScheduleCell";
 import {
   ChevronLeft,
   ChevronRight,
   Plus,
   Filter,
-  Users,
   Clock,
   DollarSign,
   CalendarDays,
@@ -35,6 +35,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function SchedulePage() {
   const [currentDate, setCurrentDate] = useState(new Date(2026, 0, 19));
@@ -55,6 +56,9 @@ export default function SchedulePage() {
   const { data: functions = [], isLoading: loadingFunctions } = useFunctions();
   const { data: supplements = [] } = useWageSupplements();
   const { data: templates = [], isLoading: loadingTemplates } = useShiftTemplates();
+  
+  const updateShift = useUpdateShift();
+  const createShift = useCreateShift();
 
   // Calculate week range
   const getWeekDays = (date: Date) => {
@@ -111,6 +115,42 @@ export default function SchedulePage() {
       costs,
       shifts: dayShifts.length 
     };
+  };
+
+  // Handle drag-and-drop of shifts
+  const handleShiftDrop = async (shiftId: string, newDate: string, newFunctionId: string, isCopy: boolean) => {
+    const shift = shifts.find((s) => s.id === shiftId);
+    if (!shift) return;
+
+    if (isCopy) {
+      // Create a copy of the shift
+      createShift.mutate({
+        date: newDate,
+        function_id: newFunctionId,
+        employee_id: shift.employee_id,
+        planned_start: shift.planned_start,
+        planned_end: shift.planned_end,
+        planned_break_minutes: shift.planned_break_minutes ?? undefined,
+        status: "draft",
+        shift_type: shift.shift_type,
+        notes: shift.notes ?? undefined,
+      }, {
+        onSuccess: () => {
+          toast.success("Vakt kopiert");
+        }
+      });
+    } else {
+      // Move the shift
+      updateShift.mutate({
+        id: shiftId,
+        date: newDate,
+        function_id: newFunctionId,
+      }, {
+        onSuccess: () => {
+          toast.success("Vakt flyttet");
+        }
+      });
+    }
   };
 
   const selectedFunction = functions.find((f) => f.id === selectedFunctionId) || null;
@@ -261,37 +301,24 @@ export default function SchedulePage() {
                       const dayShifts = getShiftsForDayAndFunction(day, func.id);
                       const isToday = formatDate(day) === "2026-01-19";
                       return (
-                        <div
+                        <DroppableScheduleCell
                           key={i}
+                          date={day}
+                          functionId={func.id}
+                          isToday={isToday}
+                          isAdminOrManager={isAdminOrManager()}
                           onClick={() => handleCellClick(day, func.id)}
-                          className={cn("min-h-[80px] cursor-pointer border-r border-border p-2 transition-colors last:border-r-0 hover:bg-muted/50", isToday && "bg-primary/5")}
+                          onDrop={handleShiftDrop}
                         >
                           {dayShifts.map((shift) => (
-                            <div
+                            <DraggableShiftCard
                               key={shift.id}
-                              onClick={(e) => { e.stopPropagation(); handleShiftClick(shift); }}
-                              className={cn(
-                                "mb-1 cursor-pointer rounded-lg p-2 text-xs transition-all hover:scale-[1.02]",
-                                !shift.employee_id ? "border-2 border-dashed border-primary bg-primary/10" : shift.is_night_shift ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
-                              )}
-                            >
-                              {shift.profiles ? (
-                                <div className="flex items-center gap-2">
-                                  <AvatarWithInitials name={shift.profiles.full_name} size="sm" />
-                                  <div>
-                                    <p className="font-medium">{shift.profiles.full_name.split(" ")[0]}</p>
-                                    <p className="opacity-80">{shift.planned_start?.slice(0,5)}-{shift.planned_end?.slice(0,5)}</p>
-                                  </div>
-                                </div>
-                              ) : (
-                                <div className="flex items-center gap-2">
-                                  <Users className="h-4 w-4" />
-                                  <span className="font-medium">Ledig vakt</span>
-                                </div>
-                              )}
-                            </div>
+                              shift={shift}
+                              onShiftClick={handleShiftClick}
+                              isAdminOrManager={isAdminOrManager()}
+                            />
                           ))}
-                        </div>
+                        </DroppableScheduleCell>
                       );
                     })}
                   </div>
