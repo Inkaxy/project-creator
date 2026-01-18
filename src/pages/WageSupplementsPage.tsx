@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -36,8 +37,12 @@ import {
   useDeleteWageSupplement,
 } from "@/hooks/useWageSupplementsMutations";
 import { useAuth } from "@/contexts/AuthContext";
-import { Moon, Sun, Calendar, Star, Plus, Pencil, Trash2, DollarSign, Percent } from "lucide-react";
+import { Moon, Sun, Calendar, Star, Plus, Pencil, Trash2, DollarSign, Percent, TrendingUp, Receipt } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { WageLaddersManagementModal } from "@/components/employees/WageLaddersManagementModal";
+import { WageAdjustmentsPanel } from "@/components/employees/WageAdjustmentsPanel";
+import { useWageLadders } from "@/hooks/useWageLadders";
+import { useWageAdjustments } from "@/hooks/useWageAdjustments";
 
 const appliestoLabels: Record<string, { label: string; icon: React.ElementType; color: string }> = {
   night: { label: "Natt", icon: Moon, color: "text-destructive" },
@@ -49,12 +54,15 @@ const appliestoLabels: Record<string, { label: string; icon: React.ElementType; 
 export default function WageSupplementsPage() {
   const { isAdminOrManager } = useAuth();
   const { data: supplements = [], isLoading } = useWageSupplements();
+  const { data: wageLadders = [] } = useWageLadders();
+  const { data: pendingAdjustments = [] } = useWageAdjustments("pending");
   const updateMutation = useUpdateWageSupplement();
   const createMutation = useCreateWageSupplement();
   const deleteMutation = useDeleteWageSupplement();
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [wageLaddersModalOpen, setWageLaddersModalOpen] = useState(false);
   const [selectedSupplement, setSelectedSupplement] = useState<WageSupplement | null>(null);
 
   // Form state for editing
@@ -161,14 +169,93 @@ export default function WageSupplementsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-center sm:justify-between lg:pl-0">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Lønnstillegg</h1>
-            <p className="text-muted-foreground">Administrer satser for natt, kveld, helg og helligdager</p>
+            <h1 className="text-3xl font-bold text-foreground">Lønnssatser</h1>
+            <p className="text-muted-foreground">Administrer lønnsstiger, tillegg og etterbetalinger</p>
           </div>
-          <Button onClick={() => setCreateModalOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Nytt tillegg
-          </Button>
         </div>
+
+        {/* Summary Stats */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                Lønnsstiger
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{wageLadders.length}</p>
+              <p className="text-xs text-muted-foreground">aktive stiger</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                <DollarSign className="h-4 w-4 text-green-600" />
+                Tillegg
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{supplements.filter(s => s.is_active).length}</p>
+              <p className="text-xs text-muted-foreground">aktive tillegg</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                <Receipt className="h-4 w-4 text-amber-600" />
+                Etterbetalinger
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{pendingAdjustments.length}</p>
+              <p className="text-xs text-muted-foreground">venter godkjenning</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                <Calendar className="h-4 w-4 text-primary" />
+                Helgetillegg
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">
+                {supplements.filter(s => s.applies_to === 'weekend' && s.is_active).length}
+              </p>
+              <p className="text-xs text-muted-foreground">aktive</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Tabs */}
+        <Tabs defaultValue="supplements" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="supplements" className="gap-2">
+              <DollarSign className="h-4 w-4" />
+              Tillegg
+            </TabsTrigger>
+            <TabsTrigger value="ladders" className="gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Lønnsstiger
+            </TabsTrigger>
+            <TabsTrigger value="adjustments" className="gap-2">
+              <Receipt className="h-4 w-4" />
+              Etterbetalinger
+              {pendingAdjustments.length > 0 && (
+                <Badge variant="secondary" className="ml-1">{pendingAdjustments.length}</Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Supplements Tab */}
+          <TabsContent value="supplements" className="space-y-4">
+            <div className="flex justify-end">
+              <Button onClick={() => setCreateModalOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Nytt tillegg
+              </Button>
+            </div>
 
         {/* Summary Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -281,8 +368,76 @@ export default function WageSupplementsPage() {
                 })}
               </TableBody>
             </Table>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Wage Ladders Tab */}
+          <TabsContent value="ladders" className="space-y-4">
+            <div className="flex justify-end">
+              <Button onClick={() => setWageLaddersModalOpen(true)}>
+                <TrendingUp className="mr-2 h-4 w-4" />
+                Administrer lønnsstiger
+              </Button>
+            </div>
+
+            {wageLadders.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <TrendingUp className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                  <h3 className="mt-4 text-lg font-medium">Ingen lønnsstiger</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Opprett lønnsstiger for å administrere timelønn basert på ansiennitet.
+                  </p>
+                  <Button className="mt-4" onClick={() => setWageLaddersModalOpen(true)}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Opprett lønnsstige
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {wageLadders.map((ladder) => (
+                  <Card key={ladder.id} className="hover:shadow-md transition-shadow">
+                    <CardHeader>
+                      <CardTitle className="flex items-center justify-between">
+                        <span>{ladder.name}</span>
+                        <Badge variant="secondary">
+                          {ladder.competence_level === 'faglaert' ? 'Faglært' : 
+                           ladder.competence_level === 'laerling' ? 'Lærling' : 'Ufaglært'}
+                        </Badge>
+                      </CardTitle>
+                      {ladder.description && (
+                        <CardDescription>{ladder.description}</CardDescription>
+                      )}
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground">
+                          {ladder.levels?.length || 0} nivå{(ladder.levels?.length || 0) !== 1 ? 'er' : ''}
+                        </p>
+                        {ladder.levels && ladder.levels.length > 0 && (
+                          <div className="text-sm">
+                            <span className="text-muted-foreground">Satser: </span>
+                            <span className="font-medium">
+                              {Math.min(...ladder.levels.map(l => l.hourly_rate)).toLocaleString('nb-NO')} - {' '}
+                              {Math.max(...ladder.levels.map(l => l.hourly_rate)).toLocaleString('nb-NO')} kr/t
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Adjustments Tab */}
+          <TabsContent value="adjustments">
+            <WageAdjustmentsPanel />
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Edit Modal */}
@@ -484,6 +639,12 @@ export default function WageSupplementsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Wage Ladders Modal */}
+      <WageLaddersManagementModal
+        open={wageLaddersModalOpen}
+        onOpenChange={setWageLaddersModalOpen}
+      />
     </MainLayout>
   );
 }
