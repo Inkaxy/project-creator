@@ -101,6 +101,37 @@ export function useShifts(startDate: string, endDate: string) {
   });
 }
 
+export function useShiftsByDate(date: string) {
+  return useQuery({
+    queryKey: ["shifts", "date", date],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("shifts")
+        .select(`
+          *,
+          functions (
+            id,
+            name,
+            color,
+            category
+          ),
+          profiles!shifts_employee_id_fkey (
+            id,
+            full_name,
+            avatar_url
+          )
+        `)
+        .eq("date", date)
+        .neq("status", "cancelled")
+        .order("planned_start", { ascending: true });
+
+      if (error) throw error;
+      return data as ShiftData[];
+    },
+    enabled: !!date,
+  });
+}
+
 export function useShiftsByFunction(functionId: string, startDate: string, endDate: string) {
   return useQuery({
     queryKey: ["shifts", "function", functionId, startDate, endDate],

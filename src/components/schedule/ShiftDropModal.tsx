@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,9 +12,11 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useEmployees } from "@/hooks/useEmployees";
 import { useEmployeeFunctions } from "@/hooks/useEmployeeFunctions";
-import { Clock, Users, User, Copy, Move, ArrowRight, Calendar } from "lucide-react";
+import { useShiftsByDate } from "@/hooks/useShifts";
+import { Clock, Users, User, Copy, Move, ArrowRight, Calendar, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ShiftDropData {
@@ -53,6 +55,7 @@ export function ShiftDropModal({
   
   const { data: employees = [] } = useEmployees();
   const { data: employeeFunctions = [] } = useEmployeeFunctions();
+  const { data: shiftsOnTargetDate = [] } = useShiftsByDate(targetDate);
 
   // Get employees certified for this function
   const certifiedEmployeeIds = employeeFunctions
@@ -61,6 +64,48 @@ export function ShiftDropModal({
 
   const certifiedEmployees = employees.filter(e => certifiedEmployeeIds.includes(e.id));
   const otherEmployees = employees.filter(e => !certifiedEmployeeIds.includes(e.id));
+
+  // Check for time overlap between two shifts
+  const hasTimeOverlap = (start1: string, end1: string, start2: string, end2: string): boolean => {
+    const s1 = start1.slice(0, 5);
+    const e1 = end1.slice(0, 5);
+    const s2 = start2.slice(0, 5);
+    const e2 = end2.slice(0, 5);
+    return s1 < e2 && e1 > s2;
+  };
+
+  // Find conflicts for a given employee
+  const getEmployeeConflicts = useMemo(() => {
+    return (employeeId: string | null): { hasConflict: boolean; conflictingShifts: typeof shiftsOnTargetDate } => {
+      if (!employeeId || !dropData) return { hasConflict: false, conflictingShifts: [] };
+      
+      const conflictingShifts = shiftsOnTargetDate.filter(shift => {
+        // Skip the shift being moved
+        if (shift.id === dropData.shiftId) return false;
+        // Check same employee
+        if (shift.employee_id !== employeeId) return false;
+        // Check time overlap
+        return hasTimeOverlap(
+          dropData.plannedStart,
+          dropData.plannedEnd,
+          shift.planned_start,
+          shift.planned_end
+        );
+      });
+      
+      return { hasConflict: conflictingShifts.length > 0, conflictingShifts };
+    };
+  }, [shiftsOnTargetDate, dropData]);
+
+  // Get current conflict based on selection
+  const currentConflict = useMemo(() => {
+    if (selectedOption === "keep") {
+      return getEmployeeConflicts(dropData?.originalEmployeeId || null);
+    } else if (selectedOption === "change") {
+      return getEmployeeConflicts(selectedEmployeeId);
+    }
+    return { hasConflict: false, conflictingShifts: [] };
+  }, [selectedOption, dropData, selectedEmployeeId, getEmployeeConflicts]);
 
   const formatDisplayDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -229,24 +274,31 @@ export function ShiftDropModal({
                     <div className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase">
                       Sertifiserte for {targetFunctionName}
                     </div>
-                    {certifiedEmployees.map((employee) => (
-                      <div
-                        key={employee.id}
-                        onClick={() => setSelectedEmployeeId(employee.id)}
-                        className={cn(
-                          "flex items-center gap-2 rounded-md p-2 cursor-pointer transition-colors",
-                          selectedEmployeeId === employee.id 
-                            ? "bg-primary/10 text-primary" 
-                            : "hover:bg-muted"
-                        )}
-                      >
-                        <AvatarWithInitials name={employee.full_name} size="sm" />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium">{employee.full_name}</p>
-                          <p className="text-xs text-muted-foreground">{employee.functions?.name || "Ingen funksjon"}</p>
+                    {certifiedEmployees.map((employee) => {
+                      const employeeConflict = getEmployeeConflicts(employee.id);
+                      return (
+                        <div
+                          key={employee.id}
+                          onClick={() => setSelectedEmployeeId(employee.id)}
+                          className={cn(
+                            "flex items-center gap-2 rounded-md p-2 cursor-pointer transition-colors",
+                            selectedEmployeeId === employee.id 
+                              ? "bg-primary/10 text-primary" 
+                              : "hover:bg-muted",
+                            employeeConflict.hasConflict && "border border-destructive/50"
+                          )}
+                        >
+                          <AvatarWithInitials name={employee.full_name} size="sm" />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">{employee.full_name}</p>
+                            <p className="text-xs text-muted-foreground">{employee.functions?.name || "Ingen funksjon"}</p>
+                          </div>
+                          {employeeConflict.hasConflict && (
+                            <AlertTriangle className="h-4 w-4 text-destructive" />
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </>
                 )}
                 
@@ -255,24 +307,31 @@ export function ShiftDropModal({
                     <div className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase mt-2">
                       Andre ansatte
                     </div>
-                    {otherEmployees.map((employee) => (
-                      <div
-                        key={employee.id}
-                        onClick={() => setSelectedEmployeeId(employee.id)}
-                        className={cn(
-                          "flex items-center gap-2 rounded-md p-2 cursor-pointer transition-colors",
-                          selectedEmployeeId === employee.id 
-                            ? "bg-primary/10 text-primary" 
-                            : "hover:bg-muted"
-                        )}
-                      >
-                        <AvatarWithInitials name={employee.full_name} size="sm" />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium">{employee.full_name}</p>
-                          <p className="text-xs text-muted-foreground">{employee.functions?.name || "Ingen funksjon"}</p>
+                    {otherEmployees.map((employee) => {
+                      const employeeConflict = getEmployeeConflicts(employee.id);
+                      return (
+                        <div
+                          key={employee.id}
+                          onClick={() => setSelectedEmployeeId(employee.id)}
+                          className={cn(
+                            "flex items-center gap-2 rounded-md p-2 cursor-pointer transition-colors",
+                            selectedEmployeeId === employee.id 
+                              ? "bg-primary/10 text-primary" 
+                              : "hover:bg-muted",
+                            employeeConflict.hasConflict && "border border-destructive/50"
+                          )}
+                        >
+                          <AvatarWithInitials name={employee.full_name} size="sm" />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">{employee.full_name}</p>
+                            <p className="text-xs text-muted-foreground">{employee.functions?.name || "Ingen funksjon"}</p>
+                          </div>
+                          {employeeConflict.hasConflict && (
+                            <AlertTriangle className="h-4 w-4 text-destructive" />
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </>
                 )}
 
@@ -285,6 +344,26 @@ export function ShiftDropModal({
             </ScrollArea>
           )}
         </div>
+
+        {/* Conflict warning */}
+        {currentConflict.hasConflict && (
+          <Alert variant="destructive" className="border-destructive/50 bg-destructive/10">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription className="text-sm">
+              <span className="font-medium">Vaktkonflikt oppdaget!</span>
+              <br />
+              Denne ansatte har allerede {currentConflict.conflictingShifts.length === 1 ? "en vakt" : `${currentConflict.conflictingShifts.length} vakter`} som overlapper:
+              <ul className="mt-1 list-disc list-inside">
+                {currentConflict.conflictingShifts.slice(0, 3).map(shift => (
+                  <li key={shift.id}>
+                    {shift.planned_start.slice(0, 5)} - {shift.planned_end.slice(0, 5)}
+                    {shift.functions?.name && ` (${shift.functions.name})`}
+                  </li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        )}
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={handleCancel}>
