@@ -11,11 +11,14 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEmployees, EmployeeProfile } from "@/hooks/useEmployees";
 import { EmployeeCardExpanded } from "@/components/employees/EmployeeCardExpanded";
+import { WageLaddersManagementModal } from "@/components/employees/WageLaddersManagementModal";
+import { WageAdjustmentsPanel } from "@/components/employees/WageAdjustmentsPanel";
 import {
   Search,
   Plus,
   Upload,
   MoreHorizontal,
+  DollarSign,
 } from "lucide-react";
 import {
   Table,
@@ -36,6 +39,7 @@ export default function EmployeesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showInactive, setShowInactive] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeProfile | null>(null);
+  const [wageLaddersModalOpen, setWageLaddersModalOpen] = useState(false);
 
   const { data: employees = [], isLoading } = useEmployees(showInactive);
 
@@ -68,6 +72,10 @@ export default function EmployeesPage() {
             <p className="text-muted-foreground">Administrer ansatte og roller</p>
           </div>
           <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setWageLaddersModalOpen(true)}>
+              <DollarSign className="mr-2 h-4 w-4" />
+              Lønnsstiger
+            </Button>
             <Button variant="outline">
               <Upload className="mr-2 h-4 w-4" />
               Importer ansatte
@@ -195,6 +203,11 @@ export default function EmployeesPage() {
             />
           )}
         </div>
+        {/* Wage Ladders Modal */}
+        <WageLaddersManagementModal
+          open={wageLaddersModalOpen}
+          onOpenChange={setWageLaddersModalOpen}
+        />
       </div>
     </MainLayout>
   );

@@ -1419,9 +1419,134 @@ export type Database = {
         }
         Relationships: []
       }
+      wage_adjustments: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string | null
+          difference_per_hour: number
+          employee_id: string
+          id: string
+          ladder_history_id: string | null
+          new_rate: number
+          old_rate: number
+          period_end: string
+          period_start: string
+          status: string | null
+          total_adjustment: number
+          total_hours: number
+          updated_at: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          difference_per_hour: number
+          employee_id: string
+          id?: string
+          ladder_history_id?: string | null
+          new_rate: number
+          old_rate: number
+          period_end: string
+          period_start: string
+          status?: string | null
+          total_adjustment: number
+          total_hours?: number
+          updated_at?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          difference_per_hour?: number
+          employee_id?: string
+          id?: string
+          ladder_history_id?: string | null
+          new_rate?: number
+          old_rate?: number
+          period_end?: string
+          period_start?: string
+          status?: string | null
+          total_adjustment?: number
+          total_hours?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wage_adjustments_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wage_adjustments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wage_adjustments_ladder_history_id_fkey"
+            columns: ["ladder_history_id"]
+            isOneToOne: false
+            referencedRelation: "wage_ladder_history"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wage_ladder_history: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          effective_from: string
+          id: string
+          ladder_id: string
+          level: number
+          new_hourly_rate: number
+          old_hourly_rate: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          effective_from: string
+          id?: string
+          ladder_id: string
+          level: number
+          new_hourly_rate: number
+          old_hourly_rate?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          effective_from?: string
+          id?: string
+          ladder_id?: string
+          level?: number
+          new_hourly_rate?: number
+          old_hourly_rate?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wage_ladder_history_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wage_ladder_history_ladder_id_fkey"
+            columns: ["ladder_id"]
+            isOneToOne: false
+            referencedRelation: "wage_ladders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wage_ladder_levels: {
         Row: {
           created_at: string
+          effective_from: string | null
           hourly_rate: number
           id: string
           ladder_id: string
@@ -1431,6 +1556,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          effective_from?: string | null
           hourly_rate: number
           id?: string
           ladder_id: string
@@ -1440,6 +1566,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          effective_from?: string | null
           hourly_rate?: number
           id?: string
           ladder_id?: string

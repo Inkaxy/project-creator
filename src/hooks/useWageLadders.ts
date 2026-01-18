@@ -9,6 +9,7 @@ export interface WageLadderLevel {
   min_hours: number;
   max_hours: number | null;
   hourly_rate: number;
+  effective_from: string | null;
   created_at: string;
 }
 
@@ -35,6 +36,7 @@ export interface CreateWageLadderLevelInput {
   min_hours: number;
   max_hours?: number | null;
   hourly_rate: number;
+  effective_from?: string;
 }
 
 export function useWageLadders() {
@@ -52,6 +54,7 @@ export function useWageLadders() {
             min_hours,
             max_hours,
             hourly_rate,
+            effective_from,
             created_at
           )
         `)
@@ -86,6 +89,7 @@ export function useWageLadder(ladderId?: string) {
             min_hours,
             max_hours,
             hourly_rate,
+            effective_from,
             created_at
           )
         `)
