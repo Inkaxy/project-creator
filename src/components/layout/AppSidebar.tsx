@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import crewplanLogo from "@/assets/crewplan-logo.png";
 
 interface NavSection {
   title: string;
@@ -128,9 +129,7 @@ export function AppSidebar() {
     <div className="flex h-full flex-col">
       {/* Logo */}
       <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-4">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-          <Calendar className="h-5 w-5 text-primary-foreground" />
-        </div>
+        <img src={crewplanLogo} alt="Crewplan" className="h-9 w-9 rounded-lg" />
         <span className="text-xl font-bold text-foreground">Crewplan</span>
       </div>
 
