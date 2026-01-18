@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -67,7 +67,11 @@ export function ShiftDropModal({
     return date.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
   };
 
-  const handleConfirm = () => {
+  const canConfirm = selectedOption !== "change" || selectedEmployeeId !== null;
+
+  const handleConfirm = useCallback(() => {
+    if (!canConfirm) return;
+    
     if (selectedOption === "keep") {
       onConfirm(dropData?.originalEmployeeId || null);
     } else if (selectedOption === "open") {
@@ -76,11 +80,29 @@ export function ShiftDropModal({
       onConfirm(selectedEmployeeId);
     }
     onOpenChange(false);
-  };
+  }, [selectedOption, selectedEmployeeId, dropData, onConfirm, onOpenChange, canConfirm]);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     onOpenChange(false);
-  };
+  }, [onOpenChange]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && canConfirm) {
+        e.preventDefault();
+        handleConfirm();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        handleCancel();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, handleConfirm, handleCancel, canConfirm]);
 
   if (!dropData) return null;
 
