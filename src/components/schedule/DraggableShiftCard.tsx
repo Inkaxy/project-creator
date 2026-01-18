@@ -1,4 +1,4 @@
-import { DragEvent } from "react";
+import { DragEvent, useEffect, useRef, useState } from "react";
 import { ShiftData } from "@/hooks/useShifts";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { Users, GripVertical } from "lucide-react";
@@ -11,11 +11,15 @@ interface DraggableShiftCardProps {
 }
 
 export function DraggableShiftCard({ shift, onShiftClick, isAdminOrManager }: DraggableShiftCardProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const elementRef = useRef<HTMLDivElement>(null);
+
   const handleDragStart = (e: DragEvent<HTMLDivElement>) => {
     if (!isAdminOrManager) {
       e.preventDefault();
       return;
     }
+    setIsDragging(true);
     e.dataTransfer.setData("application/json", JSON.stringify({
       shiftId: shift.id,
       originalDate: shift.date,
@@ -34,13 +38,37 @@ export function DraggableShiftCard({ shift, onShiftClick, isAdminOrManager }: Dr
   };
 
   const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
+    setIsDragging(false);
     const target = e.target as HTMLElement;
     target.style.opacity = "1";
     target.classList.remove("scale-105", "shadow-lg");
   };
 
+  // Handle Escape key to cancel drag
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setIsDragging(false);
+        // Reset visual state
+        if (elementRef.current) {
+          elementRef.current.style.opacity = "1";
+          elementRef.current.classList.remove("scale-105", "shadow-lg");
+        }
+        // Dispatch a custom event to signal drag cancellation
+        document.dispatchEvent(new CustomEvent("dragcancel"));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isDragging]);
+
   return (
     <div
+      ref={elementRef}
       draggable={isAdminOrManager}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
