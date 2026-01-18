@@ -203,6 +203,10 @@ export default function EmployeesPage() {
             />
           )}
         </div>
+
+        {/* Wage Adjustments Panel */}
+        <WageAdjustmentsPanel />
+
         {/* Wage Ladders Modal */}
         <WageLaddersManagementModal
           open={wageLaddersModalOpen}
