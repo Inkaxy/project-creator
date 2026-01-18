@@ -9,8 +9,10 @@ import { ClockInOutCard } from "@/components/timesheet/ClockInOutCard";
 import { ClockHistoryCard } from "@/components/timesheet/ClockHistoryCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useShifts } from "@/hooks/useShifts";
+import { useEmployeeAccounts } from "@/hooks/useEmployeeAccounts";
 import { format, addDays, startOfWeek, endOfWeek } from "date-fns";
 import { nb } from "date-fns/locale";
+import { Link } from "react-router-dom";
 import {
   Clock,
   Calendar,
@@ -38,21 +40,37 @@ export default function MyPage() {
     .filter((s) => new Date(s.date) >= today)
     .slice(0, 3);
 
-  // Mock additional user data (would come from profile in production)
-  const userData = {
-    hoursThisWeek: 32,
-    hoursPlanned: 40,
-    timeAccount: 12.5,
-    nightAccount: 3,
-    vacationDays: 18,
-    seniority: {
-      currentLevel: 2,
-      currentHours: 3200,
-      nextLevelHours: 3900,
-      hourlyRate: 220,
-      nextHourlyRate: 230,
-    },
+  // Get real account balances from database
+  const currentYear = new Date().getFullYear();
+  const { data: accounts } = useEmployeeAccounts(user?.id, currentYear);
+  
+  const vacationAccount = accounts?.find(a => a.account_type === 'vacation');
+  const timeAccount = accounts?.find(a => a.account_type === 'time_bank');
+  const nightAccount = accounts?.find(a => a.account_type === 'night_bank');
+  
+  // Calculate available balances
+  const vacationDays = vacationAccount 
+    ? (vacationAccount.balance || 0) + (vacationAccount.carried_over || 0) - (vacationAccount.used || 0)
+    : 0;
+  const timeBalance = timeAccount
+    ? (timeAccount.balance || 0) + (timeAccount.carried_over || 0) - (timeAccount.used || 0)
+    : 0;
+  const nightBalance = nightAccount
+    ? (nightAccount.balance || 0) + (nightAccount.carried_over || 0) - (nightAccount.used || 0)
+    : 0;
+
+  // Mock seniority data (will be replaced when seniority module is implemented)
+  const seniorityData = {
+    currentLevel: 2,
+    currentHours: 3200,
+    nextLevelHours: 3900,
+    hourlyRate: 220,
+    nextHourlyRate: 230,
   };
+  
+  // Mock hours data (will be replaced when calculated from time entries)
+  const hoursThisWeek = 32;
+  const hoursPlanned = 40;
 
   const courses = [
     { name: "Brannvern grunnkurs", status: "completed", date: "2025-12-15" },
@@ -61,7 +79,7 @@ export default function MyPage() {
   ];
 
   const seniorityProgress =
-    ((userData.seniority.currentHours - 1950) / (userData.seniority.nextLevelHours - 1950)) * 100;
+    ((seniorityData.currentHours - 1950) / (seniorityData.nextLevelHours - 1950)) * 100;
 
   return (
     <MainLayout>
@@ -94,7 +112,7 @@ export default function MyPage() {
                 <div>
                   <p className="text-xs text-muted-foreground">Timer denne uken</p>
                   <p className="text-xl font-bold text-foreground">
-                    {userData.hoursThisWeek}/{userData.hoursPlanned}t
+                    {hoursThisWeek}/{hoursPlanned}t
                   </p>
                 </div>
               </div>
@@ -108,7 +126,9 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Tidskonto</p>
-                  <p className="text-xl font-bold text-foreground">+{userData.timeAccount}t</p>
+                  <p className="text-xl font-bold text-foreground">
+                    {timeBalance >= 0 ? '+' : ''}{timeBalance.toFixed(1)}t
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -121,7 +141,9 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Natt-konto</p>
-                  <p className="text-xl font-bold text-foreground">+{userData.nightAccount}t</p>
+                  <p className="text-xl font-bold text-foreground">
+                    {nightBalance >= 0 ? '+' : ''}{nightBalance.toFixed(1)}t
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -134,7 +156,7 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Feriedager</p>
-                  <p className="text-xl font-bold text-foreground">{userData.vacationDays} dager</p>
+                  <p className="text-xl font-bold text-foreground">{vacationDays} dager</p>
                 </div>
               </div>
             </CardContent>
@@ -155,14 +177,14 @@ export default function MyPage() {
                 <Award className="h-5 w-5 text-primary" />
                 Din ansiennitet
               </CardTitle>
-              <CardDescription>Nivå {userData.seniority.currentLevel}</CardDescription>
+              <CardDescription>Nivå {seniorityData.currentLevel}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Fremgang til Nivå 3</span>
                   <span className="font-medium text-foreground">
-                    {userData.seniority.currentHours}/{userData.seniority.nextLevelHours}t
+                    {seniorityData.currentHours}/{seniorityData.nextLevelHours}t
                   </span>
                 </div>
                 <Progress value={seniorityProgress} className="h-3" />
@@ -172,19 +194,19 @@ export default function MyPage() {
                 <div className="flex items-center gap-2 text-primary">
                   <Target className="h-4 w-4" />
                   <span className="font-medium">
-                    {userData.seniority.nextLevelHours - userData.seniority.currentHours} timer til Nivå 3!
+                    {seniorityData.nextLevelHours - seniorityData.currentHours} timer til Nivå 3!
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">📅 Estimert: April 2026</p>
                 <p className="text-sm text-muted-foreground">
-                  💰 = +{userData.seniority.nextHourlyRate - userData.seniority.hourlyRate} kr/time
+                  💰 = +{seniorityData.nextHourlyRate - seniorityData.hourlyRate} kr/time
                 </p>
               </div>
 
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Nåværende timelønn</span>
                 <span className="text-lg font-bold text-foreground">
-                  {userData.seniority.hourlyRate} kr/t
+                  {seniorityData.hourlyRate} kr/t
                 </span>
               </div>
             </CardContent>
@@ -305,21 +327,27 @@ export default function MyPage() {
 
         {/* Quick Actions */}
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Button variant="outline" className="h-auto flex-col gap-2 p-4">
-            <Calendar className="h-6 w-6 text-primary" />
-            <span>Søk om fravær</span>
+          <Button variant="outline" className="h-auto flex-col gap-2 p-4" asChild>
+            <Link to="/fravaer">
+              <Calendar className="h-6 w-6 text-primary" />
+              <span>Søk om fravær</span>
+            </Link>
           </Button>
-          <Button variant="outline" className="h-auto flex-col gap-2 p-4">
-            <Clock className="h-6 w-6 text-primary" />
-            <span>Be om vaktbytte</span>
+          <Button variant="outline" className="h-auto flex-col gap-2 p-4" asChild>
+            <Link to="/schedule">
+              <Clock className="h-6 w-6 text-primary" />
+              <span>Be om vaktbytte</span>
+            </Link>
           </Button>
           <Button variant="outline" className="h-auto flex-col gap-2 p-4">
             <FileText className="h-6 w-6 text-primary" />
             <span>Se lønnsslipp</span>
           </Button>
-          <Button variant="outline" className="h-auto flex-col gap-2 p-4">
-            <Wallet className="h-6 w-6 text-primary" />
-            <span>Mine kontoer</span>
+          <Button variant="outline" className="h-auto flex-col gap-2 p-4" asChild>
+            <Link to="/fravaer">
+              <Wallet className="h-6 w-6 text-primary" />
+              <span>Mine kontoer</span>
+            </Link>
           </Button>
         </div>
       </div>
