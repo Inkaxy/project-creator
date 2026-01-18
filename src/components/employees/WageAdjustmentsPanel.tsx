@@ -40,6 +40,19 @@ export function WageAdjustmentsPanel() {
     updateStatus.mutate({ id, status: "rejected" });
   };
 
+  const handleMarkAsPaid = (id: string) => {
+    updateStatus.mutate({ id, status: "paid" });
+  };
+
+  const handleMarkAllAsPaid = () => {
+    const exportedAdjustments = adjustments?.filter(a => a.status === "exported") || [];
+    if (exportedAdjustments.length === 0) return;
+    
+    exportedAdjustments.forEach(adj => {
+      updateStatus.mutate({ id: adj.id, status: "paid" });
+    });
+  };
+
   const handleExport = () => {
     // Export approved adjustments as CSV
     const approvedAdjustments = adjustments?.filter(a => a.status === "approved") || [];
@@ -97,6 +110,7 @@ export function WageAdjustmentsPanel() {
 
   const pendingCount = adjustments?.filter(a => a.status === "pending").length || 0;
   const approvedCount = adjustments?.filter(a => a.status === "approved").length || 0;
+  const exportedCount = adjustments?.filter(a => a.status === "exported").length || 0;
 
   return (
     <Card>
@@ -109,7 +123,7 @@ export function WageAdjustmentsPanel() {
               <Badge variant="secondary">{pendingCount} venter</Badge>
             )}
           </CardTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap justify-end">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="Filtrer status" />
@@ -127,6 +141,12 @@ export function WageAdjustmentsPanel() {
               <Button variant="outline" size="sm" onClick={handleExport}>
                 <Download className="h-4 w-4 mr-2" />
                 Eksporter ({approvedCount})
+              </Button>
+            )}
+            {exportedCount > 0 && (
+              <Button variant="outline" size="sm" onClick={handleMarkAllAsPaid} className="text-green-600 hover:text-green-700">
+                <Check className="h-4 w-4 mr-2" />
+                Merk utbetalt ({exportedCount})
               </Button>
             )}
           </div>
@@ -150,6 +170,7 @@ export function WageAdjustmentsPanel() {
                   adjustment={adjustment}
                   onApprove={handleApprove}
                   onReject={handleReject}
+                  onMarkAsPaid={handleMarkAsPaid}
                   getStatusBadge={getStatusBadge}
                   formatCurrency={formatCurrency}
                   isPending={updateStatus.isPending}
@@ -167,6 +188,7 @@ interface AdjustmentCardProps {
   adjustment: WageAdjustment;
   onApprove: (id: string) => void;
   onReject: (id: string) => void;
+  onMarkAsPaid: (id: string) => void;
   getStatusBadge: (status: string) => React.ReactNode;
   formatCurrency: (amount: number) => string;
   isPending: boolean;
@@ -176,6 +198,7 @@ function AdjustmentCard({
   adjustment,
   onApprove,
   onReject,
+  onMarkAsPaid,
   getStatusBadge,
   formatCurrency,
   isPending,
@@ -224,6 +247,19 @@ function AdjustmentCard({
               Avvis
             </Button>
           </div>
+        )}
+
+        {adjustment.status === "exported" && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onMarkAsPaid(adjustment.id)}
+            disabled={isPending}
+            className="text-green-600 hover:text-green-700 hover:bg-green-50"
+          >
+            <DollarSign className="h-4 w-4 mr-1" />
+            Merk utbetalt
+          </Button>
         )}
       </div>
     </Card>
