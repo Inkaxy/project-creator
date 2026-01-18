@@ -29,7 +29,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import crewplanLogo from "@/assets/crewplan-logo.png";
+import crewplanLogo from "@/assets/crewplan-logo-v2.png";
 
 interface NavSection {
   title: string;
@@ -129,7 +129,7 @@ export function AppSidebar() {
     <div className="flex h-full flex-col">
       {/* Logo */}
       <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-4">
-        <img src={crewplanLogo} alt="Crewplan" className="h-9 w-9 rounded-lg" />
+        <img src={crewplanLogo} alt="Crewplan" className="h-10 w-10" />
         <span className="text-xl font-bold text-foreground">Crewplan</span>
       </div>
 
