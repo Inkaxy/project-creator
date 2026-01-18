@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Calendar, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import crewplanLogo from '@/assets/crewplan-logo.png';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -126,9 +127,7 @@ export default function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-4 text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-primary">
-            <Calendar className="h-8 w-8 text-primary-foreground" />
-          </div>
+          <img src={crewplanLogo} alt="Crewplan" className="mx-auto h-16 w-16 rounded-xl" />
           <div>
             <CardTitle className="text-2xl font-bold">Crewplan</CardTitle>
             <CardDescription className="mt-2">
