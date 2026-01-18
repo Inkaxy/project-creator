@@ -22,6 +22,7 @@ import { OpenShiftsPanel } from "@/components/schedule/OpenShiftsPanel";
 import { ShiftSwapsPanel } from "@/components/schedule/ShiftSwapsPanel";
 import { DraggableShiftCard } from "@/components/schedule/DraggableShiftCard";
 import { DroppableScheduleCell } from "@/components/schedule/DroppableScheduleCell";
+import { ShiftDropModal } from "@/components/schedule/ShiftDropModal";
 import {
   ChevronLeft,
   ChevronRight,
@@ -51,6 +52,21 @@ export default function SchedulePage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedFunctionId, setSelectedFunctionId] = useState<string | null>(null);
   const [selectedShift, setSelectedShift] = useState<ShiftData | null>(null);
+  
+  // Drag-and-drop modal state
+  const [dropModalOpen, setDropModalOpen] = useState(false);
+  const [pendingDrop, setPendingDrop] = useState<{
+    shiftId: string;
+    originalDate: string;
+    originalFunctionId: string | null;
+    originalEmployeeId: string | null;
+    plannedStart: string;
+    plannedEnd: string;
+    employeeName: string | null;
+    targetDate: string;
+    targetFunctionId: string;
+    isCopy: boolean;
+  } | null>(null);
 
   const { isAdminOrManager } = useAuth();
   const { data: functions = [], isLoading: loadingFunctions } = useFunctions();
@@ -117,17 +133,39 @@ export default function SchedulePage() {
     };
   };
 
-  // Handle drag-and-drop of shifts
-  const handleShiftDrop = async (shiftId: string, newDate: string, newFunctionId: string, isCopy: boolean) => {
+  // Handle drag-and-drop of shifts - now opens modal
+  const handleShiftDrop = (shiftId: string, newDate: string, newFunctionId: string, isCopy: boolean) => {
     const shift = shifts.find((s) => s.id === shiftId);
     if (!shift) return;
 
-    if (isCopy) {
-      // Create a copy of the shift
+    // Store pending drop data and open modal
+    setPendingDrop({
+      shiftId,
+      originalDate: shift.date,
+      originalFunctionId: shift.function_id,
+      originalEmployeeId: shift.employee_id,
+      plannedStart: shift.planned_start,
+      plannedEnd: shift.planned_end,
+      employeeName: shift.profiles?.full_name || null,
+      targetDate: newDate,
+      targetFunctionId: newFunctionId,
+      isCopy,
+    });
+    setDropModalOpen(true);
+  };
+
+  // Confirm the drop with selected employee
+  const handleDropConfirm = (employeeId: string | null) => {
+    if (!pendingDrop) return;
+
+    const shift = shifts.find((s) => s.id === pendingDrop.shiftId);
+    if (!shift) return;
+
+    if (pendingDrop.isCopy) {
       createShift.mutate({
-        date: newDate,
-        function_id: newFunctionId,
-        employee_id: shift.employee_id,
+        date: pendingDrop.targetDate,
+        function_id: pendingDrop.targetFunctionId,
+        employee_id: employeeId,
         planned_start: shift.planned_start,
         planned_end: shift.planned_end,
         planned_break_minutes: shift.planned_break_minutes ?? undefined,
@@ -140,17 +178,19 @@ export default function SchedulePage() {
         }
       });
     } else {
-      // Move the shift
       updateShift.mutate({
-        id: shiftId,
-        date: newDate,
-        function_id: newFunctionId,
+        id: pendingDrop.shiftId,
+        date: pendingDrop.targetDate,
+        function_id: pendingDrop.targetFunctionId,
+        employee_id: employeeId,
       }, {
         onSuccess: () => {
           toast.success("Vakt flyttet");
         }
       });
     }
+
+    setPendingDrop(null);
   };
 
   const selectedFunction = functions.find((f) => f.id === selectedFunctionId) || null;
@@ -391,6 +431,19 @@ export default function SchedulePage() {
           setSelectedTemplateForRollout(template);
           setRolloutModalOpen(true);
         }}
+      />
+      <ShiftDropModal
+        open={dropModalOpen}
+        onOpenChange={(open) => {
+          setDropModalOpen(open);
+          if (!open) setPendingDrop(null);
+        }}
+        dropData={pendingDrop}
+        targetDate={pendingDrop?.targetDate || ""}
+        targetFunctionId={pendingDrop?.targetFunctionId || ""}
+        targetFunctionName={functions.find(f => f.id === pendingDrop?.targetFunctionId)?.name || ""}
+        isCopy={pendingDrop?.isCopy || false}
+        onConfirm={handleDropConfirm}
       />
     </MainLayout>
   );
