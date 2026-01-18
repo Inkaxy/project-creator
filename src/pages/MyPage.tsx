@@ -7,9 +7,11 @@ import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ClockInOutCard } from "@/components/timesheet/ClockInOutCard";
 import { ClockHistoryCard } from "@/components/timesheet/ClockHistoryCard";
+import { ChecklistsPanel } from "@/components/checklist/ChecklistsPanel";
 import { useAuth } from "@/contexts/AuthContext";
 import { useShifts } from "@/hooks/useShifts";
 import { useEmployeeAccounts } from "@/hooks/useEmployeeAccounts";
+import { useActiveTimeEntry } from "@/hooks/useTimeEntries";
 import { format, addDays, startOfWeek, endOfWeek } from "date-fns";
 import { nb } from "date-fns/locale";
 import { Link } from "react-router-dom";
@@ -39,6 +41,10 @@ export default function MyPage() {
   const upcomingShifts = userShifts
     .filter((s) => new Date(s.date) >= today)
     .slice(0, 3);
+
+  // Get active time entry to find current shift
+  const { data: activeEntry } = useActiveTimeEntry(user?.id);
+  const activeShiftId = activeEntry?.shift_id || null;
 
   // Get real account balances from database
   const currentYear = new Date().getFullYear();
@@ -162,6 +168,11 @@ export default function MyPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Checklists Panel - Show when clocked in */}
+        {activeShiftId && (
+          <ChecklistsPanel shiftId={activeShiftId} />
+        )}
 
         {/* Main Content Grid */}
         <div className="grid gap-6 lg:grid-cols-3">
