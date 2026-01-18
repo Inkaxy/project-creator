@@ -130,7 +130,7 @@ export default function AuthPage() {
             <Calendar className="h-8 w-8 text-primary-foreground" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold">ShiftFlow</CardTitle>
+            <CardTitle className="text-2xl font-bold">Crewplan</CardTitle>
             <CardDescription className="mt-2">
               {isLogin ? 'Logg inn på din konto' : 'Opprett en ny konto'}
             </CardDescription>
