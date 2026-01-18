@@ -9,27 +9,13 @@ import { Label } from "@/components/ui/label";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useEmployees, useDepartments, EmployeeProfile } from "@/hooks/useEmployees";
-import { useEmployeeFunctions, useDeleteEmployeeFunction } from "@/hooks/useEmployeeFunctions";
-import { useUpdateEmployeeDepartment } from "@/hooks/useUpdateEmployeeDepartment";
-import { EmployeeFunctionModal } from "@/components/employees/EmployeeFunctionModal";
+import { useEmployees, EmployeeProfile } from "@/hooks/useEmployees";
+import { EmployeeCardExpanded } from "@/components/employees/EmployeeCardExpanded";
 import {
   Search,
   Plus,
   Upload,
-  Mail,
-  Phone,
   MoreHorizontal,
-  ChevronRight,
-  Star,
-  X,
 } from "lucide-react";
 import {
   Table,
@@ -50,13 +36,8 @@ export default function EmployeesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showInactive, setShowInactive] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeProfile | null>(null);
-  const [functionModalOpen, setFunctionModalOpen] = useState(false);
 
   const { data: employees = [], isLoading } = useEmployees(showInactive);
-  const { data: departments = [] } = useDepartments();
-  const { data: employeeFunctions = [] } = useEmployeeFunctions(selectedEmployee?.id);
-  const deleteEmployeeFunction = useDeleteEmployeeFunction();
-  const updateDepartment = useUpdateEmployeeDepartment();
 
   const filteredEmployees = employees.filter((employee) => {
     const matchesSearch =
@@ -65,32 +46,14 @@ export default function EmployeesPage() {
     return matchesSearch;
   });
 
-  const handleRemoveFunction = async (functionId: string) => {
-    if (confirm("Er du sikker på at du vil fjerne denne funksjonen?")) {
-      await deleteEmployeeFunction.mutateAsync(functionId);
-    }
-  };
-
-  const getProficiencyStars = (level: string) => {
-    const stars = level === "expert" ? 3 : level === "competent" ? 2 : 1;
-    return (
-      <div className="flex items-center gap-0.5">
-        {Array.from({ length: stars }).map((_, i) => (
-          <Star key={i} className="h-3 w-3 fill-primary text-primary" />
-        ))}
-        {Array.from({ length: 3 - stars }).map((_, i) => (
-          <Star key={i} className="h-3 w-3 text-muted-foreground" />
-        ))}
-      </div>
-    );
-  };
-
   const getEmployeeType = (type: string | null) => {
     const types: Record<string, string> = {
       fast: "Fast ansatt",
       deltid: "Fast deltid",
       tilkalling: "Tilkalling",
+      vikar: "Vikar",
       laerling: "Lærling",
+      sesong: "Sesong",
     };
     return types[type || ""] || type || "Ukjent";
   };
@@ -140,9 +103,9 @@ export default function EmployeesPage() {
         </div>
 
         {/* Content */}
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-4">
           {/* Employee List */}
-          <Card className={selectedEmployee ? "lg:col-span-2" : "lg:col-span-3"}>
+          <Card className={selectedEmployee ? "lg:col-span-2" : "lg:col-span-4"}>
             <CardHeader className="pb-3">
               <CardTitle className="text-lg">
                 Alle ansatte
@@ -161,7 +124,7 @@ export default function EmployeesPage() {
                   </div>
                 ) : filteredEmployees.length === 0 ? (
                   <div className="p-8 text-center text-muted-foreground">
-                    Ingen ansatte funnet. Registrer deg eller legg til ansatte.
+                    Ingen ansatte funnet.
                   </div>
                 ) : (
                   <Table>
@@ -224,169 +187,15 @@ export default function EmployeesPage() {
             </CardContent>
           </Card>
 
-          {/* Employee Detail Panel */}
+          {/* Employee Detail Panel - Now using EmployeeCardExpanded */}
           {selectedEmployee && (
-            <Card className="animate-fade-in">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Ansattkort</CardTitle>
-                  <Button variant="ghost" size="icon" onClick={() => setSelectedEmployee(null)}>
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Profile Header */}
-                <div className="flex flex-col items-center gap-3 text-center">
-                  <AvatarWithInitials name={selectedEmployee.full_name} size="lg" />
-                  <div>
-                    <h3 className="text-xl font-semibold text-foreground">
-                      {selectedEmployee.full_name}
-                    </h3>
-                    <p className="text-muted-foreground">{selectedEmployee.functions?.name || "Ingen rolle"}</p>
-                  </div>
-                  <StatusBadge status={selectedEmployee.is_active ? "active" : "inactive"} />
-                </div>
-
-                {/* Contact Info */}
-                <div className="space-y-3">
-                  <h4 className="text-sm font-semibold text-foreground">Kontakt</h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3 text-sm">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">{selectedEmployee.email}</span>
-                    </div>
-                    {selectedEmployee.phone && (
-                      <div className="flex items-center gap-3 text-sm">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">{selectedEmployee.phone}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Employment Info with Editable Department */}
-                <div className="space-y-3">
-                  <h4 className="text-sm font-semibold text-foreground">Ansettelse</h4>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <p className="text-muted-foreground">Type</p>
-                      <p className="font-medium text-foreground">
-                        {getEmployeeType(selectedEmployee.employee_type)}
-                      </p>
-                    </div>
-                    {selectedEmployee.start_date && (
-                      <div>
-                        <p className="text-muted-foreground">Startdato</p>
-                        <p className="font-medium text-foreground">
-                          {new Date(selectedEmployee.start_date).toLocaleDateString("nb-NO")}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-sm mb-1">Avdeling</p>
-                    <Select
-                      value={selectedEmployee.department_id || "none"}
-                      onValueChange={(value) => {
-                        updateDepartment.mutate({
-                          employeeId: selectedEmployee.id,
-                          departmentId: value === "none" ? null : value,
-                          employeeName: selectedEmployee.full_name,
-                        });
-                        // Update local state
-                        setSelectedEmployee({
-                          ...selectedEmployee,
-                          department_id: value === "none" ? null : value,
-                          departments: value === "none" ? null : departments.find(d => d.id === value) || null,
-                        });
-                      }}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Velg avdeling" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        <SelectItem value="none">Ingen avdeling</SelectItem>
-                        {departments.map((dept) => (
-                          <SelectItem key={dept.id} value={dept.id}>
-                            <div className="flex items-center gap-2">
-                              <div
-                                className="h-3 w-3 rounded-full"
-                                style={{ backgroundColor: dept.color || "#3B82F6" }}
-                              />
-                              {dept.name}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Functions - NEW SECTION */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-semibold text-foreground">Funksjoner</h4>
-                    <Button variant="outline" size="sm" onClick={() => setFunctionModalOpen(true)}>
-                      <Plus className="mr-1 h-3 w-3" />
-                      Legg til
-                    </Button>
-                  </div>
-                  {employeeFunctions.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      Ingen funksjoner tildelt ennå.
-                    </p>
-                  ) : (
-                    <div className="space-y-2">
-                      {employeeFunctions.map((ef) => (
-                        <div
-                          key={ef.id}
-                          className="flex items-center justify-between rounded-lg border border-border p-2"
-                        >
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="h-3 w-3 rounded"
-                              style={{ backgroundColor: ef.functions?.color || "#3B82F6" }}
-                            />
-                            <span className="text-sm font-medium">{ef.functions?.name}</span>
-                            {getProficiencyStars(ef.proficiency_level)}
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6"
-                            onClick={() => handleRemoveFunction(ef.id)}
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-2 pt-4">
-                  <Button className="flex-1">Rediger</Button>
-                  <Button variant="outline" className="flex-1">
-                    Se personalmappe
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <EmployeeCardExpanded 
+              employee={selectedEmployee} 
+              onClose={() => setSelectedEmployee(null)} 
+            />
           )}
         </div>
       </div>
-
-      {/* Employee Function Modal */}
-      {selectedEmployee && (
-        <EmployeeFunctionModal
-          open={functionModalOpen}
-          onOpenChange={setFunctionModalOpen}
-          employeeId={selectedEmployee.id}
-          employeeName={selectedEmployee.full_name}
-        />
-      )}
     </MainLayout>
   );
 }

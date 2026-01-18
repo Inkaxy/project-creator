@@ -526,6 +526,172 @@ export type Database = {
           },
         ]
       }
+      employee_details: {
+        Row: {
+          accumulated_hours: number | null
+          allow_mobile_clock: boolean | null
+          competence_level: string | null
+          contracted_hours_per_month: number | null
+          contracted_hours_per_week: number | null
+          created_at: string
+          current_seniority_level: number | null
+          employee_id: string
+          employment_percentage: number | null
+          end_date: string | null
+          fixed_monthly_salary: number | null
+          full_time_hours: number | null
+          gps_required: boolean | null
+          has_first_aid_course: boolean | null
+          id: string
+          included_night_hours: number | null
+          is_fire_safety_leader: boolean | null
+          is_food_safety_responsible: boolean | null
+          is_safety_representative: boolean | null
+          probation_end_date: string | null
+          salary_type: string
+          updated_at: string
+          wage_ladder_id: string | null
+        }
+        Insert: {
+          accumulated_hours?: number | null
+          allow_mobile_clock?: boolean | null
+          competence_level?: string | null
+          contracted_hours_per_month?: number | null
+          contracted_hours_per_week?: number | null
+          created_at?: string
+          current_seniority_level?: number | null
+          employee_id: string
+          employment_percentage?: number | null
+          end_date?: string | null
+          fixed_monthly_salary?: number | null
+          full_time_hours?: number | null
+          gps_required?: boolean | null
+          has_first_aid_course?: boolean | null
+          id?: string
+          included_night_hours?: number | null
+          is_fire_safety_leader?: boolean | null
+          is_food_safety_responsible?: boolean | null
+          is_safety_representative?: boolean | null
+          probation_end_date?: string | null
+          salary_type?: string
+          updated_at?: string
+          wage_ladder_id?: string | null
+        }
+        Update: {
+          accumulated_hours?: number | null
+          allow_mobile_clock?: boolean | null
+          competence_level?: string | null
+          contracted_hours_per_month?: number | null
+          contracted_hours_per_week?: number | null
+          created_at?: string
+          current_seniority_level?: number | null
+          employee_id?: string
+          employment_percentage?: number | null
+          end_date?: string | null
+          fixed_monthly_salary?: number | null
+          full_time_hours?: number | null
+          gps_required?: boolean | null
+          has_first_aid_course?: boolean | null
+          id?: string
+          included_night_hours?: number | null
+          is_fire_safety_leader?: boolean | null
+          is_food_safety_responsible?: boolean | null
+          is_safety_representative?: boolean | null
+          probation_end_date?: string | null
+          salary_type?: string
+          updated_at?: string
+          wage_ladder_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_details_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_details_wage_ladder_id_fkey"
+            columns: ["wage_ladder_id"]
+            isOneToOne: false
+            referencedRelation: "wage_ladders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_documents: {
+        Row: {
+          category: string
+          created_at: string
+          employee_id: string
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          id: string
+          is_signed: boolean | null
+          name: string
+          notes: string | null
+          signed_at: string | null
+          signed_by: string | null
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          employee_id: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          id?: string
+          is_signed?: boolean | null
+          name: string
+          notes?: string | null
+          signed_at?: string | null
+          signed_by?: string | null
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          employee_id?: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          is_signed?: boolean | null
+          name?: string
+          notes?: string | null
+          signed_at?: string | null
+          signed_by?: string | null
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_documents_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_documents_signed_by_fkey"
+            columns: ["signed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_functions: {
         Row: {
           certified_by: string | null
@@ -731,10 +897,17 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address: string | null
           avatar_url: string | null
+          city: string | null
           created_at: string
+          date_of_birth: string | null
           department_id: string | null
           email: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          emergency_contact_relation: string | null
+          employee_number: string | null
           employee_type: Database["public"]["Enums"]["employee_type"] | null
           full_name: string
           function_id: string | null
@@ -742,14 +915,22 @@ export type Database = {
           is_active: boolean | null
           phone: string | null
           pin_code: string | null
+          postal_code: string | null
           start_date: string | null
           updated_at: string
         }
         Insert: {
+          address?: string | null
           avatar_url?: string | null
+          city?: string | null
           created_at?: string
+          date_of_birth?: string | null
           department_id?: string | null
           email: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          emergency_contact_relation?: string | null
+          employee_number?: string | null
           employee_type?: Database["public"]["Enums"]["employee_type"] | null
           full_name: string
           function_id?: string | null
@@ -757,14 +938,22 @@ export type Database = {
           is_active?: boolean | null
           phone?: string | null
           pin_code?: string | null
+          postal_code?: string | null
           start_date?: string | null
           updated_at?: string
         }
         Update: {
+          address?: string | null
           avatar_url?: string | null
+          city?: string | null
           created_at?: string
+          date_of_birth?: string | null
           department_id?: string | null
           email?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          emergency_contact_relation?: string | null
+          employee_number?: string | null
           employee_type?: Database["public"]["Enums"]["employee_type"] | null
           full_name?: string
           function_id?: string | null
@@ -772,6 +961,7 @@ export type Database = {
           is_active?: boolean | null
           phone?: string | null
           pin_code?: string | null
+          postal_code?: string | null
           start_date?: string | null
           updated_at?: string
         }
@@ -1226,6 +1416,74 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      wage_ladder_levels: {
+        Row: {
+          created_at: string
+          hourly_rate: number
+          id: string
+          ladder_id: string
+          level: number
+          max_hours: number | null
+          min_hours: number
+        }
+        Insert: {
+          created_at?: string
+          hourly_rate: number
+          id?: string
+          ladder_id: string
+          level: number
+          max_hours?: number | null
+          min_hours?: number
+        }
+        Update: {
+          created_at?: string
+          hourly_rate?: number
+          id?: string
+          ladder_id?: string
+          level?: number
+          max_hours?: number | null
+          min_hours?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wage_ladder_levels_ladder_id_fkey"
+            columns: ["ladder_id"]
+            isOneToOne: false
+            referencedRelation: "wage_ladders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wage_ladders: {
+        Row: {
+          competence_level: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          competence_level?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          competence_level?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }
