@@ -57,6 +57,7 @@ const navigation: NavSection[] = [
     title: "PERSONAL & ADMIN",
     items: [
       { title: "Ansatte", href: "/ansatte", icon: Users, badge: 12 },
+      { title: "Fravær", href: "/fravaer", icon: Calendar },
       { title: "Godkjenninger", href: "/godkjenninger", icon: CheckCircle, badge: 3 },
       { title: "Rekruttering", href: "/rekruttering", icon: UserPlus },
       { title: "Personalhåndbok", href: "/personalhandbok", icon: BookOpen },
