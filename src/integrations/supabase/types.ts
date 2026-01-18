@@ -228,6 +228,225 @@ export type Database = {
           },
         ]
       }
+      checklist_completions: {
+        Row: {
+          completed_at: string
+          created_at: string
+          employee_id: string
+          id: string
+          notes: string | null
+          shift_id: string | null
+          status: string | null
+          template_id: string
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          employee_id: string
+          id?: string
+          notes?: string | null
+          shift_id?: string | null
+          status?: string | null
+          template_id: string
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          employee_id?: string
+          id?: string
+          notes?: string | null
+          shift_id?: string | null
+          status?: string | null
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_completions_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checklist_completions_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checklist_completions_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "checklist_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checklist_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_critical: boolean | null
+          item_type: string | null
+          max_value: number | null
+          min_value: number | null
+          sort_order: number | null
+          template_id: string
+          title: string
+          unit: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_critical?: boolean | null
+          item_type?: string | null
+          max_value?: number | null
+          min_value?: number | null
+          sort_order?: number | null
+          template_id: string
+          title: string
+          unit?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_critical?: boolean | null
+          item_type?: string | null
+          max_value?: number | null
+          min_value?: number | null
+          sort_order?: number | null
+          template_id?: string
+          title?: string
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_items_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "checklist_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checklist_responses: {
+        Row: {
+          checked: boolean | null
+          completion_id: string
+          created_at: string
+          id: string
+          is_flagged: boolean | null
+          item_id: string
+          notes: string | null
+          photo_url: string | null
+          value: string | null
+        }
+        Insert: {
+          checked?: boolean | null
+          completion_id: string
+          created_at?: string
+          id?: string
+          is_flagged?: boolean | null
+          item_id: string
+          notes?: string | null
+          photo_url?: string | null
+          value?: string | null
+        }
+        Update: {
+          checked?: boolean | null
+          completion_id?: string
+          created_at?: string
+          id?: string
+          is_flagged?: boolean | null
+          item_id?: string
+          notes?: string | null
+          photo_url?: string | null
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_responses_completion_id_fkey"
+            columns: ["completion_id"]
+            isOneToOne: false
+            referencedRelation: "checklist_completions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checklist_responses_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "checklist_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checklist_templates: {
+        Row: {
+          category: string | null
+          created_at: string
+          department_id: string | null
+          description: string | null
+          frequency: string | null
+          function_id: string | null
+          id: string
+          is_active: boolean | null
+          is_required_for_clock_out: boolean | null
+          name: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          frequency?: string | null
+          function_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_required_for_clock_out?: boolean | null
+          name: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          frequency?: string | null
+          function_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_required_for_clock_out?: boolean | null
+          name?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_templates_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checklist_templates_function_id_fkey"
+            columns: ["function_id"]
+            isOneToOne: false
+            referencedRelation: "functions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       departments: {
         Row: {
           color: string | null
