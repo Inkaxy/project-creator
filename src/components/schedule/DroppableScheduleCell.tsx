@@ -20,6 +20,7 @@ interface DroppableScheduleCellProps {
   onClick: () => void;
   onDrop: (shiftId: string, newDate: string, newFunctionId: string, isCopy: boolean) => void;
   children: ReactNode;
+  className?: string;
 }
 
 export function DroppableScheduleCell({
@@ -30,6 +31,7 @@ export function DroppableScheduleCell({
   onClick,
   onDrop,
   children,
+  className,
 }: DroppableScheduleCellProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [dragData, setDragData] = useState<DragData | null>(null);
@@ -113,7 +115,8 @@ export function DroppableScheduleCell({
       className={cn(
         "min-h-[80px] cursor-pointer border-r border-border p-2 transition-all last:border-r-0 hover:bg-muted/50 relative",
         isToday && "bg-primary/5",
-        isDragOver && isAdminOrManager && "bg-primary/10 ring-2 ring-primary ring-inset"
+        isDragOver && isAdminOrManager && "bg-primary/10 ring-2 ring-primary ring-inset",
+        className
       )}
     >
       {children}
