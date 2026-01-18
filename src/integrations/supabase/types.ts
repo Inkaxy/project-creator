@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      approval_requests: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          request_type: string
+          requestor_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewer_notes: string | null
+          status: string
+          target_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          request_type: string
+          requestor_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          status?: string
+          target_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          request_type?: string
+          requestor_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          status?: string
+          target_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approval_requests_requestor_id_fkey"
+            columns: ["requestor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_requests_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       departments: {
         Row: {
           color: string | null
@@ -371,6 +428,88 @@ export type Database = {
             columns: ["published_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      time_entries: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          break_minutes: number | null
+          clock_in: string | null
+          clock_in_location: Json | null
+          clock_out: string | null
+          clock_out_location: Json | null
+          created_at: string
+          date: string
+          deviation_minutes: number | null
+          deviation_reason: string | null
+          employee_id: string
+          id: string
+          manager_notes: string | null
+          shift_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          break_minutes?: number | null
+          clock_in?: string | null
+          clock_in_location?: Json | null
+          clock_out?: string | null
+          clock_out_location?: Json | null
+          created_at?: string
+          date?: string
+          deviation_minutes?: number | null
+          deviation_reason?: string | null
+          employee_id: string
+          id?: string
+          manager_notes?: string | null
+          shift_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          break_minutes?: number | null
+          clock_in?: string | null
+          clock_in_location?: Json | null
+          clock_out?: string | null
+          clock_out_location?: Json | null
+          created_at?: string
+          date?: string
+          deviation_minutes?: number | null
+          deviation_reason?: string | null
+          employee_id?: string
+          id?: string
+          manager_notes?: string | null
+          shift_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_entries_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
             referencedColumns: ["id"]
           },
         ]
