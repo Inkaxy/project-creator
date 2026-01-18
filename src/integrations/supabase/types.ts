@@ -372,6 +372,145 @@ export type Database = {
           },
         ]
       }
+      shift_applicants: {
+        Row: {
+          applied_at: string
+          employee_id: string
+          id: string
+          note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          shift_id: string
+          status: string
+        }
+        Insert: {
+          applied_at?: string
+          employee_id: string
+          id?: string
+          note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          shift_id: string
+          status?: string
+        }
+        Update: {
+          applied_at?: string
+          employee_id?: string
+          id?: string
+          note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          shift_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shift_applicants_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_applicants_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_applicants_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shift_swap_requests: {
+        Row: {
+          colleague_approved_at: string | null
+          created_at: string
+          id: string
+          manager_approved_at: string | null
+          manager_approved_by: string | null
+          original_shift_id: string
+          reason: string | null
+          requester_id: string
+          status: string
+          swap_type: string
+          target_employee_id: string | null
+          target_shift_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          colleague_approved_at?: string | null
+          created_at?: string
+          id?: string
+          manager_approved_at?: string | null
+          manager_approved_by?: string | null
+          original_shift_id: string
+          reason?: string | null
+          requester_id: string
+          status?: string
+          swap_type: string
+          target_employee_id?: string | null
+          target_shift_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          colleague_approved_at?: string | null
+          created_at?: string
+          id?: string
+          manager_approved_at?: string | null
+          manager_approved_by?: string | null
+          original_shift_id?: string
+          reason?: string | null
+          requester_id?: string
+          status?: string
+          swap_type?: string
+          target_employee_id?: string | null
+          target_shift_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shift_swap_requests_manager_approved_by_fkey"
+            columns: ["manager_approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_swap_requests_original_shift_id_fkey"
+            columns: ["original_shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_swap_requests_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_swap_requests_target_employee_id_fkey"
+            columns: ["target_employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_swap_requests_target_shift_id_fkey"
+            columns: ["target_shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shift_templates: {
         Row: {
           category: string | null
