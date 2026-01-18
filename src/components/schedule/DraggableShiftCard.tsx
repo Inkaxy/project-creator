@@ -8,9 +8,10 @@ interface DraggableShiftCardProps {
   shift: ShiftData;
   onShiftClick: (shift: ShiftData) => void;
   isAdminOrManager: boolean;
+  showFunction?: boolean;
 }
 
-export function DraggableShiftCard({ shift, onShiftClick, isAdminOrManager }: DraggableShiftCardProps) {
+export function DraggableShiftCard({ shift, onShiftClick, isAdminOrManager, showFunction = false }: DraggableShiftCardProps) {
   const [isDragging, setIsDragging] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
 
@@ -90,7 +91,19 @@ export function DraggableShiftCard({ shift, onShiftClick, isAdminOrManager }: Dr
         </div>
       )}
       
-      {shift.profiles ? (
+      {showFunction && shift.functions ? (
+        // Employee-based view: Show function name instead of employee
+        <div className="flex items-center gap-2">
+          <div
+            className="h-3 w-3 rounded"
+            style={{ backgroundColor: shift.functions.color || "#3B82F6" }}
+          />
+          <div>
+            <p className="font-medium">{shift.functions.name}</p>
+            <p className="opacity-80">{shift.planned_start?.slice(0,5)}-{shift.planned_end?.slice(0,5)}</p>
+          </div>
+        </div>
+      ) : shift.profiles ? (
         <div className="flex items-center gap-2">
           <AvatarWithInitials name={shift.profiles.full_name} size="sm" />
           <div>

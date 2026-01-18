@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useFunctions } from "@/hooks/useFunctions";
-import { useDepartments } from "@/hooks/useEmployees";
+import { useDepartments, useEmployees } from "@/hooks/useEmployees";
 import { useShifts, ShiftData, useUpdateShift, useCreateShift } from "@/hooks/useShifts";
 import { useWageSupplements, calculateDayCost } from "@/hooks/useWageSupplements";
 import { useShiftTemplates, ShiftTemplate } from "@/hooks/useShiftTemplates";
@@ -28,6 +28,8 @@ import { DroppableScheduleCell } from "@/components/schedule/DroppableScheduleCe
 import { ShiftDropModal } from "@/components/schedule/ShiftDropModal";
 import { DepartmentFilter } from "@/components/schedule/DepartmentFilter";
 import { FunctionFilterButtons } from "@/components/schedule/FunctionFilterButtons";
+import { ScheduleViewToggle, ViewMode } from "@/components/schedule/ScheduleViewToggle";
+import { EmployeeBasedScheduleGrid } from "@/components/schedule/EmployeeBasedScheduleGrid";
 import {
   ChevronLeft,
   ChevronRight,
@@ -50,6 +52,7 @@ export default function SchedulePage() {
   const [activeFunctionIds, setActiveFunctionIds] = useState<string[]>([]);
   const [showOnlyDepartmentEmployees, setShowOnlyDepartmentEmployees] = useState(false);
   const [viewType, setViewType] = useState<"day" | "week" | "month">("week");
+  const [scheduleViewMode, setScheduleViewMode] = useState<ViewMode>("functions");
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [functionsModalOpen, setFunctionsModalOpen] = useState(false);
@@ -80,6 +83,7 @@ export default function SchedulePage() {
   const { isAdminOrManager } = useAuth();
   const { data: functions = [], isLoading: loadingFunctions } = useFunctions();
   const { data: departments = [] } = useDepartments();
+  const { data: employees = [] } = useEmployees();
   const { data: supplements = [] } = useWageSupplements();
   const { data: templates = [], isLoading: loadingTemplates } = useShiftTemplates();
 
@@ -94,6 +98,12 @@ export default function SchedulePage() {
     if (activeFunctionIds.length === 0) return filteredFunctions;
     return filteredFunctions.filter((f) => activeFunctionIds.includes(f.id));
   }, [filteredFunctions, activeFunctionIds]);
+
+  // Filter employees based on department
+  const filteredEmployees = useMemo(() => {
+    if (!showOnlyDepartmentEmployees || !selectedDepartment) return employees;
+    return employees.filter((e) => e.department_id === selectedDepartment);
+  }, [employees, showOnlyDepartmentEmployees, selectedDepartment]);
 
   const handleFunctionToggle = (functionId: string) => {
     setActiveFunctionIds((prev) =>
@@ -279,9 +289,9 @@ export default function SchedulePage() {
           </div>
         </div>
 
-        {/* Navigation with Department Filter */}
+        {/* Navigation with Department Filter and View Toggle */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <DepartmentFilter
               selectedDepartment={selectedDepartment}
               onDepartmentChange={setSelectedDepartment}
@@ -301,12 +311,11 @@ export default function SchedulePage() {
               </span>
             </div>
           </div>
-          <div className="flex rounded-lg border border-border bg-muted p-1">
-            {(["day", "week", "month"] as const).map((type) => (
-              <Button key={type} variant={viewType === type ? "default" : "ghost"} size="sm" onClick={() => setViewType(type)} className={cn("px-4", viewType === type && "shadow-sm")}>
-                {type === "day" ? "Dag" : type === "week" ? "Uke" : "Måned"}
-              </Button>
-            ))}
+          <div className="flex items-center gap-3">
+            <ScheduleViewToggle
+              viewMode={scheduleViewMode}
+              onViewModeChange={setScheduleViewMode}
+            />
           </div>
         </div>
 
@@ -321,28 +330,6 @@ export default function SchedulePage() {
           onToggleDepartmentFilter={() => setShowOnlyDepartmentEmployees(!showOnlyDepartmentEmployees)}
           hasDepartmentSelected={selectedDepartment !== null}
         />
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={() => navigateWeek(-1)}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" onClick={goToToday}>I dag</Button>
-            <Button variant="outline" size="icon" onClick={() => navigateWeek(1)}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <span className="ml-2 text-lg font-semibold text-foreground">
-              Uke {Math.ceil((currentDate.getDate() + new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay()) / 7)},{" "}
-              {currentDate.toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}
-            </span>
-          </div>
-          <div className="flex rounded-lg border border-border bg-muted p-1">
-            {(["day", "week", "month"] as const).map((type) => (
-              <Button key={type} variant={viewType === type ? "default" : "ghost"} size="sm" onClick={() => setViewType(type)} className={cn("px-4", viewType === type && "shadow-sm")}>
-                {type === "day" ? "Dag" : type === "week" ? "Uke" : "Måned"}
-              </Button>
-            ))}
-          </div>
-        </div>
 
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="border-primary text-primary">
@@ -382,131 +369,149 @@ export default function SchedulePage() {
         {/* Schedule Grid */}
         <Card>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              {/* Headers */}
-              <div className="grid min-w-[800px] grid-cols-[200px_repeat(7,1fr)] border-b border-border">
-                <div className="border-r border-border bg-muted/50 p-3">
-                  <span className="text-sm font-medium text-muted-foreground">Funksjon</span>
-                </div>
-                {weekDays.map((day, i) => {
-                  const isToday = formatDate(day) === "2026-01-19";
-                  const dayAbsences = getAbsencesForDate(approvedAbsences, formatDate(day));
-                  return (
-                    <div key={i} className={cn("border-r border-border p-3 last:border-r-0", isToday && "bg-primary/5")}>
-                      <div className="text-center">
-                        <p className="text-sm text-muted-foreground">{dayNames[i]}</p>
-                        <p className={cn("text-lg font-semibold", isToday ? "text-primary" : "text-foreground")}>{day.getDate()}</p>
-                        {dayAbsences.length > 0 && (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="mt-1 flex items-center justify-center gap-1">
-                                <Palmtree className="h-3 w-3 text-success" />
-                                <span className="text-xs text-success font-medium">{dayAbsences.length}</span>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-xs">
-                              <p className="font-medium mb-1">Fravær denne dagen:</p>
-                              <ul className="text-xs space-y-1">
-                                {dayAbsences.map((absence) => (
-                                  <li key={absence.id} className="flex items-center gap-2">
-                                    <span 
-                                      className="w-2 h-2 rounded-full" 
-                                      style={{ backgroundColor: absence.absence_types?.color || '#6B7280' }}
-                                    />
-                                    <span>{absence.profiles?.full_name}</span>
-                                    <span className="text-muted-foreground">({absence.absence_types?.name})</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </TooltipContent>
-                          </Tooltip>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Function Rows */}
-              {displayedFunctions.length === 0 ? (
-                <div className="p-8 text-center text-muted-foreground">
-                  {functions.length === 0
-                    ? "Ingen funksjoner opprettet ennå. Klikk \"Funksjoner\" for å legge til."
-                    : "Ingen funksjoner matcher valgt filter."}
-                </div>
-              ) : (
-                displayedFunctions.map((func) => (
-                  <div key={func.id} className="grid min-w-[800px] grid-cols-[200px_repeat(7,1fr)] border-b border-border last:border-b-0">
-                    <div className="flex items-center gap-2 border-r border-border bg-muted/30 p-3">
-                      <div className="h-3 w-3 rounded" style={{ backgroundColor: func.color || "#3B82F6" }} />
-                      {func.icon && <span>{func.icon}</span>}
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-foreground">{func.name}</span>
-                        {func.departments?.name && (
-                          <span className="text-xs text-muted-foreground">{func.departments.name}</span>
-                        )}
-                      </div>
-                    </div>
-                    {weekDays.map((day, i) => {
-                      const dayShifts = getShiftsForDayAndFunction(day, func.id);
-                      const isToday = formatDate(day) === "2026-01-19";
-                      return (
-                        <DroppableScheduleCell
-                          key={i}
-                          date={day}
-                          functionId={func.id}
-                          isToday={isToday}
-                          isAdminOrManager={isAdminOrManager()}
-                          onClick={() => handleCellClick(day, func.id)}
-                          onDrop={handleShiftDrop}
-                        >
-                          {dayShifts.map((shift) => (
-                            <DraggableShiftCard
-                              key={shift.id}
-                              shift={shift}
-                              onShiftClick={handleShiftClick}
-                              isAdminOrManager={isAdminOrManager()}
-                            />
-                          ))}
-                        </DroppableScheduleCell>
-                      );
-                    })}
+            {scheduleViewMode === "employees" ? (
+              /* Employee-based view */
+              <EmployeeBasedScheduleGrid
+                employees={filteredEmployees}
+                shifts={shifts}
+                weekDays={weekDays}
+                isAdminOrManager={isAdminOrManager()}
+                onCellClick={(date, employeeId) => {
+                  setSelectedDate(date);
+                  setSelectedFunctionId(displayedFunctions[0]?.id || null);
+                  setCreateModalOpen(true);
+                }}
+                onShiftClick={handleShiftClick}
+                onShiftDrop={handleShiftDrop}
+              />
+            ) : (
+              /* Function-based view */
+              <div className="overflow-x-auto">
+                {/* Headers */}
+                <div className="grid min-w-[800px] grid-cols-[200px_repeat(7,1fr)] border-b border-border">
+                  <div className="border-r border-border bg-muted/50 p-3">
+                    <span className="text-sm font-medium text-muted-foreground">Funksjon</span>
                   </div>
-                ))
-              )}
-
-              {/* Summary Row */}
-              <div className="grid min-w-[800px] grid-cols-[200px_repeat(7,1fr)] bg-muted/50">
-                <div className="border-r border-border p-3">
-                  <span className="text-xs font-semibold uppercase text-muted-foreground">Dagstotaler</span>
-                </div>
-                {weekDays.map((day, i) => {
-                  const stats = calculateDayStats(day);
-                  const isToday = formatDate(day) === "2026-01-19";
-                  const hasSupplements = stats.costs.totalSupplements > 0;
-                  return (
-                    <CostSummaryTooltip key={i} costs={stats.costs}>
-                      <div className={cn("cursor-pointer border-r border-border p-2 text-xs last:border-r-0 transition-colors hover:bg-muted", isToday && "bg-primary/10")}>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <Clock className="h-3 w-3" /><span>{stats.hours}t</span>
-                          </div>
-                          <div className="flex items-center gap-1 font-medium text-foreground">
-                            <DollarSign className="h-3 w-3" /><span>{stats.costs.totalCost.toLocaleString("nb-NO")} kr</span>
-                          </div>
-                          {hasSupplements && (
-                            <div className="flex items-center gap-1 text-destructive">
-                              <Moon className="h-3 w-3" />
-                              <span>+{stats.costs.totalSupplements.toLocaleString("nb-NO")} kr</span>
-                            </div>
+                  {weekDays.map((day, i) => {
+                    const isToday = formatDate(day) === "2026-01-19";
+                    const dayAbsences = getAbsencesForDate(approvedAbsences, formatDate(day));
+                    return (
+                      <div key={i} className={cn("border-r border-border p-3 last:border-r-0", isToday && "bg-primary/5")}>
+                        <div className="text-center">
+                          <p className="text-sm text-muted-foreground">{dayNames[i]}</p>
+                          <p className={cn("text-lg font-semibold", isToday ? "text-primary" : "text-foreground")}>{day.getDate()}</p>
+                          {dayAbsences.length > 0 && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="mt-1 flex items-center justify-center gap-1">
+                                  <Palmtree className="h-3 w-3 text-success" />
+                                  <span className="text-xs text-success font-medium">{dayAbsences.length}</span>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-xs">
+                                <p className="font-medium mb-1">Fravær denne dagen:</p>
+                                <ul className="text-xs space-y-1">
+                                  {dayAbsences.map((absence) => (
+                                    <li key={absence.id} className="flex items-center gap-2">
+                                      <span 
+                                        className="w-2 h-2 rounded-full" 
+                                        style={{ backgroundColor: absence.absence_types?.color || '#6B7280' }}
+                                      />
+                                      <span>{absence.profiles?.full_name}</span>
+                                      <span className="text-muted-foreground">({absence.absence_types?.name})</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </TooltipContent>
+                            </Tooltip>
                           )}
                         </div>
                       </div>
-                    </CostSummaryTooltip>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+
+                {/* Function Rows */}
+                {displayedFunctions.length === 0 ? (
+                  <div className="p-8 text-center text-muted-foreground">
+                    {functions.length === 0
+                      ? "Ingen funksjoner opprettet ennå. Klikk \"Funksjoner\" for å legge til."
+                      : "Ingen funksjoner matcher valgt filter."}
+                  </div>
+                ) : (
+                  displayedFunctions.map((func) => (
+                    <div key={func.id} className="grid min-w-[800px] grid-cols-[200px_repeat(7,1fr)] border-b border-border last:border-b-0">
+                      <div className="flex items-center gap-2 border-r border-border bg-muted/30 p-3">
+                        <div className="h-3 w-3 rounded" style={{ backgroundColor: func.color || "#3B82F6" }} />
+                        {func.icon && <span>{func.icon}</span>}
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-foreground">{func.name}</span>
+                          {func.departments?.name && (
+                            <span className="text-xs text-muted-foreground">{func.departments.name}</span>
+                          )}
+                        </div>
+                      </div>
+                      {weekDays.map((day, i) => {
+                        const dayShifts = getShiftsForDayAndFunction(day, func.id);
+                        const isToday = formatDate(day) === "2026-01-19";
+                        return (
+                          <DroppableScheduleCell
+                            key={i}
+                            date={day}
+                            functionId={func.id}
+                            isToday={isToday}
+                            isAdminOrManager={isAdminOrManager()}
+                            onClick={() => handleCellClick(day, func.id)}
+                            onDrop={handleShiftDrop}
+                          >
+                            {dayShifts.map((shift) => (
+                              <DraggableShiftCard
+                                key={shift.id}
+                                shift={shift}
+                                onShiftClick={handleShiftClick}
+                                isAdminOrManager={isAdminOrManager()}
+                              />
+                            ))}
+                          </DroppableScheduleCell>
+                        );
+                      })}
+                    </div>
+                  ))
+                )}
+
+                {/* Summary Row */}
+                <div className="grid min-w-[800px] grid-cols-[200px_repeat(7,1fr)] bg-muted/50">
+                  <div className="border-r border-border p-3">
+                    <span className="text-xs font-semibold uppercase text-muted-foreground">Dagstotaler</span>
+                  </div>
+                  {weekDays.map((day, i) => {
+                    const stats = calculateDayStats(day);
+                    const isToday = formatDate(day) === "2026-01-19";
+                    const hasSupplements = stats.costs.totalSupplements > 0;
+                    return (
+                      <CostSummaryTooltip key={i} costs={stats.costs}>
+                        <div className={cn("cursor-pointer border-r border-border p-2 text-xs last:border-r-0 transition-colors hover:bg-muted", isToday && "bg-primary/10")}>
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-1 text-muted-foreground">
+                              <Clock className="h-3 w-3" /><span>{stats.hours}t</span>
+                            </div>
+                            <div className="flex items-center gap-1 font-medium text-foreground">
+                              <DollarSign className="h-3 w-3" /><span>{stats.costs.totalCost.toLocaleString("nb-NO")} kr</span>
+                            </div>
+                            {hasSupplements && (
+                              <div className="flex items-center gap-1 text-destructive">
+                                <Moon className="h-3 w-3" />
+                                <span>+{stats.costs.totalSupplements.toLocaleString("nb-NO")} kr</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </CostSummaryTooltip>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
