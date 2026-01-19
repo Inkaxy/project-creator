@@ -1356,6 +1356,365 @@ export type Database = {
           },
         ]
       }
+      handbook: {
+        Row: {
+          created_at: string | null
+          effective_date: string | null
+          footer_text: string | null
+          id: string
+          logo_url: string | null
+          published_at: string | null
+          published_by: string | null
+          status: string
+          title: string
+          updated_at: string | null
+          version: string
+        }
+        Insert: {
+          created_at?: string | null
+          effective_date?: string | null
+          footer_text?: string | null
+          id?: string
+          logo_url?: string | null
+          published_at?: string | null
+          published_by?: string | null
+          status?: string
+          title?: string
+          updated_at?: string | null
+          version?: string
+        }
+        Update: {
+          created_at?: string | null
+          effective_date?: string | null
+          footer_text?: string | null
+          id?: string
+          logo_url?: string | null
+          published_at?: string | null
+          published_by?: string | null
+          status?: string
+          title?: string
+          updated_at?: string | null
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "handbook_published_by_fkey"
+            columns: ["published_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      handbook_acknowledgments: {
+        Row: {
+          acknowledged_at: string | null
+          employee_id: string
+          handbook_id: string
+          id: string
+          ip_address: string | null
+          section_id: string | null
+          signature_data: string | null
+          signature_method: string | null
+          user_agent: string | null
+          version: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          employee_id: string
+          handbook_id: string
+          id?: string
+          ip_address?: string | null
+          section_id?: string | null
+          signature_data?: string | null
+          signature_method?: string | null
+          user_agent?: string | null
+          version: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          employee_id?: string
+          handbook_id?: string
+          id?: string
+          ip_address?: string | null
+          section_id?: string | null
+          signature_data?: string | null
+          signature_method?: string | null
+          user_agent?: string | null
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "handbook_acknowledgments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "handbook_acknowledgments_handbook_id_fkey"
+            columns: ["handbook_id"]
+            isOneToOne: false
+            referencedRelation: "handbook"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "handbook_acknowledgments_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "handbook_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      handbook_attachments: {
+        Row: {
+          description: string | null
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          filename: string
+          id: string
+          section_id: string
+          uploaded_at: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          description?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          filename: string
+          id?: string
+          section_id: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          description?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          filename?: string
+          id?: string
+          section_id?: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "handbook_attachments_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "handbook_sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "handbook_attachments_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      handbook_chapters: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          handbook_id: string
+          icon: string | null
+          id: string
+          is_visible: boolean | null
+          requires_acknowledgment: boolean | null
+          sort_order: number
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          handbook_id: string
+          icon?: string | null
+          id?: string
+          is_visible?: boolean | null
+          requires_acknowledgment?: boolean | null
+          sort_order?: number
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          handbook_id?: string
+          icon?: string | null
+          id?: string
+          is_visible?: boolean | null
+          requires_acknowledgment?: boolean | null
+          sort_order?: number
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "handbook_chapters_handbook_id_fkey"
+            columns: ["handbook_id"]
+            isOneToOne: false
+            referencedRelation: "handbook"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      handbook_sections: {
+        Row: {
+          chapter_id: string
+          content: string
+          content_type: string | null
+          created_at: string | null
+          id: string
+          is_legal_requirement: boolean | null
+          is_visible: boolean | null
+          last_reviewed_at: string | null
+          legal_reference: string | null
+          requires_acknowledgment: boolean | null
+          reviewed_by: string | null
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          chapter_id: string
+          content?: string
+          content_type?: string | null
+          created_at?: string | null
+          id?: string
+          is_legal_requirement?: boolean | null
+          is_visible?: boolean | null
+          last_reviewed_at?: string | null
+          legal_reference?: string | null
+          requires_acknowledgment?: boolean | null
+          reviewed_by?: string | null
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          chapter_id?: string
+          content?: string
+          content_type?: string | null
+          created_at?: string | null
+          id?: string
+          is_legal_requirement?: boolean | null
+          is_visible?: boolean | null
+          last_reviewed_at?: string | null
+          legal_reference?: string | null
+          requires_acknowledgment?: boolean | null
+          reviewed_by?: string | null
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "handbook_sections_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "handbook_chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "handbook_sections_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      handbook_templates: {
+        Row: {
+          category: string
+          content: string
+          created_at: string | null
+          id: string
+          industry: string | null
+          is_legal_requirement: boolean | null
+          legal_reference: string | null
+          title: string
+        }
+        Insert: {
+          category: string
+          content: string
+          created_at?: string | null
+          id?: string
+          industry?: string | null
+          is_legal_requirement?: boolean | null
+          legal_reference?: string | null
+          title: string
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string | null
+          id?: string
+          industry?: string | null
+          is_legal_requirement?: boolean | null
+          legal_reference?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      handbook_versions: {
+        Row: {
+          changed_sections: string[] | null
+          changes_summary: string | null
+          content_snapshot: Json | null
+          handbook_id: string
+          id: string
+          published_at: string | null
+          published_by: string | null
+          version: string
+        }
+        Insert: {
+          changed_sections?: string[] | null
+          changes_summary?: string | null
+          content_snapshot?: Json | null
+          handbook_id: string
+          id?: string
+          published_at?: string | null
+          published_by?: string | null
+          version: string
+        }
+        Update: {
+          changed_sections?: string[] | null
+          changes_summary?: string | null
+          content_snapshot?: Json | null
+          handbook_id?: string
+          id?: string
+          published_at?: string | null
+          published_by?: string | null
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "handbook_versions_handbook_id_fkey"
+            columns: ["handbook_id"]
+            isOneToOne: false
+            referencedRelation: "handbook"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "handbook_versions_published_by_fkey"
+            columns: ["published_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inspection_reports: {
         Row: {
           created_at: string | null
