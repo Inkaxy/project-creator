@@ -30,11 +30,61 @@ export interface ShiftTemplate {
   description: string | null;
   category: string | null;
   is_default: boolean;
+  department_id: string | null;
+  is_rotating: boolean;
+  rotation_group_id: string | null;
+  rotation_sequence: number | null;
+  rotation_name: string | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;
   template_shifts?: TemplateShift[];
   shift_count?: number;
+  department?: {
+    id: string;
+    name: string;
+  } | null;
+  rotation_group?: RotationGroup | null;
+}
+
+export interface RotationGroup {
+  id: string;
+  name: string;
+  description: string | null;
+  rotation_length: number;
+  department_id: string | null;
+  is_active: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  templates?: ShiftTemplate[];
+  department?: {
+    id: string;
+    name: string;
+  } | null;
+}
+
+export interface RolloutRotationInput {
+  rotationGroupId: string;
+  startWeekDate: Date;
+  numberOfCycles: number;
+  startingSequence?: number;
+  keepEmployeeAssignments?: boolean;
+  skipHolidays?: boolean;
+  overwriteExisting?: boolean;
+}
+
+export interface RotationRolloutPreview {
+  weekNumber: number;
+  weekStart: Date;
+  weekEnd: Date;
+  templateId: string;
+  templateName: string;
+  rotationName: string;
+  shiftCount: number;
+  totalHours: number;
+  estimatedCost: number;
+  hasHoliday: boolean;
 }
 
 export interface CreateTemplateInput {
@@ -51,6 +101,7 @@ export interface SaveWeekAsTemplateInput {
   is_default?: boolean;
   weekStartDate: Date;
   includeEmployees?: boolean;
+  department_id?: string | null;
 }
 
 export interface RolloutTemplateInput {
@@ -81,24 +132,33 @@ export interface CopyWeekInput {
 }
 
 // Fetch all shift templates with shift count
-export function useShiftTemplates() {
+export function useShiftTemplates(departmentId?: string | null) {
   return useQuery({
-    queryKey: ["shift_templates"],
+    queryKey: ["shift_templates", departmentId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("shift_templates")
         .select(`
           *,
-          template_shifts(count)
+          template_shifts(count),
+          departments(id, name)
         `)
         .order("is_default", { ascending: false })
         .order("name");
+
+      // Filter: show global templates + templates for specific department
+      if (departmentId) {
+        query = query.or(`department_id.eq.${departmentId},department_id.is.null`);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
       return (data || []).map((template: any) => ({
         ...template,
         shift_count: template.template_shifts?.[0]?.count || 0,
+        department: template.departments,
       })) as ShiftTemplate[];
     },
   });
@@ -269,6 +329,7 @@ export function useSaveCurrentWeekAsTemplate() {
           description: input.description,
           category: input.category,
           is_default: input.is_default || false,
+          department_id: input.department_id || null,
           created_by: userData.user?.id,
         })
         .select()
@@ -979,6 +1040,451 @@ export function useCopyWeek() {
     },
     onError: (error) => {
       toast.error("Kunne ikke kopiere: " + error.message);
+    },
+  });
+}
+
+// Hent alle rotasjonsgrupper
+export function useRotationGroups(departmentId?: string | null) {
+  return useQuery({
+    queryKey: ["rotation_groups", departmentId],
+    queryFn: async () => {
+      let query = supabase
+        .from("template_rotation_groups")
+        .select(`
+          *,
+          departments(id, name),
+          shift_templates(
+            id, 
+            name, 
+            rotation_sequence, 
+            rotation_name,
+            template_shifts(count)
+          )
+        `)
+        .eq("is_active", true)
+        .order("name");
+
+      if (departmentId) {
+        query = query.or(`department_id.eq.${departmentId},department_id.is.null`);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      
+      return (data || []).map((group: any) => ({
+        ...group,
+        department: group.departments,
+        templates: (group.shift_templates || [])
+          .sort((a: any, b: any) => (a.rotation_sequence || 0) - (b.rotation_sequence || 0))
+          .map((t: any) => ({
+            ...t,
+            shift_count: t.template_shifts?.[0]?.count || 0,
+          })),
+      })) as RotationGroup[];
+    },
+  });
+}
+
+// Hent enkelt rotasjonsgruppe med alle detaljer
+export function useRotationGroup(groupId: string | null) {
+  return useQuery({
+    queryKey: ["rotation_group", groupId],
+    queryFn: async () => {
+      if (!groupId) return null;
+
+      const { data, error } = await supabase
+        .from("template_rotation_groups")
+        .select(`
+          *,
+          departments(id, name),
+          shift_templates(
+            *,
+            template_shifts(
+              *,
+              functions(id, name, color),
+              profiles(id, full_name)
+            )
+          )
+        `)
+        .eq("id", groupId)
+        .single();
+
+      if (error) throw error;
+      
+      return {
+        ...data,
+        department: data.departments,
+        templates: (data.shift_templates || [])
+          .sort((a: any, b: any) => (a.rotation_sequence || 0) - (b.rotation_sequence || 0)),
+      } as RotationGroup;
+    },
+    enabled: !!groupId,
+  });
+}
+
+// Opprett rotasjonsgruppe
+export function useCreateRotationGroup() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: {
+      name: string;
+      description?: string;
+      rotation_length: number;
+      department_id?: string | null;
+    }) => {
+      const { data: userData } = await supabase.auth.getUser();
+
+      const { data, error } = await supabase
+        .from("template_rotation_groups")
+        .insert({
+          name: input.name,
+          description: input.description,
+          rotation_length: input.rotation_length,
+          department_id: input.department_id,
+          created_by: userData.user?.id,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["rotation_groups"] });
+      toast.success("Rotasjonsgruppe opprettet");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke opprette rotasjonsgruppe: " + error.message);
+    },
+  });
+}
+
+// Oppdater rotasjonsgruppe
+export function useUpdateRotationGroup() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: {
+      id: string;
+      name?: string;
+      description?: string;
+      is_active?: boolean;
+    }) => {
+      const { id, ...updates } = input;
+      
+      const { data, error } = await supabase
+        .from("template_rotation_groups")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["rotation_groups"] });
+      toast.success("Rotasjonsgruppe oppdatert");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke oppdatere: " + error.message);
+    },
+  });
+}
+
+// Slett rotasjonsgruppe
+export function useDeleteRotationGroup() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (groupId: string) => {
+      // First, unlink all templates from this group
+      await supabase
+        .from("shift_templates")
+        .update({
+          is_rotating: false,
+          rotation_group_id: null,
+          rotation_sequence: null,
+          rotation_name: null,
+        })
+        .eq("rotation_group_id", groupId);
+
+      // Then delete the group
+      const { error } = await supabase
+        .from("template_rotation_groups")
+        .delete()
+        .eq("id", groupId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["rotation_groups"] });
+      queryClient.invalidateQueries({ queryKey: ["shift_templates"] });
+      toast.success("Rotasjonsgruppe slettet");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke slette: " + error.message);
+    },
+  });
+}
+
+// Koble mal til rotasjonsgruppe
+export function useLinkTemplateToRotation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: {
+      templateId: string;
+      rotationGroupId: string;
+      sequence: number;
+      rotationName: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("shift_templates")
+        .update({
+          is_rotating: true,
+          rotation_group_id: input.rotationGroupId,
+          rotation_sequence: input.sequence,
+          rotation_name: input.rotationName,
+        })
+        .eq("id", input.templateId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["rotation_groups"] });
+      queryClient.invalidateQueries({ queryKey: ["shift_templates"] });
+      toast.success("Mal koblet til rotasjon");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke koble mal: " + error.message);
+    },
+  });
+}
+
+// Fjern mal fra rotasjonsgruppe
+export function useUnlinkTemplateFromRotation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (templateId: string) => {
+      const { data, error } = await supabase
+        .from("shift_templates")
+        .update({
+          is_rotating: false,
+          rotation_group_id: null,
+          rotation_sequence: null,
+          rotation_name: null,
+        })
+        .eq("id", templateId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["rotation_groups"] });
+      queryClient.invalidateQueries({ queryKey: ["shift_templates"] });
+      toast.success("Mal fjernet fra rotasjon");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke fjerne mal: " + error.message);
+    },
+  });
+}
+
+// Forhåndsvis rotasjons-rollout
+export function previewRotationRollout(
+  group: RotationGroup,
+  startWeekDate: Date,
+  numberOfCycles: number,
+  startingSequence: number = 1
+): RotationRolloutPreview[] {
+  if (!group.templates?.length) return [];
+
+  const previews: RotationRolloutPreview[] = [];
+  const weekStart = startOfWeek(startWeekDate, { weekStartsOn: 1 });
+  const totalWeeks = numberOfCycles * group.rotation_length;
+  const startSeq = startingSequence - 1;
+
+  for (let week = 0; week < totalWeeks; week++) {
+    const currentWeekStart = addDays(weekStart, week * 7);
+    const currentWeekEnd = addDays(currentWeekStart, 6);
+    
+    // Determine which template to use
+    const templateIndex = (week + startSeq) % group.templates.length;
+    const template = group.templates[templateIndex];
+
+    if (!template) continue;
+
+    // Calculate hours and cost (simplified)
+    const shiftCount = template.shift_count || 0;
+    const avgHoursPerShift = 7;
+    const totalHours = shiftCount * avgHoursPerShift;
+    const hasHoliday = isNorwegianHoliday(currentWeekStart) || 
+                       isNorwegianHoliday(currentWeekEnd);
+    const estimatedCost = totalHours * 220 * (hasHoliday ? 1.3 : 1);
+
+    previews.push({
+      weekNumber: getWeekNumber(currentWeekStart),
+      weekStart: currentWeekStart,
+      weekEnd: currentWeekEnd,
+      templateId: template.id,
+      templateName: template.name,
+      rotationName: template.rotation_name || `Uke ${templateIndex + 1}`,
+      shiftCount,
+      totalHours,
+      estimatedCost: Math.round(estimatedCost),
+      hasHoliday,
+    });
+  }
+
+  return previews;
+}
+
+// Rull ut rotasjon
+export function useRolloutRotation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: RolloutRotationInput) => {
+      const { data: userData } = await supabase.auth.getUser();
+
+      // Fetch rotation group with templates and shifts
+      const { data: group, error: groupError } = await supabase
+        .from("template_rotation_groups")
+        .select(`
+          *,
+          shift_templates(
+            *,
+            template_shifts(*)
+          )
+        `)
+        .eq("id", input.rotationGroupId)
+        .single();
+
+      if (groupError) throw groupError;
+
+      const templates = (group.shift_templates || [])
+        .sort((a: any, b: any) => (a.rotation_sequence || 0) - (b.rotation_sequence || 0));
+
+      if (templates.length === 0) {
+        throw new Error("Rotasjonsgruppen har ingen maler");
+      }
+
+      const shiftsToCreate: any[] = [];
+      const weekStart = startOfWeek(input.startWeekDate, { weekStartsOn: 1 });
+      const totalWeeks = input.numberOfCycles * group.rotation_length;
+      const startSeq = (input.startingSequence || 1) - 1;
+
+      for (let week = 0; week < totalWeeks; week++) {
+        const currentWeekStart = addDays(weekStart, week * 7);
+        
+        // Determine which template to use for this week
+        const templateIndex = (week + startSeq) % templates.length;
+        const template = templates[templateIndex];
+
+        if (!template.template_shifts?.length) continue;
+
+        for (const templateShift of template.template_shifts) {
+          const shiftDate = getDateFromDayOfWeek(
+            currentWeekStart, 
+            templateShift.day_of_week
+          );
+          const dateStr = format(shiftDate, "yyyy-MM-dd");
+
+          // Skip holidays if option set
+          if (input.skipHolidays && isNorwegianHoliday(shiftDate)) {
+            continue;
+          }
+
+          // Check for existing shifts if not overwriting
+          if (!input.overwriteExisting) {
+            const { data: existing } = await supabase
+              .from("shifts")
+              .select("id")
+              .eq("date", dateStr)
+              .eq("function_id", templateShift.function_id)
+              .eq("planned_start", templateShift.start_time)
+              .neq("status", "cancelled")
+              .maybeSingle();
+
+            if (existing) continue;
+          }
+
+          const dayOfWeek = getDay(shiftDate);
+          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+          const [startHour] = templateShift.start_time.split(":").map(Number);
+          const isNightShift = startHour >= 21 || startHour < 6;
+          const isHoliday = isNorwegianHoliday(shiftDate);
+
+          shiftsToCreate.push({
+            date: dateStr,
+            function_id: templateShift.function_id,
+            employee_id: input.keepEmployeeAssignments 
+              ? templateShift.employee_id 
+              : null,
+            planned_start: templateShift.start_time,
+            planned_end: templateShift.end_time,
+            planned_break_minutes: templateShift.break_minutes,
+            status: "draft",
+            shift_type: "normal",
+            is_weekend: isWeekend,
+            is_night_shift: isNightShift,
+            is_holiday: isHoliday,
+            created_by: userData.user?.id,
+            internal_notes: `Rotasjon: ${group.name} - ${template.rotation_name}`,
+          });
+        }
+      }
+
+      if (shiftsToCreate.length === 0) {
+        throw new Error("Ingen vakter å opprette");
+      }
+
+      // If overwriting, cancel existing shifts first
+      if (input.overwriteExisting) {
+        const endDate = addDays(weekStart, totalWeeks * 7 - 1);
+        
+        await supabase
+          .from("shifts")
+          .update({ status: "cancelled" })
+          .gte("date", format(weekStart, "yyyy-MM-dd"))
+          .lte("date", format(endDate, "yyyy-MM-dd"))
+          .eq("status", "draft");
+      }
+
+      // Insert all shifts in batches of 100
+      const batchSize = 100;
+      for (let i = 0; i < shiftsToCreate.length; i += batchSize) {
+        const batch = shiftsToCreate.slice(i, i + batchSize);
+        const { error: insertError } = await supabase
+          .from("shifts")
+          .insert(batch);
+
+        if (insertError) throw insertError;
+      }
+
+      return { 
+        count: shiftsToCreate.length,
+        weeks: totalWeeks,
+        cycles: input.numberOfCycles,
+      };
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["shifts"] });
+      toast.success(
+        `${data.count} vakter opprettet over ${data.weeks} uker (${data.cycles} rotasjoner)`
+      );
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke rulle ut rotasjon: " + error.message);
     },
   });
 }

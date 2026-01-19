@@ -2955,33 +2955,63 @@ export type Database = {
           category: string | null
           created_at: string
           created_by: string | null
+          department_id: string | null
           description: string | null
           id: string
           is_default: boolean
+          is_rotating: boolean
           name: string
+          rotation_group_id: string | null
+          rotation_name: string | null
+          rotation_sequence: number | null
           updated_at: string
         }
         Insert: {
           category?: string | null
           created_at?: string
           created_by?: string | null
+          department_id?: string | null
           description?: string | null
           id?: string
           is_default?: boolean
+          is_rotating?: boolean
           name: string
+          rotation_group_id?: string | null
+          rotation_name?: string | null
+          rotation_sequence?: number | null
           updated_at?: string
         }
         Update: {
           category?: string | null
           created_at?: string
           created_by?: string | null
+          department_id?: string | null
           description?: string | null
           id?: string
           is_default?: boolean
+          is_rotating?: boolean
           name?: string
+          rotation_group_id?: string | null
+          rotation_name?: string | null
+          rotation_sequence?: number | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "shift_templates_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_templates_rotation_group_id_fkey"
+            columns: ["rotation_group_id"]
+            isOneToOne: false
+            referencedRelation: "template_rotation_groups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shifts: {
         Row: {
@@ -3179,6 +3209,50 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      template_rotation_groups: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          department_id: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          rotation_length: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          department_id?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          rotation_length: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          department_id?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          rotation_length?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_rotation_groups_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       template_shifts: {
         Row: {
