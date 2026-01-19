@@ -506,6 +506,362 @@ export function getWeekNumber(date: Date): number {
   return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
 }
 
+// Add single shift to template
+export function useAddTemplateShift() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: {
+      template_id: string;
+      day_of_week: number;
+      function_id: string;
+      start_time: string;
+      end_time: string;
+      break_minutes?: number;
+      employee_id?: string | null;
+    }) => {
+      const { data, error } = await supabase
+        .from("template_shifts")
+        .insert({
+          template_id: input.template_id,
+          day_of_week: input.day_of_week,
+          function_id: input.function_id,
+          start_time: input.start_time,
+          end_time: input.end_time,
+          break_minutes: input.break_minutes || 30,
+          employee_id: input.employee_id || null,
+        })
+        .select(`
+          *,
+          functions(id, name, color),
+          profiles(id, full_name)
+        `)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ 
+        queryKey: ["shift_template", variables.template_id] 
+      });
+      queryClient.invalidateQueries({ queryKey: ["shift_templates"] });
+      toast.success("Vakt lagt til i mal");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke legge til vakt: " + error.message);
+    },
+  });
+}
+
+// Update single shift in template
+export function useUpdateTemplateShift() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: {
+      id: string;
+      template_id: string;
+      day_of_week?: number;
+      function_id?: string;
+      start_time?: string;
+      end_time?: string;
+      break_minutes?: number;
+      employee_id?: string | null;
+    }) => {
+      const { id, template_id, ...updates } = input;
+      
+      const { data, error } = await supabase
+        .from("template_shifts")
+        .update(updates)
+        .eq("id", id)
+        .select(`
+          *,
+          functions(id, name, color),
+          profiles(id, full_name)
+        `)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ 
+        queryKey: ["shift_template", variables.template_id] 
+      });
+      toast.success("Vakt oppdatert");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke oppdatere vakt: " + error.message);
+    },
+  });
+}
+
+// Delete single shift from template
+export function useDeleteTemplateShift() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { id: string; template_id: string }) => {
+      const { error } = await supabase
+        .from("template_shifts")
+        .delete()
+        .eq("id", input.id);
+
+      if (error) throw error;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ 
+        queryKey: ["shift_template", variables.template_id] 
+      });
+      queryClient.invalidateQueries({ queryKey: ["shift_templates"] });
+      toast.success("Vakt fjernet fra mal");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke slette vakt: " + error.message);
+    },
+  });
+}
+
+// Duplicate template
+export function useDuplicateTemplate() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { 
+      templateId: string; 
+      newName: string;
+      newDescription?: string;
+    }) => {
+      // Fetch original template with shifts
+      const { data: original, error: fetchError } = await supabase
+        .from("shift_templates")
+        .select(`
+          *,
+          template_shifts(*)
+        `)
+        .eq("id", input.templateId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // Get current user
+      const { data: userData } = await supabase.auth.getUser();
+
+      // Create new template
+      const { data: newTemplate, error: createError } = await supabase
+        .from("shift_templates")
+        .insert({
+          name: input.newName,
+          description: input.newDescription || original.description,
+          category: original.category,
+          is_default: false, // Never duplicate as default
+          created_by: userData.user?.id,
+        })
+        .select()
+        .single();
+
+      if (createError) throw createError;
+
+      // Duplicate all shifts
+      if (original.template_shifts?.length) {
+        const newShifts = original.template_shifts.map((shift: any) => ({
+          template_id: newTemplate.id,
+          day_of_week: shift.day_of_week,
+          function_id: shift.function_id,
+          start_time: shift.start_time,
+          end_time: shift.end_time,
+          break_minutes: shift.break_minutes,
+          employee_id: shift.employee_id,
+        }));
+
+        const { error: shiftsError } = await supabase
+          .from("template_shifts")
+          .insert(newShifts);
+
+        if (shiftsError) throw shiftsError;
+      }
+
+      return newTemplate;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["shift_templates"] });
+      toast.success("Mal duplisert");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke duplisere mal: " + error.message);
+    },
+  });
+}
+
+// Preview rollout with conflict detection
+export interface PreviewShift {
+  date: string;
+  dayOfWeek: number;
+  function_id: string;
+  function_name: string;
+  function_color: string | null;
+  start_time: string;
+  end_time: string;
+  break_minutes: number;
+  employee_id: string | null;
+  employee_name: string | null;
+  status: 'new' | 'conflict' | 'existing';
+  conflictReason?: string;
+  isHoliday: boolean;
+  isWeekend: boolean;
+}
+
+export interface RolloutPreview {
+  weekNumber: number;
+  weekStart: Date;
+  weekEnd: Date;
+  shifts: PreviewShift[];
+  shiftCount: number;
+  conflictCount: number;
+  totalHours: number;
+  estimatedCost: number;
+  hasHoliday: boolean;
+}
+
+export function useRolloutPreview(
+  templateId: string | null,
+  startWeekDate: Date,
+  numberOfWeeks: number,
+  options: {
+    skipHolidays: boolean;
+    overwriteExisting: boolean;
+  }
+) {
+  return useQuery({
+    queryKey: [
+      "rollout_preview", 
+      templateId, 
+      format(startWeekDate, "yyyy-MM-dd"), 
+      numberOfWeeks,
+      options.skipHolidays,
+      options.overwriteExisting
+    ],
+    queryFn: async (): Promise<RolloutPreview[]> => {
+      if (!templateId) return [];
+
+      // Fetch template with shifts
+      const { data: template, error: templateError } = await supabase
+        .from("shift_templates")
+        .select(`
+          *,
+          template_shifts(
+            *,
+            functions(id, name, color),
+            profiles(id, full_name)
+          )
+        `)
+        .eq("id", templateId)
+        .single();
+
+      if (templateError) throw templateError;
+      if (!template.template_shifts?.length) return [];
+
+      const previews: RolloutPreview[] = [];
+      const weekStart = startOfWeek(startWeekDate, { weekStartsOn: 1 });
+
+      for (let week = 0; week < numberOfWeeks; week++) {
+        const currentWeekStart = addDays(weekStart, week * 7);
+        const currentWeekEnd = addDays(currentWeekStart, 6);
+        const shifts: PreviewShift[] = [];
+        let conflictCount = 0;
+
+        // Fetch existing shifts for this week
+        const { data: existingShifts } = await supabase
+          .from("shifts")
+          .select("*")
+          .gte("date", format(currentWeekStart, "yyyy-MM-dd"))
+          .lte("date", format(currentWeekEnd, "yyyy-MM-dd"))
+          .neq("status", "cancelled");
+
+        for (const templateShift of template.template_shifts) {
+          const shiftDate = getDateFromDayOfWeek(
+            currentWeekStart, 
+            templateShift.day_of_week
+          );
+          const dateStr = format(shiftDate, "yyyy-MM-dd");
+          const isHoliday = isNorwegianHoliday(shiftDate);
+          const dayOfWeek = getDay(shiftDate);
+          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+          // Skip holidays if option set
+          if (options.skipHolidays && isHoliday) continue;
+
+          // Check for conflicts
+          const conflict = existingShifts?.find(
+            (s) =>
+              s.date === dateStr &&
+              s.function_id === templateShift.function_id &&
+              s.planned_start === templateShift.start_time
+          );
+
+          let status: PreviewShift['status'] = 'new';
+          let conflictReason: string | undefined;
+
+          if (conflict && !options.overwriteExisting) {
+            status = 'conflict';
+            conflictReason = 'Vakt eksisterer allerede';
+            conflictCount++;
+          } else if (conflict && options.overwriteExisting) {
+            status = 'existing';
+          }
+
+          shifts.push({
+            date: dateStr,
+            dayOfWeek: templateShift.day_of_week,
+            function_id: templateShift.function_id,
+            function_name: templateShift.functions?.name || 'Ukjent',
+            function_color: templateShift.functions?.color || null,
+            start_time: templateShift.start_time,
+            end_time: templateShift.end_time,
+            break_minutes: templateShift.break_minutes,
+            employee_id: templateShift.employee_id,
+            employee_name: templateShift.profiles?.full_name || null,
+            status,
+            conflictReason,
+            isHoliday,
+            isWeekend,
+          });
+        }
+
+        // Calculate totals
+        const validShifts = shifts.filter(s => s.status !== 'conflict');
+        const totalHours = validShifts.reduce((sum, s) => {
+          const [startH, startM] = s.start_time.split(":").map(Number);
+          const [endH, endM] = s.end_time.split(":").map(Number);
+          let hours = (endH * 60 + endM - startH * 60 - startM) / 60;
+          if (hours < 0) hours += 24;
+          return sum + hours - s.break_minutes / 60;
+        }, 0);
+
+        const hasHoliday = shifts.some(s => s.isHoliday);
+        const estimatedCost = totalHours * 220 * (hasHoliday ? 1.3 : 1);
+
+        previews.push({
+          weekNumber: getWeekNumber(currentWeekStart),
+          weekStart: currentWeekStart,
+          weekEnd: currentWeekEnd,
+          shifts,
+          shiftCount: validShifts.length,
+          conflictCount,
+          totalHours: Math.round(totalHours),
+          estimatedCost: Math.round(estimatedCost),
+          hasHoliday,
+        });
+      }
+
+      return previews;
+    },
+    enabled: !!templateId,
+    staleTime: 30000,
+  });
+}
+
 // Copy week to another week
 export function useCopyWeek() {
   const queryClient = useQueryClient();
