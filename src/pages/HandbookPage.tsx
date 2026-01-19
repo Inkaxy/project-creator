@@ -43,8 +43,8 @@ import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 
 export default function HandbookPage() {
-  const { user, isAdmin, isManager } = useAuth();
-  const isAdminOrManager = isAdmin || isManager;
+  const { user, isAdminOrManager } = useAuth();
+  const canEdit = isAdminOrManager();
   
   const [activeTab, setActiveTab] = useState<string>("read");
   const [selectedSection, setSelectedSection] = useState<HandbookSection | null>(null);
@@ -139,7 +139,7 @@ export default function HandbookPage() {
         <div className="flex flex-col items-center justify-center h-96 gap-4">
           <BookOpen className="h-16 w-16 text-muted-foreground" />
           <h2 className="text-xl font-semibold">Ingen personalhåndbok funnet</h2>
-          {isAdminOrManager && (
+          {canEdit && (
             <Button onClick={handleCreateHandbook} disabled={upsertHandbook.isPending}>
               {upsertHandbook.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Opprett personalhåndbok
@@ -177,7 +177,7 @@ export default function HandbookPage() {
           </div>
           
           <div className="flex items-center gap-2">
-            {isAdminOrManager && (
+            {canEdit && (
               <>
                 <Button variant="outline" onClick={() => setShowPublishModal(true)}>
                   Publiser ny versjon
@@ -208,7 +208,7 @@ export default function HandbookPage() {
         )}
         
         {/* Main content */}
-        {isAdminOrManager ? (
+        {canEdit ? (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
             <div className="border-b px-6">
               <TabsList className="h-12">

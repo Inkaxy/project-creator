@@ -302,10 +302,10 @@ export function useCreateChapter() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (chapter: Partial<HandbookChapter>) => {
+    mutationFn: async (chapter: { handbook_id: string; title: string } & Partial<Omit<HandbookChapter, 'handbook_id' | 'title'>>) => {
       const { data, error } = await supabase
         .from("handbook_chapters")
-        .insert(chapter)
+        .insert([chapter])
         .select()
         .single();
       if (error) throw error;
@@ -373,10 +373,10 @@ export function useCreateSection() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (section: Partial<HandbookSection>) => {
+    mutationFn: async (section: { chapter_id: string; title: string; slug: string } & Partial<Omit<HandbookSection, 'chapter_id' | 'title' | 'slug'>>) => {
       const { data, error } = await supabase
         .from("handbook_sections")
-        .insert(section)
+        .insert([section])
         .select()
         .single();
       if (error) throw error;
