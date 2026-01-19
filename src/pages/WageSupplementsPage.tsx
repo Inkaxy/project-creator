@@ -37,11 +37,12 @@ import {
   useDeleteWageSupplement,
 } from "@/hooks/useWageSupplementsMutations";
 import { useAuth } from "@/contexts/AuthContext";
-import { Moon, Sun, Calendar, Star, Plus, Pencil, Trash2, DollarSign, Percent, TrendingUp, Receipt } from "lucide-react";
+import { Moon, Sun, Calendar, Star, Plus, Pencil, Trash2, DollarSign, Percent, TrendingUp, Receipt, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WageLaddersManagementModal } from "@/components/employees/WageLaddersManagementModal";
 import { WageAdjustmentsPanel } from "@/components/employees/WageAdjustmentsPanel";
 import { WageLadderHistoryPanel } from "@/components/employees/WageLadderHistoryPanel";
+import { TariffImportModal } from "@/components/employees/TariffImportModal";
 import { useWageLadders } from "@/hooks/useWageLadders";
 import { useWageAdjustments } from "@/hooks/useWageAdjustments";
 
@@ -64,6 +65,7 @@ export default function WageSupplementsPage() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [wageLaddersModalOpen, setWageLaddersModalOpen] = useState(false);
+  const [tariffImportModalOpen, setTariffImportModalOpen] = useState(false);
   const [selectedSupplement, setSelectedSupplement] = useState<WageSupplement | null>(null);
 
   // Form state for editing
@@ -375,7 +377,11 @@ export default function WageSupplementsPage() {
 
           {/* Wage Ladders Tab */}
           <TabsContent value="ladders" className="space-y-4">
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setTariffImportModalOpen(true)}>
+                <Upload className="mr-2 h-4 w-4" />
+                Importer tariff
+              </Button>
               <Button onClick={() => setWageLaddersModalOpen(true)}>
                 <TrendingUp className="mr-2 h-4 w-4" />
                 Administrer lønnsstiger
@@ -645,6 +651,12 @@ export default function WageSupplementsPage() {
       <WageLaddersManagementModal
         open={wageLaddersModalOpen}
         onOpenChange={setWageLaddersModalOpen}
+      />
+
+      {/* Tariff Import Modal */}
+      <TariffImportModal
+        open={tariffImportModalOpen}
+        onOpenChange={setTariffImportModalOpen}
       />
     </MainLayout>
   );

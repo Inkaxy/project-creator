@@ -2760,6 +2760,57 @@ export type Database = {
           },
         ]
       }
+      seniority_log: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          employee_id: string
+          hours_added: number
+          id: string
+          notes: string | null
+          reference_id: string | null
+          source: string
+          total_hours_after: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          employee_id: string
+          hours_added: number
+          id?: string
+          notes?: string | null
+          reference_id?: string | null
+          source: string
+          total_hours_after?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          employee_id?: string
+          hours_added?: number
+          id?: string
+          notes?: string | null
+          reference_id?: string | null
+          source?: string
+          total_hours_after?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seniority_log_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seniority_log_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shift_applicants: {
         Row: {
           applied_at: string
@@ -3463,6 +3514,8 @@ export type Database = {
           id: string
           is_active: boolean | null
           name: string
+          tariff_version: string | null
+          tariff_year: number | null
           updated_at: string
         }
         Insert: {
@@ -3472,6 +3525,8 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           name: string
+          tariff_version?: string | null
+          tariff_year?: number | null
           updated_at?: string
         }
         Update: {
@@ -3481,6 +3536,8 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           name?: string
+          tariff_version?: string | null
+          tariff_year?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -3610,6 +3667,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_seniority_hours: {
+        Args: {
+          p_created_by?: string
+          p_employee_id: string
+          p_hours: number
+          p_notes?: string
+          p_reference_id?: string
+          p_source: string
+        }
+        Returns: number
+      }
       calculate_pool_percentage: {
         Args: { _employee_id: string; _from_date?: string; _to_date?: string }
         Returns: number
