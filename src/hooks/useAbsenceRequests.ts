@@ -202,7 +202,7 @@ export const useApproveAbsenceRequest = () => {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async ({ id, approved }: { id: string; approved: boolean; rejectionReason?: string }) => {
+    mutationFn: async ({ id, approved, rejectionReason }: { id: string; approved: boolean; rejectionReason?: string }) => {
       if (!user) throw new Error("Ikke innlogget");
 
       const updateData: Record<string, unknown> = {
@@ -210,6 +210,11 @@ export const useApproveAbsenceRequest = () => {
         approved_by: user.id,
         approved_at: new Date().toISOString(),
       };
+
+      // Include rejection reason when rejecting
+      if (!approved && rejectionReason) {
+        updateData.rejection_reason = rejectionReason;
+      }
 
       const { data, error } = await supabase
         .from("absence_requests")
@@ -227,6 +232,71 @@ export const useApproveAbsenceRequest = () => {
     },
     onError: (error) => {
       toast.error("Kunne ikke behandle søknad: " + error.message);
+    },
+  });
+};
+
+export const useRevokeApprovedAbsence = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
+      if (!user) throw new Error("Ikke innlogget");
+
+      const updateData: Record<string, unknown> = {
+        status: "rejected",
+        approved_by: user.id,
+        approved_at: new Date().toISOString(),
+        rejection_reason: reason || "Godkjenning tilbakekalt",
+      };
+
+      const { data, error } = await supabase
+        .from("absence_requests")
+        .update(updateData)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["absence-requests"] });
+      toast.success("Godkjent ferie tilbakekalt");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke tilbakekalle: " + error.message);
+    },
+  });
+};
+
+export const useDeleteAbsenceWithNotification = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
+      // First update with reason (so it's logged) then delete
+      if (reason) {
+        await supabase
+          .from("absence_requests")
+          .update({ rejection_reason: reason })
+          .eq("id", id);
+      }
+
+      const { error } = await supabase
+        .from("absence_requests")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["absence-requests"] });
+      toast.success("Fraværssøknad slettet");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke slette søknad: " + error.message);
     },
   });
 };

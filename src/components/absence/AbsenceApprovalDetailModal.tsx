@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -20,8 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Clock, CheckCircle, XCircle, AlertTriangle, Loader2, Trash2, RotateCcw, Pencil } from "lucide-react";
-import { AbsenceRequest, useApproveAbsenceRequest, useDeleteAbsenceRequest, useRevertAbsenceToStatus } from "@/hooks/useAbsenceRequests";
+import { Clock, CheckCircle, XCircle, AlertTriangle, Loader2, Trash2, RotateCcw, MessageSquare } from "lucide-react";
+import { AbsenceRequest, useApproveAbsenceRequest, useDeleteAbsenceRequest, useRevertAbsenceToStatus, useRevokeApprovedAbsence, useDeleteAbsenceWithNotification } from "@/hooks/useAbsenceRequests";
 import { useEmployeeAccounts, getAvailableBalance, accountTypeLabels } from "@/hooks/useEmployeeAccounts";
 import { useShifts, ShiftData, useUpdateShift, useDeleteShift } from "@/hooks/useShifts";
 import { useFunctions } from "@/hooks/useFunctions";
@@ -36,6 +38,7 @@ interface AbsenceApprovalDetailModalProps {
 }
 
 type ShiftAction = "keep" | "delete" | "change_type";
+type ActionMode = "none" | "reject" | "revoke" | "delete";
 
 export const AbsenceApprovalDetailModal = ({
   open,
@@ -48,12 +51,18 @@ export const AbsenceApprovalDetailModal = ({
   const [shiftAction, setShiftAction] = useState<ShiftAction>("keep");
   const [selectedFunctionId, setSelectedFunctionId] = useState<string>("");
   const [createOpenShifts, setCreateOpenShifts] = useState<"none" | "copy">("none");
+  
+  // Comment/reason dialog state
+  const [actionMode, setActionMode] = useState<ActionMode>("none");
+  const [actionComment, setActionComment] = useState("");
 
   const { data: accounts } = useEmployeeAccounts(absence.employee_id);
   const { data: functions } = useFunctions();
   const approveAbsence = useApproveAbsenceRequest();
   const deleteAbsence = useDeleteAbsenceRequest();
+  const deleteAbsenceWithNotification = useDeleteAbsenceWithNotification();
   const revertAbsence = useRevertAbsenceToStatus();
+  const revokeAbsence = useRevokeApprovedAbsence();
   const updateShift = useUpdateShift();
   const deleteShift = useDeleteShift();
 
@@ -114,21 +123,49 @@ export const AbsenceApprovalDetailModal = ({
     }
   };
 
-  const handleReject = async () => {
-    try {
-      await approveAbsence.mutateAsync({ id: absence.id, approved: false });
-      onOpenChange(false);
-    } catch (error) {
-      console.error("Rejection failed:", error);
-    }
+  const handleRejectClick = () => {
+    setActionMode("reject");
+    setActionComment("");
   };
 
-  const handleDelete = async () => {
+  const handleRevokeClick = () => {
+    setActionMode("revoke");
+    setActionComment("");
+  };
+
+  const handleDeleteClick = () => {
+    setActionMode("delete");
+    setActionComment("");
+  };
+
+  const handleActionConfirm = async () => {
     try {
-      await deleteAbsence.mutateAsync(absence.id);
+      switch (actionMode) {
+        case "reject":
+          await approveAbsence.mutateAsync({ 
+            id: absence.id, 
+            approved: false,
+            rejectionReason: actionComment || undefined
+          });
+          break;
+        case "revoke":
+          await revokeAbsence.mutateAsync({
+            id: absence.id,
+            reason: actionComment || undefined
+          });
+          break;
+        case "delete":
+          await deleteAbsenceWithNotification.mutateAsync({
+            id: absence.id,
+            reason: actionComment || undefined
+          });
+          break;
+      }
+      setActionMode("none");
+      setActionComment("");
       onOpenChange(false);
     } catch (error) {
-      console.error("Delete failed:", error);
+      console.error("Action failed:", error);
     }
   };
 
@@ -144,7 +181,67 @@ export const AbsenceApprovalDetailModal = ({
   const isPending = absence.status === "pending";
   const isApproved = absence.status === "approved";
   const isRejected = absence.status === "rejected";
-  const isProcessing = approveAbsence.isPending || deleteAbsence.isPending || revertAbsence.isPending;
+  const isProcessing = approveAbsence.isPending || deleteAbsence.isPending || revertAbsence.isPending || revokeAbsence.isPending || deleteAbsenceWithNotification.isPending;
+
+  const getActionTitle = () => {
+    switch (actionMode) {
+      case "reject": return "Avslå forespørsel";
+      case "revoke": return "Tilbakekall godkjenning";
+      case "delete": return "Slett forespørsel";
+      default: return "";
+    }
+  };
+
+  const getActionDescription = () => {
+    switch (actionMode) {
+      case "reject": return `Du er i ferd med å avslå ferieforespørselen til ${absence.profiles?.full_name}.`;
+      case "revoke": return `Du er i ferd med å tilbakekalle godkjent ferie for ${absence.profiles?.full_name}. Den ansatte vil bli varslet.`;
+      case "delete": return `Du er i ferd med å slette ferieforespørselen til ${absence.profiles?.full_name}. Den ansatte kan motta en melding om dette.`;
+      default: return "";
+    }
+  };
+
+  // If in action mode (showing comment dialog)
+  if (actionMode !== "none") {
+    return (
+      <Dialog open={open} onOpenChange={(o) => { if (!o) setActionMode("none"); onOpenChange(o); }}>
+        <DialogContent className="sm:max-w-[450px]">
+          <DialogHeader>
+            <DialogTitle>{getActionTitle()}</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <p className="text-sm text-muted-foreground">{getActionDescription()}</p>
+            <div>
+              <Label htmlFor="comment">Melding til ansatt (valgfritt)</Label>
+              <Textarea
+                id="comment"
+                placeholder="Skriv en kommentar som sendes til den ansatte..."
+                value={actionComment}
+                onChange={(e) => setActionComment(e.target.value)}
+                rows={3}
+                className="mt-2"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setActionMode("none")}>
+              Avbryt
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleActionConfirm}
+              disabled={isProcessing}
+            >
+              {isProcessing ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : null}
+              {actionMode === "reject" ? "Avslå" : actionMode === "revoke" ? "Tilbakekall" : "Slett"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -161,7 +258,7 @@ export const AbsenceApprovalDetailModal = ({
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={handleReject}
+                onClick={handleRejectClick}
                 disabled={isProcessing}
               >
                 Avvis
@@ -179,7 +276,29 @@ export const AbsenceApprovalDetailModal = ({
               </Button>
             </div>
           )}
-          {(isApproved || isRejected) && (
+          {isApproved && (
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRevokeClick}
+                disabled={isProcessing}
+              >
+                <XCircle className="h-4 w-4 mr-1" />
+                Tilbakekall
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDeleteClick}
+                disabled={isProcessing}
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Slett
+              </Button>
+            </div>
+          )}
+          {isRejected && (
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -193,7 +312,7 @@ export const AbsenceApprovalDetailModal = ({
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={handleDelete}
+                onClick={handleDeleteClick}
                 disabled={isProcessing}
               >
                 <Trash2 className="h-4 w-4 mr-1" />
