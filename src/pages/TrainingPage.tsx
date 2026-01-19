@@ -46,6 +46,13 @@ const COURSE_CATEGORIES: CourseCategory[] = [
     color: "text-green-600"
   },
   { 
+    id: "hms-ledere", 
+    title: "HMS for Ledere", 
+    icon: Shield, 
+    description: "Lovpålagt HMS-opplæring for ledere",
+    color: "text-emerald-600"
+  },
+  { 
     id: "mattrygghet", 
     title: "Mattrygghet", 
     icon: Utensils, 
