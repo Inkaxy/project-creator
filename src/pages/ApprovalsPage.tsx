@@ -19,10 +19,12 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
-import { usePendingAbsenceRequests, useApproveAbsenceRequest, useAbsenceRequests, AbsenceRequest } from "@/hooks/useAbsenceRequests";
+import { usePendingAbsenceRequests, useApproveAbsenceRequest, useAbsenceRequests, AbsenceRequest, useDeleteAbsenceRequest, useRevertAbsenceToStatus } from "@/hooks/useAbsenceRequests";
 import { useShiftSwapRequests, useManagerApproveSwap, useManagerRejectSwap, ShiftSwapRequest } from "@/hooks/useShiftSwaps";
 import { useAllTimeEntries, useApproveTimeEntries, useRejectTimeEntry, TimeEntryData } from "@/hooks/useTimeEntries";
 import { useShifts } from "@/hooks/useShifts";
+import { AbsenceApprovalDetailModal } from "@/components/absence/AbsenceApprovalDetailModal";
+import { AdminAbsenceModal } from "@/components/absence/AdminAbsenceModal";
 import {
   Search,
   Calendar,
@@ -39,6 +41,11 @@ import {
   Heart,
   BriefcaseMedical,
   Moon,
+  Plus,
+  Pencil,
+  Trash2,
+  RotateCcw,
+  Eye,
 } from "lucide-react";
 
 // Icon mapping for absence types
@@ -77,6 +84,13 @@ export default function ApprovalsPage() {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [selectedApproval, setSelectedApproval] = useState<UnifiedApproval | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
+
+  // Detail modal state
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedAbsence, setSelectedAbsence] = useState<AbsenceRequest | null>(null);
+
+  // Admin create absence modal
+  const [adminAbsenceModalOpen, setAdminAbsenceModalOpen] = useState(false);
 
   // Fetch all pending absence requests
   const { data: pendingAbsences = [], isLoading: absencesLoading } = usePendingAbsenceRequests();
@@ -445,11 +459,17 @@ export default function ApprovalsPage() {
     <MainLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="pl-12 lg:pl-0">
-          <h1 className="text-3xl font-bold text-foreground">Godkjenninger</h1>
-          <p className="text-muted-foreground">
-            Behandle søknader og forespørsler fra ansatte
-          </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pl-12 lg:pl-0">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Godkjenninger</h1>
+            <p className="text-muted-foreground">
+              Behandle søknader og forespørsler fra ansatte
+            </p>
+          </div>
+          <Button onClick={() => setAdminAbsenceModalOpen(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Søk om fravær / ferie
+          </Button>
         </div>
 
         {/* Quick stats */}
@@ -646,6 +666,21 @@ export default function ApprovalsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Admin Absence Modal */}
+      <AdminAbsenceModal
+        open={adminAbsenceModalOpen}
+        onOpenChange={setAdminAbsenceModalOpen}
+      />
+
+      {/* Absence Detail Modal */}
+      {selectedAbsence && (
+        <AbsenceApprovalDetailModal
+          open={detailModalOpen}
+          onOpenChange={setDetailModalOpen}
+          absence={selectedAbsence}
+        />
+      )}
     </MainLayout>
   );
 }
