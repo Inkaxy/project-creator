@@ -1,19 +1,56 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
-import { shifts } from "@/data/mockData";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  CalendarDays,
+  Clock,
+  UserX,
+  Flame,
+  Shield,
+  ClipboardCheck
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { format, startOfMonth, endOfMonth, addMonths, subMonths } from "date-fns";
+import { nb } from "date-fns/locale";
+import { 
+  useCalendarEvents, 
+  getEventsForDate, 
+  CalendarEventType,
+  EVENT_TYPE_CONFIG 
+} from "@/hooks/useCalendarEvents";
+import { CalendarEventBadge, EventTypeLegend } from "@/components/calendar/CalendarEventBadge";
+import { CalendarDayDetail } from "@/components/calendar/CalendarDayDetail";
+import { StatCard } from "@/components/ui/stat-card";
 
 export default function CalendarPage() {
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 0, 1)); // January 2026
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [activeFilters, setActiveFilters] = useState<CalendarEventType[]>([
+    'shift', 'absence', 'fire_drill', 'safety_round', 'inspection'
+  ]);
 
-  const getDaysInMonth = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
+  // Calculate date range for current month view
+  const monthStart = startOfMonth(currentDate);
+  const monthEnd = endOfMonth(currentDate);
+  const startDate = format(monthStart, 'yyyy-MM-dd');
+  const endDate = format(monthEnd, 'yyyy-MM-dd');
+
+  // Fetch all events for the month
+  const { eventsByDate, isLoading, counts } = useCalendarEvents({
+    startDate,
+    endDate,
+    filters: activeFilters,
+  });
+
+  // Generate calendar grid
+  const calendarDays = useMemo(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
@@ -27,134 +64,201 @@ export default function CalendarPage() {
       days.push(i);
     }
     return days;
-  };
+  }, [currentDate]);
 
-  const days = getDaysInMonth(currentDate);
   const dayNames = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"];
+  const today = new Date();
+  const todayStr = format(today, 'yyyy-MM-dd');
 
   const navigateMonth = (direction: number) => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(newDate.getMonth() + direction);
-    setCurrentDate(newDate);
+    setCurrentDate(prev => direction > 0 ? addMonths(prev, 1) : subMonths(prev, 1));
+    setSelectedDate(null);
   };
 
-  const getShiftsForDay = (day: number) => {
-    const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    return shifts.filter((s) => s.date === dateStr);
+  const toggleFilter = (type: CalendarEventType) => {
+    setActiveFilters(prev => {
+      if (prev.includes(type)) {
+        return prev.filter(t => t !== type);
+      }
+      return [...prev, type];
+    });
   };
 
-  const today = 19; // Demo: Jan 19
+  const getDateString = (day: number) => {
+    return format(new Date(currentDate.getFullYear(), currentDate.getMonth(), day), 'yyyy-MM-dd');
+  };
+
+  const selectedDateEvents = selectedDate ? getEventsForDate(eventsByDate, selectedDate) : [];
 
   return (
     <MainLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-center sm:justify-between lg:pl-0">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Kalender</h1>
-            <p className="text-muted-foreground">Månedsoversikt</p>
-          </div>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Ny hendelse
-          </Button>
-        </div>
-
-        {/* Calendar Navigation */}
-        <div className="flex items-center justify-between">
-          <Button variant="outline" size="icon" onClick={() => navigateMonth(-1)}>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <h2 className="text-xl font-semibold text-foreground">
-            {currentDate.toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}
-          </h2>
-          <Button variant="outline" size="icon" onClick={() => navigateMonth(1)}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-
-        {/* Calendar Grid */}
-        <Card>
-          <CardContent className="p-0">
-            {/* Day Headers */}
-            <div className="grid grid-cols-7 border-b border-border">
-              {dayNames.map((day) => (
-                <div
-                  key={day}
-                  className="p-3 text-center text-sm font-medium text-muted-foreground"
-                >
-                  {day}
-                </div>
-              ))}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Main Calendar Section */}
+        <div className="flex-1 space-y-6">
+          {/* Header */}
+          <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-center sm:justify-between lg:pl-0">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Kalender</h1>
+              <p className="text-muted-foreground">Samlet oversikt over alle hendelser</p>
             </div>
+          </div>
 
-            {/* Calendar Days */}
-            <div className="grid grid-cols-7">
-              {days.map((day, index) => {
-                const dayShifts = day ? getShiftsForDay(day) : [];
-                const isToday = day === today;
-                const isWeekend = index % 7 >= 5;
+          {/* Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <StatCard
+              title="Vakter"
+              value={counts.shifts}
+              subtitle="denne måneden"
+              icon={Clock}
+              variant="default"
+            />
+            <StatCard
+              title="Fravær"
+              value={counts.absences}
+              subtitle="godkjente"
+              icon={UserX}
+              variant={counts.absences > 0 ? "warning" : "default"}
+            />
+            <StatCard
+              title="Brannøvelser"
+              value={counts.fireDrills}
+              subtitle="planlagt"
+              icon={Flame}
+              variant="default"
+            />
+            <StatCard
+              title="Vernerunder"
+              value={counts.safetyRounds}
+              subtitle="planlagt"
+              icon={Shield}
+              variant="default"
+            />
+            <StatCard
+              title="Tilsyn"
+              value={counts.inspections}
+              subtitle="registrert"
+              icon={ClipboardCheck}
+              variant="default"
+            />
+          </div>
 
-                return (
+          {/* Calendar Navigation */}
+          <div className="flex items-center justify-between">
+            <Button variant="outline" size="icon" onClick={() => navigateMonth(-1)}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <h2 className="text-xl font-semibold text-foreground capitalize">
+              {format(currentDate, "MMMM yyyy", { locale: nb })}
+            </h2>
+            <Button variant="outline" size="icon" onClick={() => navigateMonth(1)}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Filter Legend */}
+          <EventTypeLegend
+            activeTypes={activeFilters}
+            onToggle={toggleFilter}
+          />
+
+          {/* Calendar Grid */}
+          <Card>
+            <CardContent className="p-0">
+              {/* Day Headers */}
+              <div className="grid grid-cols-7 border-b border-border">
+                {dayNames.map((day) => (
                   <div
-                    key={index}
-                    className={cn(
-                      "min-h-[100px] border-b border-r border-border p-2 last:border-r-0 [&:nth-child(7n)]:border-r-0",
-                      isWeekend && "bg-muted/30",
-                      !day && "bg-muted/50"
-                    )}
+                    key={day}
+                    className="p-3 text-center text-sm font-medium text-muted-foreground"
                   >
-                    {day && (
-                      <>
-                        <div
-                          className={cn(
-                            "mb-2 flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium",
-                            isToday
-                              ? "bg-primary text-primary-foreground"
-                              : "text-foreground"
-                          )}
-                        >
-                          {day}
-                        </div>
-                        <div className="space-y-1">
-                          {dayShifts.slice(0, 2).map((shift) => (
+                    {day}
+                  </div>
+                ))}
+              </div>
+
+              {/* Calendar Days */}
+              {isLoading ? (
+                <div className="grid grid-cols-7">
+                  {Array.from({ length: 35 }).map((_, i) => (
+                    <div key={i} className="min-h-[100px] border-b border-r border-border p-2">
+                      <Skeleton className="h-7 w-7 rounded-full mb-2" />
+                      <Skeleton className="h-4 w-full mb-1" />
+                      <Skeleton className="h-4 w-3/4" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-7">
+                  {calendarDays.map((day, index) => {
+                    const dateStr = day ? getDateString(day) : '';
+                    const dayEvents = day ? getEventsForDate(eventsByDate, dateStr) : [];
+                    const isToday = dateStr === todayStr;
+                    const isWeekend = index % 7 >= 5;
+                    const isSelected = dateStr === selectedDate;
+
+                    return (
+                      <div
+                        key={index}
+                        onClick={() => day && setSelectedDate(dateStr)}
+                        className={cn(
+                          "min-h-[100px] border-b border-r border-border p-2 transition-colors cursor-pointer",
+                          "last:border-r-0 [&:nth-child(7n)]:border-r-0",
+                          isWeekend && "bg-muted/30",
+                          !day && "bg-muted/50 cursor-default",
+                          isSelected && "ring-2 ring-primary ring-inset",
+                          day && "hover:bg-accent/50"
+                        )}
+                      >
+                        {day && (
+                          <>
                             <div
-                              key={shift.id}
                               className={cn(
-                                "truncate rounded px-1.5 py-0.5 text-xs",
-                                shift.isNight
-                                  ? "bg-night-light text-night"
-                                  : "bg-primary-light text-primary"
+                                "mb-2 flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium",
+                                isToday
+                                  ? "bg-primary text-primary-foreground"
+                                  : "text-foreground"
                               )}
                             >
-                              {shift.employeeName?.split(" ")[0] || "Ledig"}
+                              {day}
                             </div>
-                          ))}
-                          {dayShifts.length > 2 && (
-                            <div className="text-xs text-muted-foreground">
-                              +{dayShifts.length - 2} mer
+                            <div className="space-y-1">
+                              {dayEvents.slice(0, 3).map((event) => (
+                                <CalendarEventBadge
+                                  key={event.id}
+                                  event={event}
+                                />
+                              ))}
+                              {dayEvents.length > 3 && (
+                                <div className="text-xs text-muted-foreground pl-1">
+                                  +{dayEvents.length - 3} mer
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* Legend */}
-        <div className="flex gap-6">
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded bg-primary-light" />
-            <span className="text-sm text-muted-foreground">Dagvakt</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded bg-night-light" />
-            <span className="text-sm text-muted-foreground">Nattvakt</span>
-          </div>
+        {/* Side Panel for Selected Day */}
+        <div className={cn(
+          "lg:w-80 shrink-0 transition-all duration-200",
+          !selectedDate && "lg:w-0 overflow-hidden"
+        )}>
+          {selectedDate && (
+            <Card className="h-[600px] sticky top-4">
+              <CalendarDayDetail
+                date={selectedDate}
+                events={selectedDateEvents}
+                onClose={() => setSelectedDate(null)}
+              />
+            </Card>
+          )}
         </div>
       </div>
     </MainLayout>
