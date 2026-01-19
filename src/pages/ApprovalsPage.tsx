@@ -19,7 +19,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
-import { usePendingAbsenceRequests, useApproveAbsenceRequest, useAbsenceRequests, AbsenceRequest, useDeleteAbsenceRequest, useRevertAbsenceToStatus } from "@/hooks/useAbsenceRequests";
+import { usePendingAbsenceRequests, useApproveAbsenceRequest, useAbsenceRequests, AbsenceRequest, useDeleteAbsenceRequest, useRevertAbsenceToStatus, useRevokeApprovedAbsence, useDeleteAbsenceWithNotification } from "@/hooks/useAbsenceRequests";
 import { useShiftSwapRequests, useManagerApproveSwap, useManagerRejectSwap, ShiftSwapRequest } from "@/hooks/useShiftSwaps";
 import { useAllTimeEntries, useApproveTimeEntries, useRejectTimeEntry, TimeEntryData } from "@/hooks/useTimeEntries";
 import { useShifts } from "@/hooks/useShifts";
@@ -347,6 +347,20 @@ export default function ApprovalsPage() {
 
             {showActions && (
               <div className="flex gap-2 self-end sm:self-start">
+                {approval.type === "absence" && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="gap-2"
+                    onClick={() => {
+                      setSelectedAbsence(approval.originalData as AbsenceRequest);
+                      setDetailModalOpen(true);
+                    }}
+                  >
+                    <Eye className="h-4 w-4" />
+                    Detaljer
+                  </Button>
+                )}
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -360,7 +374,15 @@ export default function ApprovalsPage() {
                 <Button 
                   size="sm" 
                   className="gap-2"
-                  onClick={() => handleApprove(approval)}
+                  onClick={() => {
+                    // For absences with overlapping shifts, open detail modal instead
+                    if (approval.type === "absence" && approval.overlappingShifts && approval.overlappingShifts.length > 0) {
+                      setSelectedAbsence(approval.originalData as AbsenceRequest);
+                      setDetailModalOpen(true);
+                    } else {
+                      handleApprove(approval);
+                    }
+                  }}
                   disabled={isPending}
                 >
                   {isPending ? (
@@ -540,7 +562,14 @@ export default function ApprovalsPage() {
             ) : (
               <>
                 {approvedAbsences.map(absence => (
-                  <Card key={absence.id} className="opacity-80">
+                  <Card 
+                    key={absence.id} 
+                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => {
+                      setSelectedAbsence(absence);
+                      setDetailModalOpen(true);
+                    }}
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
                         <AvatarWithInitials name={absence.profiles?.full_name || ""} size="lg" />
@@ -564,6 +593,12 @@ export default function ApprovalsPage() {
                             </p>
                           )}
                         </div>
+                        <div className="flex gap-2">
+                          <Button variant="ghost" size="sm" className="gap-1">
+                            <Eye className="h-4 w-4" />
+                            Detaljer
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -578,7 +613,14 @@ export default function ApprovalsPage() {
             ) : (
               <>
                 {rejectedAbsences.map(absence => (
-                  <Card key={absence.id} className="opacity-80">
+                  <Card 
+                    key={absence.id} 
+                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => {
+                      setSelectedAbsence(absence);
+                      setDetailModalOpen(true);
+                    }}
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
                         <AvatarWithInitials name={absence.profiles?.full_name || ""} size="lg" />
@@ -601,6 +643,12 @@ export default function ApprovalsPage() {
                               Grunn: {absence.rejection_reason}
                             </p>
                           )}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="ghost" size="sm" className="gap-1">
+                            <Eye className="h-4 w-4" />
+                            Detaljer
+                          </Button>
                         </div>
                       </div>
                     </CardContent>
