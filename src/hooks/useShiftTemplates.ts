@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { format, addDays, startOfWeek, getDay } from "date-fns";
+import { format, addDays, startOfWeek, getDay, addWeeks } from "date-fns";
 import { nb } from "date-fns/locale";
-
+import { isNorwegianHoliday } from "@/lib/norwegian-holidays";
 export interface TemplateShift {
   id: string;
   template_id: string;
@@ -70,6 +70,14 @@ export interface WeekCostPreview {
   totalHours: number;
   estimatedCost: number;
   hasHoliday: boolean;
+}
+
+export interface CopyWeekInput {
+  sourceWeekStart: Date;
+  targetWeekStart: Date;
+  keepEmployees: boolean;
+  skipHolidays: boolean;
+  overwrite: boolean;
 }
 
 // Fetch all shift templates with shift count
@@ -311,25 +319,7 @@ function getDateFromDayOfWeek(weekStart: Date, dayOfWeek: number): Date {
   return addDays(weekStart, mondayOffset);
 }
 
-// Norwegian public holidays (simplified - would need more comprehensive list)
-function isNorwegianHoliday(date: Date): boolean {
-  const year = date.getFullYear();
-  const dateStr = format(date, "MM-dd");
-  
-  const fixedHolidays = [
-    "01-01", // Nyttårsdag
-    "05-01", // 1. mai
-    "05-17", // 17. mai
-    "12-25", // 1. juledag
-    "12-26", // 2. juledag
-  ];
-  
-  if (fixedHolidays.includes(dateStr)) return true;
-  
-  // Easter-based holidays would need proper calculation
-  // This is a simplified version
-  return false;
-}
+// isNorwegianHoliday is now imported from @/lib/norwegian-holidays
 
 // Calculate hours for a shift
 function calculateShiftHours(startTime: string, endTime: string, breakMinutes: number): number {
@@ -514,4 +504,125 @@ export function getWeekNumber(date: Date): number {
   const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
   const pastDaysOfYear = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
   return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+}
+
+// Copy week to another week
+export function useCopyWeek() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: CopyWeekInput) => {
+      const { data: userData } = await supabase.auth.getUser();
+
+      // Hent vakter fra kildeuken
+      const sourceEnd = addDays(input.sourceWeekStart, 6);
+      const { data: sourceShifts, error: fetchError } = await supabase
+        .from("shifts")
+        .select("*")
+        .gte("date", format(input.sourceWeekStart, "yyyy-MM-dd"))
+        .lte("date", format(sourceEnd, "yyyy-MM-dd"))
+        .neq("status", "cancelled");
+
+      if (fetchError) throw fetchError;
+      if (!sourceShifts || sourceShifts.length === 0) {
+        throw new Error("Ingen vakter å kopiere i denne uken");
+      }
+
+      // Beregn offset i dager
+      const dayOffset = Math.round(
+        (input.targetWeekStart.getTime() - input.sourceWeekStart.getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+
+      // Slett eksisterende vakter hvis overwrite
+      if (input.overwrite) {
+        const targetEnd = addDays(input.targetWeekStart, 6);
+        await supabase
+          .from("shifts")
+          .update({ status: "cancelled" })
+          .gte("date", format(input.targetWeekStart, "yyyy-MM-dd"))
+          .lte("date", format(targetEnd, "yyyy-MM-dd"))
+          .eq("status", "draft");
+      }
+
+      // Forbered nye vakter
+      const newShifts: any[] = [];
+      let skippedCount = 0;
+
+      for (const shift of sourceShifts) {
+        const sourceDate = new Date(shift.date);
+        const targetDate = addDays(sourceDate, dayOffset);
+        const targetDateStr = format(targetDate, "yyyy-MM-dd");
+
+        // Hopp over helligdager
+        if (input.skipHolidays && isNorwegianHoliday(targetDate)) {
+          skippedCount++;
+          continue;
+        }
+
+        // Sjekk for eksisterende vakt hvis ikke overwrite
+        if (!input.overwrite) {
+          const { data: existing } = await supabase
+            .from("shifts")
+            .select("id")
+            .eq("date", targetDateStr)
+            .eq("function_id", shift.function_id)
+            .eq("planned_start", shift.planned_start)
+            .neq("status", "cancelled")
+            .maybeSingle();
+
+          if (existing) {
+            skippedCount++;
+            continue;
+          }
+        }
+
+        const dayOfWeek = getDay(targetDate);
+
+        newShifts.push({
+          date: targetDateStr,
+          function_id: shift.function_id,
+          employee_id: input.keepEmployees ? shift.employee_id : null,
+          planned_start: shift.planned_start,
+          planned_end: shift.planned_end,
+          planned_break_minutes: shift.planned_break_minutes,
+          status: "draft",
+          shift_type: shift.shift_type || "normal",
+          is_weekend: dayOfWeek === 0 || dayOfWeek === 6,
+          is_night_shift: shift.is_night_shift,
+          is_holiday: isNorwegianHoliday(targetDate),
+          notes: shift.notes,
+          created_by: userData.user?.id,
+        });
+      }
+
+      if (newShifts.length === 0) {
+        throw new Error(
+          "Ingen nye vakter å opprette (alle eksisterer allerede eller er helligdager)"
+        );
+      }
+
+      // Opprett nye vakter i batch
+      const { error: insertError } = await supabase
+        .from("shifts")
+        .insert(newShifts);
+
+      if (insertError) throw insertError;
+
+      return { count: newShifts.length, skipped: skippedCount };
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["shifts"] });
+      if (data.skipped > 0) {
+        toast.success(
+          `${data.count} vakter kopiert (${data.skipped} hoppet over)`
+        );
+      } else {
+        toast.success(`${data.count} vakter kopiert`);
+      }
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke kopiere: " + error.message);
+    },
+  });
 }

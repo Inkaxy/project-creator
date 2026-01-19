@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -27,13 +26,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 import {
   useShiftTemplates,
+  useShiftTemplate,
   useUpdateShiftTemplate,
   useDeleteShiftTemplate,
   ShiftTemplate,
+  TemplateShift,
 } from "@/hooks/useShiftTemplates";
 import {
   Settings,
@@ -42,12 +48,83 @@ import {
   Trash2,
   Pencil,
   Copy,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 
 interface ManageTemplatesModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onRollout: (template: ShiftTemplate) => void;
+}
+
+// Component for visual preview of a template's shifts
+function TemplatePreviewGrid({ templateId }: { templateId: string }) {
+  const { data: template, isLoading } = useShiftTemplate(templateId);
+
+  const dayNames = ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"];
+  const orderedDays = [1, 2, 3, 4, 5, 6, 0]; // Man-Søn
+
+  const shiftsByDay = useMemo(() => {
+    if (!template?.template_shifts) return {};
+    return template.template_shifts.reduce((acc, shift) => {
+      if (!acc[shift.day_of_week]) acc[shift.day_of_week] = [];
+      acc[shift.day_of_week].push(shift);
+      return acc;
+    }, {} as Record<number, TemplateShift[]>);
+  }, [template]);
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-7 gap-1 p-2">
+        {orderedDays.map((day) => (
+          <div key={day} className="animate-pulse">
+            <div className="text-center text-xs font-medium text-muted-foreground mb-1">
+              {dayNames[day]}
+            </div>
+            <div className="h-8 bg-muted rounded" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (!template) return null;
+
+  return (
+    <div className="grid grid-cols-7 gap-1 p-2 bg-muted/30 rounded-md">
+      {orderedDays.map((dayOfWeek) => {
+        const dayShifts = shiftsByDay[dayOfWeek] || [];
+        return (
+          <div key={dayOfWeek} className="text-center">
+            <div className="text-xs font-medium text-muted-foreground mb-1">
+              {dayNames[dayOfWeek]}
+            </div>
+            <div className="min-h-[32px] flex flex-col gap-0.5">
+              {dayShifts.slice(0, 4).map((shift, idx) => (
+                <div
+                  key={idx}
+                  className="h-1.5 rounded-sm"
+                  style={{
+                    backgroundColor: shift.functions?.color || "#3B82F6",
+                  }}
+                  title={`${shift.functions?.name || "Ukjent"}: ${shift.start_time}-${shift.end_time}`}
+                />
+              ))}
+              {dayShifts.length > 4 && (
+                <div className="text-[9px] text-muted-foreground">
+                  +{dayShifts.length - 4}
+                </div>
+              )}
+              {dayShifts.length === 0 && (
+                <div className="h-1.5 rounded-sm bg-muted" />
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export function ManageTemplatesModal({
@@ -58,6 +135,7 @@ export function ManageTemplatesModal({
   const [editingTemplate, setEditingTemplate] = useState<ShiftTemplate | null>(null);
   const [editName, setEditName] = useState("");
   const [deleteConfirmTemplate, setDeleteConfirmTemplate] = useState<ShiftTemplate | null>(null);
+  const [expandedTemplateId, setExpandedTemplateId] = useState<string | null>(null);
 
   const { data: templates = [], isLoading } = useShiftTemplates();
   const updateTemplate = useUpdateShiftTemplate();
@@ -95,6 +173,10 @@ export function ManageTemplatesModal({
     setDeleteConfirmTemplate(null);
   };
 
+  const toggleExpand = (templateId: string) => {
+    setExpandedTemplateId((prev) => (prev === templateId ? null : templateId));
+  };
+
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -109,7 +191,7 @@ export function ManageTemplatesModal({
             </DialogDescription>
           </DialogHeader>
 
-          <ScrollArea className="max-h-[400px]">
+          <ScrollArea className="max-h-[500px]">
             {isLoading ? (
               <div className="py-8 text-center text-muted-foreground">
                 Laster maler...
@@ -125,104 +207,127 @@ export function ManageTemplatesModal({
             ) : (
               <div className="space-y-2 pr-4">
                 {templates.map((template) => (
-                  <div
+                  <Collapsible
                     key={template.id}
-                    className="flex items-center justify-between rounded-lg border p-3"
+                    open={expandedTemplateId === template.id}
+                    onOpenChange={() => toggleExpand(template.id)}
                   >
-                    <div className="flex-1 min-w-0">
-                      {editingTemplate?.id === template.id ? (
-                        <div className="flex items-center gap-2">
-                          <Input
-                            value={editName}
-                            onChange={(e) => setEditName(e.target.value)}
-                            className="h-8"
-                            autoFocus
-                          />
-                          <Button
-                            size="sm"
-                            onClick={handleSaveEdit}
-                            disabled={updateTemplate.isPending}
-                          >
-                            Lagre
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setEditingTemplate(null)}
-                          >
-                            Avbryt
-                          </Button>
-                        </div>
-                      ) : (
-                        <>
-                          <div className="flex items-center gap-2">
-                            {template.is_default && (
-                              <Star className="h-4 w-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />
-                            )}
-                            <span className="font-medium truncate">
-                              {template.name}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary" className="text-xs">
-                              {template.shift_count} vakter
-                            </Badge>
-                            {template.category && (
-                              <Badge variant="outline" className="text-xs">
-                                {template.category}
-                              </Badge>
-                            )}
-                            <span className="text-xs text-muted-foreground">
-                              Opprettet{" "}
-                              {format(new Date(template.created_at), "d. MMM yyyy", {
-                                locale: nb,
-                              })}
-                            </span>
-                          </div>
-                        </>
-                      )}
-                    </div>
-
-                    {editingTemplate?.id !== template.id && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-popover">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              onRollout(template);
-                              onOpenChange(false);
-                            }}
-                          >
-                            <Copy className="h-4 w-4 mr-2" />
-                            Rull ut mal
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleStartEdit(template)}>
-                            <Pencil className="h-4 w-4 mr-2" />
-                            Endre navn
-                          </DropdownMenuItem>
-                          {!template.is_default && (
-                            <DropdownMenuItem
-                              onClick={() => handleSetDefault(template)}
-                            >
-                              <Star className="h-4 w-4 mr-2" />
-                              Sett som standard
-                            </DropdownMenuItem>
+                    <div className="rounded-lg border">
+                      <div className="flex items-center justify-between p-3">
+                        <div className="flex-1 min-w-0">
+                          {editingTemplate?.id === template.id ? (
+                            <div className="flex items-center gap-2">
+                              <Input
+                                value={editName}
+                                onChange={(e) => setEditName(e.target.value)}
+                                className="h-8"
+                                autoFocus
+                              />
+                              <Button
+                                size="sm"
+                                onClick={handleSaveEdit}
+                                disabled={updateTemplate.isPending}
+                              >
+                                Lagre
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setEditingTemplate(null)}
+                              >
+                                Avbryt
+                              </Button>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex items-center gap-2">
+                                <CollapsibleTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-6 w-6">
+                                    {expandedTemplateId === template.id ? (
+                                      <ChevronDown className="h-4 w-4" />
+                                    ) : (
+                                      <ChevronRight className="h-4 w-4" />
+                                    )}
+                                  </Button>
+                                </CollapsibleTrigger>
+                                {template.is_default && (
+                                  <Star className="h-4 w-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+                                )}
+                                <span className="font-medium truncate">
+                                  {template.name}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 mt-1 ml-8">
+                                <Badge variant="secondary" className="text-xs">
+                                  {template.shift_count} vakter
+                                </Badge>
+                                {template.category && (
+                                  <Badge variant="outline" className="text-xs">
+                                    {template.category}
+                                  </Badge>
+                                )}
+                                <span className="text-xs text-muted-foreground">
+                                  Opprettet{" "}
+                                  {format(new Date(template.created_at), "d. MMM yyyy", {
+                                    locale: nb,
+                                  })}
+                                </span>
+                              </div>
+                            </>
                           )}
-                          <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
-                            onClick={() => setDeleteConfirmTemplate(template)}
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Slett
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </div>
+                        </div>
+
+                        {editingTemplate?.id !== template.id && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="bg-popover">
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  onRollout(template);
+                                  onOpenChange(false);
+                                }}
+                              >
+                                <Copy className="h-4 w-4 mr-2" />
+                                Rull ut mal
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleStartEdit(template)}>
+                                <Pencil className="h-4 w-4 mr-2" />
+                                Endre navn
+                              </DropdownMenuItem>
+                              {!template.is_default && (
+                                <DropdownMenuItem
+                                  onClick={() => handleSetDefault(template)}
+                                >
+                                  <Star className="h-4 w-4 mr-2" />
+                                  Sett som standard
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => setDeleteConfirmTemplate(template)}
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Slett
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
+                      </div>
+
+                      <CollapsibleContent>
+                        <div className="border-t px-3 pb-3 pt-2">
+                          <p className="text-xs text-muted-foreground mb-2">
+                            Forhåndsvisning av vakter per dag:
+                          </p>
+                          <TemplatePreviewGrid templateId={template.id} />
+                        </div>
+                      </CollapsibleContent>
+                    </div>
+                  </Collapsible>
                 ))}
               </div>
             )}
