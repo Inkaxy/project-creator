@@ -41,6 +41,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { InteractiveLearning } from "@/components/training/InteractiveLearning";
 
 export default function CourseViewerPage() {
   const { courseId } = useParams<{ courseId: string }>();
@@ -595,11 +596,72 @@ function QuizSection({
 function ModuleContentRenderer({ module }: { module: CourseModule }) {
   const content = (module.content || {}) as StructuredContent;
   const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [learningMode, setLearningMode] = useState<'learning' | 'quiz'>('learning');
+  const [learningComplete, setLearningComplete] = useState(false);
   
   // Check if content has structured format (introduction, sections, keyPoints, quiz)
   const hasStructuredContent = content.introduction || content.sections || content.keyPoints;
+  const hasQuiz = content.quiz && content.quiz.length > 0;
   
   if (hasStructuredContent) {
+    // If we have all components for interactive learning, show it
+    const canUseInteractiveLearning = 
+      content.introduction && 
+      content.keyPoints && 
+      content.keyPoints.length > 0 && 
+      content.sections && 
+      content.sections.length > 0;
+
+    if (canUseInteractiveLearning && learningMode === 'learning' && !learningComplete) {
+      return (
+        <InteractiveLearning
+          introduction={content.introduction!}
+          keyPoints={content.keyPoints!}
+          sections={content.sections!}
+          quiz={content.quiz || []}
+          onLearningComplete={() => {
+            setLearningComplete(true);
+            if (hasQuiz) {
+              setLearningMode('quiz');
+            }
+          }}
+        />
+      );
+    }
+
+    // Show quiz after learning or if user skipped
+    if (hasQuiz && learningMode === 'quiz') {
+      return (
+        <div className="space-y-6">
+          {learningComplete && (
+            <Card className="border-success/50 bg-success/5">
+              <CardContent className="py-4 flex items-center gap-3">
+                <CheckCircle className="h-5 w-5 text-success" />
+                <div>
+                  <p className="font-medium text-success">Læringsdelen fullført!</p>
+                  <p className="text-sm text-muted-foreground">Nå er det tid for kunnskapstesten.</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
+          <div className="flex items-center gap-2">
+            <HelpCircle className="h-5 w-5 text-primary" />
+            <h3 className="font-semibold">Kunnskapstest</h3>
+            <Badge variant="secondary">{content.quiz!.length} spørsmål</Badge>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Test din forståelse av materialet. Du trenger minst 70% riktige svar for å bestå.
+          </p>
+          <QuizSection 
+            questions={content.quiz!} 
+            onComplete={(score) => setQuizScore(score)} 
+          />
+        </div>
+      );
+    }
+
+    // Fallback to static display if interactive learning not available
     return (
       <div className="space-y-6">
         {/* Introduction */}
@@ -669,19 +731,19 @@ function ModuleContentRenderer({ module }: { module: CourseModule }) {
         )}
         
         {/* Quiz Section */}
-        {content.quiz && content.quiz.length > 0 && (
+        {hasQuiz && (
           <div className="space-y-4">
             <Separator />
             <div className="flex items-center gap-2 pt-2">
               <HelpCircle className="h-5 w-5 text-primary" />
               <h3 className="font-semibold">Kunnskapstest</h3>
-              <Badge variant="secondary">{content.quiz.length} spørsmål</Badge>
+              <Badge variant="secondary">{content.quiz!.length} spørsmål</Badge>
             </div>
             <p className="text-sm text-muted-foreground">
               Test din forståelse av materialet. Du trenger minst 70% riktige svar for å bestå.
             </p>
             <QuizSection 
-              questions={content.quiz} 
+              questions={content.quiz!} 
               onComplete={(score) => setQuizScore(score)} 
             />
           </div>
