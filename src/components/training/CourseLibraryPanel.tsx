@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,7 @@ const CATEGORIES = [
 
 export function CourseLibraryPanel({ courses, selectedCategory = "all", onCategoryChange }: CourseLibraryPanelProps) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState(selectedCategory);
   
@@ -155,7 +157,11 @@ export function CourseLibraryPanel({ courses, selectedCategory = "all", onCatego
                       </a>
                     </Button>
                   ) : isEnrolled ? (
-                    <Button className="w-full" variant="secondary">
+                    <Button 
+                      className="w-full" 
+                      variant="secondary"
+                      onClick={() => navigate(`/opplaering/kurs/${course.id}`)}
+                    >
                       <Play className="mr-2 h-4 w-4" />
                       Fortsett kurs
                     </Button>

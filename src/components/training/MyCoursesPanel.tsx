@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import { nb } from "date-fns/locale";
 
 export function MyCoursesPanel() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { data: enrollments = [], isLoading } = useEmployeeEnrollments(user?.id || null);
   const { data: requiredData } = useRequiredCoursesForEmployee(user?.id || null);
 
@@ -17,6 +19,10 @@ export function MyCoursesPanel() {
   const notStarted = enrollments.filter(e => !e.completed_at && (e.progress_percent || 0) === 0);
   const completed = enrollments.filter(e => e.completed_at);
   const missingRequired = requiredData?.missing || [];
+
+  const handleNavigate = (courseId: string) => {
+    navigate(`/opplaering/kurs/${courseId}`);
+  };
 
   if (isLoading) {
     return (
@@ -67,7 +73,7 @@ export function MyCoursesPanel() {
           <h3 className="font-semibold">Pågående kurs</h3>
           <div className="grid gap-4 md:grid-cols-2">
             {inProgress.map(enrollment => (
-              <CourseCard key={enrollment.id} enrollment={enrollment} status="in-progress" />
+              <CourseCard key={enrollment.id} enrollment={enrollment} status="in-progress" onNavigate={handleNavigate} />
             ))}
           </div>
         </div>
@@ -79,7 +85,7 @@ export function MyCoursesPanel() {
           <h3 className="font-semibold">Ikke påbegynt</h3>
           <div className="grid gap-4 md:grid-cols-2">
             {notStarted.map(enrollment => (
-              <CourseCard key={enrollment.id} enrollment={enrollment} status="not-started" />
+              <CourseCard key={enrollment.id} enrollment={enrollment} status="not-started" onNavigate={handleNavigate} />
             ))}
           </div>
         </div>
@@ -91,7 +97,7 @@ export function MyCoursesPanel() {
           <h3 className="font-semibold">Fullførte kurs</h3>
           <div className="grid gap-4 md:grid-cols-2">
             {completed.map(enrollment => (
-              <CourseCard key={enrollment.id} enrollment={enrollment} status="completed" />
+              <CourseCard key={enrollment.id} enrollment={enrollment} status="completed" onNavigate={handleNavigate} />
             ))}
           </div>
         </div>
@@ -118,9 +124,10 @@ export function MyCoursesPanel() {
 interface CourseCardProps {
   enrollment: CourseEnrollment;
   status: "in-progress" | "not-started" | "completed";
+  onNavigate: (courseId: string) => void;
 }
 
-function CourseCard({ enrollment, status }: CourseCardProps) {
+function CourseCard({ enrollment, status, onNavigate }: CourseCardProps) {
   const course = enrollment.courses;
   
   if (!course) return null;
@@ -192,7 +199,7 @@ function CourseCard({ enrollment, status }: CourseCardProps) {
             </a>
           </Button>
         ) : status !== "completed" ? (
-          <Button className="w-full">
+          <Button className="w-full" onClick={() => onNavigate(course.id)}>
             <Play className="mr-2 h-4 w-4" />
             {status === "in-progress" ? "Fortsett" : "Start kurs"}
           </Button>
