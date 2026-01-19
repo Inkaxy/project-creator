@@ -15,7 +15,7 @@ import {
   ClipboardCheck
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { format, startOfMonth, endOfMonth, addMonths, subMonths } from "date-fns";
+import { format, startOfMonth, endOfMonth, addMonths, subMonths, getWeek } from "date-fns";
 import { nb } from "date-fns/locale";
 import { 
   useCalendarEvents, 
@@ -47,8 +47,8 @@ export default function CalendarPage() {
     filters: activeFilters,
   });
 
-  // Generate calendar grid
-  const calendarDays = useMemo(() => {
+  // Generate calendar grid with week numbers
+  const { calendarDays, weekNumbers } = useMemo(() => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const firstDay = new Date(year, month, 1);
@@ -63,7 +63,27 @@ export default function CalendarPage() {
     for (let i = 1; i <= daysInMonth; i++) {
       days.push(i);
     }
-    return days;
+
+    // Calculate week numbers for each row
+    const weeks: number[] = [];
+    const totalRows = Math.ceil(days.length / 7);
+    for (let row = 0; row < totalRows; row++) {
+      // Find first actual day in this row to calculate week number
+      const rowStart = row * 7;
+      let dayInRow: number | null = null;
+      for (let i = rowStart; i < rowStart + 7 && i < days.length; i++) {
+        if (days[i] !== null) {
+          dayInRow = days[i];
+          break;
+        }
+      }
+      if (dayInRow !== null) {
+        const dateInRow = new Date(year, month, dayInRow);
+        weeks.push(getWeek(dateInRow, { weekStartsOn: 1, firstWeekContainsDate: 4 }));
+      }
+    }
+
+    return { calendarDays: days, weekNumbers: weeks };
   }, [currentDate]);
 
   const dayNames = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"];
@@ -164,8 +184,11 @@ export default function CalendarPage() {
           {/* Calendar Grid */}
           <Card>
             <CardContent className="p-0">
-              {/* Day Headers */}
-              <div className="grid grid-cols-7 border-b border-border">
+              {/* Day Headers with Week column */}
+              <div className="grid grid-cols-[40px_repeat(7,1fr)] border-b border-border">
+                <div className="p-3 text-center text-sm font-medium text-muted-foreground">
+                  Uke
+                </div>
                 {dayNames.map((day) => (
                   <div
                     key={day}
@@ -176,69 +199,87 @@ export default function CalendarPage() {
                 ))}
               </div>
 
-              {/* Calendar Days */}
+              {/* Calendar Days with Week Numbers */}
               {isLoading ? (
-                <div className="grid grid-cols-7">
-                  {Array.from({ length: 35 }).map((_, i) => (
-                    <div key={i} className="min-h-[100px] border-b border-r border-border p-2">
-                      <Skeleton className="h-7 w-7 rounded-full mb-2" />
-                      <Skeleton className="h-4 w-full mb-1" />
-                      <Skeleton className="h-4 w-3/4" />
+                <div>
+                  {Array.from({ length: 5 }).map((_, rowIndex) => (
+                    <div key={rowIndex} className="grid grid-cols-[40px_repeat(7,1fr)]">
+                      <div className="min-h-[100px] border-b border-r border-border p-2 flex items-start justify-center">
+                        <Skeleton className="h-5 w-6" />
+                      </div>
+                      {Array.from({ length: 7 }).map((_, i) => (
+                        <div key={i} className="min-h-[100px] border-b border-r border-border p-2">
+                          <Skeleton className="h-7 w-7 rounded-full mb-2" />
+                          <Skeleton className="h-4 w-full mb-1" />
+                          <Skeleton className="h-4 w-3/4" />
+                        </div>
+                      ))}
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-7">
-                  {calendarDays.map((day, index) => {
-                    const dateStr = day ? getDateString(day) : '';
-                    const dayEvents = day ? getEventsForDate(eventsByDate, dateStr) : [];
-                    const isToday = dateStr === todayStr;
-                    const isWeekend = index % 7 >= 5;
-                    const isSelected = dateStr === selectedDate;
-
-                    return (
-                      <div
-                        key={index}
-                        onClick={() => day && setSelectedDate(dateStr)}
-                        className={cn(
-                          "min-h-[100px] border-b border-r border-border p-2 transition-colors cursor-pointer",
-                          "last:border-r-0 [&:nth-child(7n)]:border-r-0",
-                          isWeekend && "bg-muted/30",
-                          !day && "bg-muted/50 cursor-default",
-                          isSelected && "ring-2 ring-primary ring-inset",
-                          day && "hover:bg-accent/50"
-                        )}
-                      >
-                        {day && (
-                          <>
-                            <div
-                              className={cn(
-                                "mb-2 flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium",
-                                isToday
-                                  ? "bg-primary text-primary-foreground"
-                                  : "text-foreground"
-                              )}
-                            >
-                              {day}
-                            </div>
-                            <div className="space-y-1">
-                              {dayEvents.slice(0, 3).map((event) => (
-                                <CalendarEventBadge
-                                  key={event.id}
-                                  event={event}
-                                />
-                              ))}
-                              {dayEvents.length > 3 && (
-                                <div className="text-xs text-muted-foreground pl-1">
-                                  +{dayEvents.length - 3} mer
-                                </div>
-                              )}
-                            </div>
-                          </>
-                        )}
+                <div>
+                  {Array.from({ length: Math.ceil(calendarDays.length / 7) }).map((_, rowIndex) => (
+                    <div key={rowIndex} className="grid grid-cols-[40px_repeat(7,1fr)]">
+                      {/* Week Number Cell */}
+                      <div className="min-h-[100px] border-b border-r border-border p-2 flex items-start justify-center bg-muted/20">
+                        <span className="text-sm font-medium text-muted-foreground">
+                          {weekNumbers[rowIndex]}
+                        </span>
                       </div>
-                    );
-                  })}
+                      {/* Day Cells */}
+                      {calendarDays.slice(rowIndex * 7, (rowIndex + 1) * 7).map((day, index) => {
+                        const dateStr = day ? getDateString(day) : '';
+                        const dayEvents = day ? getEventsForDate(eventsByDate, dateStr) : [];
+                        const isToday = dateStr === todayStr;
+                        const isWeekend = index >= 5;
+                        const isSelected = dateStr === selectedDate;
+
+                        return (
+                          <div
+                            key={index}
+                            onClick={() => day && setSelectedDate(dateStr)}
+                            className={cn(
+                              "min-h-[100px] border-b border-r border-border p-2 transition-colors cursor-pointer",
+                              "[&:last-child]:border-r-0",
+                              isWeekend && "bg-muted/30",
+                              !day && "bg-muted/50 cursor-default",
+                              isSelected && "ring-2 ring-primary ring-inset",
+                              day && "hover:bg-accent/50"
+                            )}
+                          >
+                            {day && (
+                              <>
+                                <div
+                                  className={cn(
+                                    "mb-2 flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium",
+                                    isToday
+                                      ? "bg-primary text-primary-foreground"
+                                      : "text-foreground"
+                                  )}
+                                >
+                                  {day}
+                                </div>
+                                <div className="space-y-1">
+                                  {dayEvents.slice(0, 3).map((event) => (
+                                    <CalendarEventBadge
+                                      key={event.id}
+                                      event={event}
+                                    />
+                                  ))}
+                                  {dayEvents.length > 3 && (
+                                    <div className="text-xs text-muted-foreground pl-1">
+                                      +{dayEvents.length - 3} mer
+                                    </div>
+                                  )}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
                 </div>
               )}
             </CardContent>
