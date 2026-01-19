@@ -76,7 +76,7 @@ export function ShiftDetailModal({
 
   useEffect(() => {
     if (shift) {
-      setEmployeeId(shift.employee_id || "");
+      setEmployeeId(shift.employee_id || "unassigned");
       setStartTime(shift.planned_start?.slice(0, 5) || "07:00");
       setEndTime(shift.planned_end?.slice(0, 5) || "15:00");
       setBreakMinutes(shift.planned_break_minutes || 30);
@@ -89,7 +89,7 @@ export function ShiftDetailModal({
 
     await updateShift.mutateAsync({
       id: shift.id,
-      employee_id: employeeId || null,
+      employee_id: employeeId && employeeId !== "unassigned" ? employeeId : null,
       planned_start: startTime,
       planned_end: endTime,
       planned_break_minutes: breakMinutes,
@@ -140,6 +140,7 @@ export function ShiftDetailModal({
   if (!shift) return null;
 
   const isOpenShift = !shift.employee_id;
+  const isUnassignedSelected = employeeId === "unassigned";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -147,7 +148,7 @@ export function ShiftDetailModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {shift.functions?.name || "Vaktdetaljer"}
-            {isOpenShift && (
+            {(isOpenShift || isUnassignedSelected) && (
               <Badge variant="outline" className="border-primary text-primary">
                 Ledig vakt
               </Badge>
@@ -199,34 +200,36 @@ export function ShiftDetailModal({
                 <SelectValue placeholder="Velg ansatt" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">
+                <SelectItem value="unassigned">
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-muted-foreground" />
                     <span>Ledig vakt</span>
                   </div>
                 </SelectItem>
-                {qualifiedEmployees?.map((ef) => {
-                  const badge = getProficiencyBadge(ef.proficiency_level);
-                  return (
-                    <SelectItem key={ef.id} value={ef.profiles?.id || ""}>
-                      <div className="flex items-center gap-2">
-                        <AvatarWithInitials
-                          name={ef.profiles?.full_name || ""}
-                          size="sm"
-                        />
-                        <span>{ef.profiles?.full_name}</span>
-                        <div className="flex items-center gap-0.5">
-                          {Array.from({ length: badge.stars }).map((_, i) => (
-                            <Star
-                              key={i}
-                              className="h-3 w-3 fill-primary text-primary"
-                            />
-                          ))}
+                {qualifiedEmployees
+                  ?.filter((ef) => !!ef.profiles?.id)
+                  .map((ef) => {
+                    const badge = getProficiencyBadge(ef.proficiency_level);
+                    return (
+                      <SelectItem key={ef.id} value={ef.profiles!.id}>
+                        <div className="flex items-center gap-2">
+                          <AvatarWithInitials
+                            name={ef.profiles?.full_name || ""}
+                            size="sm"
+                          />
+                          <span>{ef.profiles?.full_name}</span>
+                          <div className="flex items-center gap-0.5">
+                            {Array.from({ length: badge.stars }).map((_, i) => (
+                              <Star
+                                key={i}
+                                className="h-3 w-3 fill-primary text-primary"
+                              />
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
+                      </SelectItem>
+                    );
+                  })}
               </SelectContent>
             </Select>
           </div>
