@@ -16,6 +16,9 @@ import WageSupplementsPage from "./pages/WageSupplementsPage";
 import AbsencePage from "./pages/AbsencePage";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
+import IKMatPage from "./pages/IKMatPage";
+import ReportDeviationPage from "./pages/ReportDeviationPage";
+import DeviationsPage from "./pages/DeviationsPage";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +40,9 @@ const App = () => (
             <Route path="/min-side" element={<ProtectedRoute><MyPage /></ProtectedRoute>} />
             <Route path="/lonnssatser" element={<ProtectedRoute><WageSupplementsPage /></ProtectedRoute>} />
             <Route path="/fravaer" element={<ProtectedRoute><AbsencePage /></ProtectedRoute>} />
+            <Route path="/ik-mat" element={<ProtectedRoute><IKMatPage /></ProtectedRoute>} />
+            <Route path="/meld-avvik" element={<ProtectedRoute><ReportDeviationPage /></ProtectedRoute>} />
+            <Route path="/avvik" element={<ProtectedRoute><DeviationsPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
