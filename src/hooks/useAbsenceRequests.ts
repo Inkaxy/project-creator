@@ -238,18 +238,21 @@ export const useApproveAbsenceRequest = () => {
 
 export const useRevokeApprovedAbsence = () => {
   const queryClient = useQueryClient();
-  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
-      if (!user) throw new Error("Ikke innlogget");
-
+      // Revoke sets status back to pending so it appears for approval again
       const updateData: Record<string, unknown> = {
-        status: "rejected",
-        approved_by: user.id,
-        approved_at: new Date().toISOString(),
-        rejection_reason: reason || "Godkjenning tilbakekalt",
+        status: "pending",
+        approved_by: null,
+        approved_at: null,
+        rejection_reason: null,
       };
+
+      // Store the revoke reason in comment field for reference
+      if (reason) {
+        updateData.comment = reason;
+      }
 
       const { data, error } = await supabase
         .from("absence_requests")
@@ -263,7 +266,7 @@ export const useRevokeApprovedAbsence = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["absence-requests"] });
-      toast.success("Godkjent ferie tilbakekalt");
+      toast.success("Fraværssøknad satt tilbake til ventende godkjenning");
     },
     onError: (error) => {
       toast.error("Kunne ikke tilbakekalle: " + error.message);
