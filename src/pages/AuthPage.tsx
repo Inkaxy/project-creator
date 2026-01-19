@@ -16,7 +16,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
 // Demo credentials - for testing purposes
 const DEMO_EMAIL = 'henrik@lovable.dev';
-const DEMO_PASSWORD = 'demo123';
+const DEMO_PASSWORD = 'demo1234';
 
 const loginSchema = z.object({
   email: z.string().email('Ugyldig e-postadresse'),
