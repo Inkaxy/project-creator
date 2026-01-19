@@ -36,6 +36,17 @@ export interface CreateAbsenceRequestInput {
   total_days: number;
   overlapping_shift_action?: "keep" | "delete" | "open";
   comment?: string;
+  employee_id?: string; // For admin creating on behalf of employee
+}
+
+export interface UpdateAbsenceRequestInput {
+  id: string;
+  absence_type_id?: string;
+  start_date?: string;
+  end_date?: string;
+  total_days?: number;
+  overlapping_shift_action?: "keep" | "delete" | "open";
+  comment?: string;
 }
 
 export const useAbsenceRequests = (employeeId?: string) => {
@@ -97,12 +108,79 @@ export const useCreateAbsenceRequest = () => {
     mutationFn: async (input: CreateAbsenceRequestInput) => {
       if (!user) throw new Error("Ikke innlogget");
 
+      const { employee_id, ...rest } = input;
+      
       const { data, error } = await supabase
         .from("absence_requests")
         .insert({
-          employee_id: user.id,
-          ...input,
+          employee_id: employee_id || user.id, // Allow admin to set employee_id
+          ...rest,
         })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["absence-requests"] });
+      toast.success(variables.employee_id ? "Fraværssøknad opprettet for ansatt" : "Fraværssøknad sendt");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke sende søknad: " + error.message);
+    },
+  });
+};
+
+export const useUpdateAbsenceRequest = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: UpdateAbsenceRequestInput) => {
+      const { id, ...updateData } = input;
+      
+      const { data, error } = await supabase
+        .from("absence_requests")
+        .update(updateData)
+        .eq("id", id)
+        .select(`
+          *,
+          absence_types (id, name, color, from_account),
+          profiles!absence_requests_employee_id_fkey (id, full_name)
+        `)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["absence-requests"] });
+      toast.success("Fraværssøknad oppdatert");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke oppdatere søknad: " + error.message);
+    },
+  });
+};
+
+export const useRevertAbsenceToStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: "pending" | "approved" | "rejected" }) => {
+      const updateData: Record<string, unknown> = { status };
+      
+      // Clear approval data if reverting to pending
+      if (status === "pending") {
+        updateData.approved_by = null;
+        updateData.approved_at = null;
+        updateData.rejection_reason = null;
+      }
+      
+      const { data, error } = await supabase
+        .from("absence_requests")
+        .update(updateData)
+        .eq("id", id)
         .select()
         .single();
 
@@ -111,10 +189,10 @@ export const useCreateAbsenceRequest = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["absence-requests"] });
-      toast.success("Fraværssøknad sendt");
+      toast.success("Status endret");
     },
     onError: (error) => {
-      toast.error("Kunne ikke sende søknad: " + error.message);
+      toast.error("Kunne ikke endre status: " + error.message);
     },
   });
 };
