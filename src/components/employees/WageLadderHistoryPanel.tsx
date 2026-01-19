@@ -16,10 +16,10 @@ import { useWageLadderHistory } from "@/hooks/useWageLadderHistory";
 import { useWageLadders } from "@/hooks/useWageLadders";
 
 export function WageLadderHistoryPanel() {
-  const [selectedLadderId, setSelectedLadderId] = useState<string>("");
+  const [selectedLadderId, setSelectedLadderId] = useState<string>("all");
   const { data: wageLadders, isLoading: laddersLoading } = useWageLadders();
   const { data: history, isLoading: historyLoading } = useWageLadderHistory(
-    selectedLadderId || undefined
+    selectedLadderId === "all" ? undefined : selectedLadderId
   );
 
   const formatCurrency = (amount: number) => {
@@ -41,7 +41,7 @@ export function WageLadderHistoryPanel() {
               <SelectValue placeholder="Alle lønnsstiger" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Alle lønnsstiger</SelectItem>
+              <SelectItem value="all">Alle lønnsstiger</SelectItem>
               {wageLadders?.map((ladder) => (
                 <SelectItem key={ladder.id} value={ladder.id}>
                   {ladder.name}
