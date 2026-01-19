@@ -11,6 +11,8 @@ import { toast } from "sonner";
 
 interface CourseLibraryPanelProps {
   courses: Course[];
+  selectedCategory?: string;
+  onCategoryChange?: (category: string) => void;
 }
 
 const CATEGORIES = [
@@ -23,22 +25,34 @@ const CATEGORIES = [
   { value: "generell", label: "Generell" },
 ];
 
-export function CourseLibraryPanel({ courses }: CourseLibraryPanelProps) {
+export function CourseLibraryPanel({ courses, selectedCategory = "all", onCategoryChange }: CourseLibraryPanelProps) {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState(selectedCategory);
   
   const { data: myEnrollments = [] } = useEmployeeEnrollments(user?.id || null);
   const enrollMutation = useEnrollInCourse();
 
   const enrolledCourseIds = new Set(myEnrollments.map(e => e.course_id));
 
+  // Use selectedCategory from parent if provided, otherwise use internal filter
+  const effectiveCategory = selectedCategory !== "all" ? selectedCategory : categoryFilter;
+
   const filteredCourses = courses.filter(course => {
     const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       course.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === "all" || course.category === categoryFilter;
+    // When selectedCategory is passed from parent, skip category filter (already filtered)
+    if (selectedCategory !== "all") return matchesSearch;
+    const matchesCategory = categoryFilter === "all" || 
+      course.category === categoryFilter || 
+      (categoryFilter === "obligatorisk" && course.is_required);
     return matchesSearch && matchesCategory;
   });
+  
+  const handleCategoryChange = (value: string) => {
+    setCategoryFilter(value);
+    onCategoryChange?.(value);
+  };
 
   const handleEnroll = (courseId: string) => {
     if (!user?.id) {
@@ -69,18 +83,21 @@ export function CourseLibraryPanel({ courses }: CourseLibraryPanelProps) {
             className="pl-9"
           />
         </div>
-        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-full sm:w-[200px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {CATEGORIES.map(cat => (
-              <SelectItem key={cat.value} value={cat.value}>
-                {cat.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {/* Only show category filter if not controlled by parent */}
+        {selectedCategory === "all" && (
+          <Select value={categoryFilter} onValueChange={handleCategoryChange}>
+            <SelectTrigger className="w-full sm:w-[200px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {CATEGORIES.map(cat => (
+                <SelectItem key={cat.value} value={cat.value}>
+                  {cat.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
       {/* Course grid */}
