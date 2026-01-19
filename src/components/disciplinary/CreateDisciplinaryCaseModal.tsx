@@ -61,20 +61,26 @@ export function CreateDisciplinaryCaseModal({
       return;
     }
 
+    // Generate case number
+    const now = new Date();
+    const caseNumber = `DISC-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+
     await createCase.mutateAsync({
+      case_number: caseNumber,
       employee_id: formData.employee_id,
       category_id: formData.category_id,
       severity: formData.severity as DisciplinarySeverity,
       incident_date: format(incidentDate, 'yyyy-MM-dd'),
-      incident_time: formData.incident_time,
+      incident_time: formData.incident_time || null,
       incident_description: formData.incident_description,
-      incident_location: formData.incident_location,
+      incident_location: formData.incident_location || null,
       warning_type: formData.warning_type as WarningType,
-      consequences_description: formData.consequences_description,
-      improvement_expectations: formData.improvement_expectations,
-      expiry_date: expiryDate ? format(expiryDate, 'yyyy-MM-dd') : undefined,
+      consequences_description: formData.consequences_description || null,
+      improvement_expectations: formData.improvement_expectations || null,
+      expiry_date: expiryDate ? format(expiryDate, 'yyyy-MM-dd') : null,
       blocks_clock_in: formData.blocks_clock_in,
       blocks_timesheet: formData.blocks_timesheet,
+      block_until_acknowledged: formData.block_until_acknowledged,
     });
 
     // Reset form
