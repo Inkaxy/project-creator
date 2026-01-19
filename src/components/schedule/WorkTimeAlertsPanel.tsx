@@ -111,9 +111,9 @@ export function WorkTimeAlertsPanel({ violations, onDismiss, compact = false }: 
           </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent className="pt-0">
-              <ScrollArea className="max-h-[140px]">
+              <ScrollArea className={violations.length > 2 ? "h-[140px]" : ""}>
                 <div className="space-y-2 pr-3">
-                  {violations.slice(0, Math.max(violations.length, 2)).map((violation) => (
+                  {violations.map((violation) => (
                     <ViolationItem key={violation.id} violation={violation} />
                   ))}
                 </div>
