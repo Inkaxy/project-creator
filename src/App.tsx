@@ -22,6 +22,8 @@ import DeviationsPage from "./pages/DeviationsPage";
 import HMSPage from "./pages/HMSPage";
 import FireSafetyPage from "./pages/FireSafetyPage";
 import TrainingPage from "./pages/TrainingPage";
+import CrewsharePage from "./pages/CrewsharePage";
+import HandbookPage from "./pages/HandbookPage";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +51,8 @@ const App = () => (
             <Route path="/hms" element={<ProtectedRoute><HMSPage /></ProtectedRoute>} />
             <Route path="/brann" element={<ProtectedRoute><FireSafetyPage /></ProtectedRoute>} />
             <Route path="/opplaering" element={<ProtectedRoute><TrainingPage /></ProtectedRoute>} />
+            <Route path="/crewshare" element={<ProtectedRoute><CrewsharePage /></ProtectedRoute>} />
+            <Route path="/personalhandbok" element={<ProtectedRoute><HandbookPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
