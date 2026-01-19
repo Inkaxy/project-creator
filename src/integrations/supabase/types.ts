@@ -228,6 +228,53 @@ export type Database = {
           },
         ]
       }
+      certificates: {
+        Row: {
+          certificate_type: string
+          created_at: string | null
+          document_url: string | null
+          employee_id: string
+          expiry_date: string | null
+          id: string
+          issued_date: string | null
+          issuer: string | null
+          updated_at: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          certificate_type: string
+          created_at?: string | null
+          document_url?: string | null
+          employee_id: string
+          expiry_date?: string | null
+          id?: string
+          issued_date?: string | null
+          issuer?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          certificate_type?: string
+          created_at?: string | null
+          document_url?: string | null
+          employee_id?: string
+          expiry_date?: string | null
+          id?: string
+          issued_date?: string | null
+          issuer?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificates_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       checklist_completions: {
         Row: {
           completed_at: string
@@ -396,6 +443,7 @@ export type Database = {
           frequency: string | null
           function_id: string | null
           id: string
+          inspection_categories: string[] | null
           is_active: boolean | null
           is_required_for_clock_out: boolean | null
           name: string
@@ -410,6 +458,7 @@ export type Database = {
           frequency?: string | null
           function_id?: string | null
           id?: string
+          inspection_categories?: string[] | null
           is_active?: boolean | null
           is_required_for_clock_out?: boolean | null
           name: string
@@ -424,6 +473,7 @@ export type Database = {
           frequency?: string | null
           function_id?: string | null
           id?: string
+          inspection_categories?: string[] | null
           is_active?: boolean | null
           is_required_for_clock_out?: boolean | null
           name?: string
@@ -695,6 +745,7 @@ export type Database = {
           due_date: string | null
           id: string
           image_url: string | null
+          inspection_category: string | null
           is_anonymous: boolean | null
           location: string | null
           preventive_action: string | null
@@ -716,6 +767,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           image_url?: string | null
+          inspection_category?: string | null
           is_anonymous?: boolean | null
           location?: string | null
           preventive_action?: string | null
@@ -737,6 +789,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           image_url?: string | null
+          inspection_category?: string | null
           is_anonymous?: boolean | null
           location?: string | null
           preventive_action?: string | null
@@ -1270,6 +1323,98 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      inspection_reports: {
+        Row: {
+          created_at: string | null
+          generated_at: string | null
+          generated_by: string | null
+          id: string
+          inspection_type: string
+          metadata: Json | null
+          notes: string | null
+          pdf_url: string | null
+          period_from: string
+          period_to: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          generated_at?: string | null
+          generated_by?: string | null
+          id?: string
+          inspection_type: string
+          metadata?: Json | null
+          notes?: string | null
+          pdf_url?: string | null
+          period_from: string
+          period_to: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          generated_at?: string | null
+          generated_by?: string | null
+          id?: string
+          inspection_type?: string
+          metadata?: Json | null
+          notes?: string | null
+          pdf_url?: string | null
+          period_from?: string
+          period_to?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inspection_reports_generated_by_fkey"
+            columns: ["generated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inspection_visits: {
+        Row: {
+          created_at: string | null
+          deadline: string | null
+          findings: Json | null
+          id: string
+          inspection_type: string
+          inspector_name: string | null
+          remarks: string | null
+          report_url: string | null
+          result: string | null
+          updated_at: string | null
+          visit_date: string
+        }
+        Insert: {
+          created_at?: string | null
+          deadline?: string | null
+          findings?: Json | null
+          id?: string
+          inspection_type: string
+          inspector_name?: string | null
+          remarks?: string | null
+          report_url?: string | null
+          result?: string | null
+          updated_at?: string | null
+          visit_date: string
+        }
+        Update: {
+          created_at?: string | null
+          deadline?: string | null
+          findings?: Json | null
+          id?: string
+          inspection_type?: string
+          inspector_name?: string | null
+          remarks?: string | null
+          report_url?: string | null
+          result?: string | null
+          updated_at?: string | null
+          visit_date?: string
+        }
+        Relationships: []
       }
       inspections: {
         Row: {
