@@ -1,1 +1,4 @@
 project_id = "picmyjumulegvtebrdui"
+
+[functions.seed-demo-employees]
+verify_jwt = false
