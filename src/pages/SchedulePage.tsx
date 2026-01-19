@@ -21,6 +21,7 @@ import { ShiftTemplatesDropdown } from "@/components/schedule/ShiftTemplatesDrop
 import { SaveTemplateModal } from "@/components/schedule/SaveTemplateModal";
 import { RolloutTemplateModal } from "@/components/schedule/RolloutTemplateModal";
 import { ManageTemplatesModal } from "@/components/schedule/ManageTemplatesModal";
+import { CopyWeekModal } from "@/components/schedule/CopyWeekModal";
 import { WorkTimeAlertsPanel } from "@/components/schedule/WorkTimeAlertsPanel";
 import { OpenShiftsPanel } from "@/components/schedule/OpenShiftsPanel";
 import { ShiftSwapsPanel } from "@/components/schedule/ShiftSwapsPanel";
@@ -43,6 +44,7 @@ import {
   AlertCircle,
   Palmtree,
   Building2,
+  Copy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -62,6 +64,7 @@ export default function SchedulePage() {
   const [saveTemplateModalOpen, setSaveTemplateModalOpen] = useState(false);
   const [rolloutModalOpen, setRolloutModalOpen] = useState(false);
   const [manageTemplatesModalOpen, setManageTemplatesModalOpen] = useState(false);
+  const [copyWeekModalOpen, setCopyWeekModalOpen] = useState(false);
   const [selectedTemplateForRollout, setSelectedTemplateForRollout] = useState<ShiftTemplate | undefined>();
   const [showAlerts, setShowAlerts] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -279,6 +282,10 @@ export default function SchedulePage() {
                   }}
                   onManage={() => setManageTemplatesModalOpen(true)}
                 />
+                <Button variant="outline" onClick={() => setCopyWeekModalOpen(true)}>
+                  <Copy className="mr-2 h-4 w-4" />
+                  Kopier uke
+                </Button>
               <Button variant="outline" onClick={() => setDepartmentsModalOpen(true)}>
                   <Building2 className="mr-2 h-4 w-4" />
                   Avdelinger
@@ -558,6 +565,11 @@ export default function SchedulePage() {
       <DepartmentsManagementModal
         open={departmentsModalOpen}
         onOpenChange={setDepartmentsModalOpen}
+      />
+      <CopyWeekModal
+        open={copyWeekModalOpen}
+        onOpenChange={setCopyWeekModalOpen}
+        sourceWeekDate={currentDate}
       />
       <ShiftDropModal
         open={dropModalOpen}
