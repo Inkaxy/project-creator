@@ -8,10 +8,12 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ClockInOutCard } from "@/components/timesheet/ClockInOutCard";
 import { ClockHistoryCard } from "@/components/timesheet/ClockHistoryCard";
 import { ChecklistsPanel } from "@/components/checklist/ChecklistsPanel";
+import { MyDeviationsPanel } from "@/components/deviation/MyDeviationsPanel";
 import { useAuth } from "@/contexts/AuthContext";
 import { useShifts } from "@/hooks/useShifts";
 import { useEmployeeAccounts } from "@/hooks/useEmployeeAccounts";
 import { useActiveTimeEntry } from "@/hooks/useTimeEntries";
+import { useMyAssignedDeviations } from "@/hooks/useDeviations";
 import { format, addDays, startOfWeek, endOfWeek } from "date-fns";
 import { nb } from "date-fns/locale";
 import { Link } from "react-router-dom";
@@ -26,6 +28,7 @@ import {
   Moon,
   Target,
   Award,
+  AlertTriangle,
 } from "lucide-react";
 
 export default function MyPage() {
@@ -173,6 +176,9 @@ export default function MyPage() {
         {activeShiftId && (
           <ChecklistsPanel shiftId={activeShiftId} />
         )}
+
+        {/* My Assigned Deviations */}
+        <MyDeviationsPanel />
 
         {/* Main Content Grid */}
         <div className="grid gap-6 lg:grid-cols-3">
