@@ -24,8 +24,10 @@ import {
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
+import { KontrollknappenModal } from "@/components/kontrollknappen/KontrollknappenModal";
 
 export default function IKMatPage() {
+  const [showKontrollknappen, setShowKontrollknappen] = useState(false);
   const { data: units = [] } = useTemperatureUnits();
   const { data: todayLogs = [] } = useTodayTemperatureLogs();
   const { data: deviationCount = 0 } = useTemperatureDeviationsToday();
@@ -45,13 +47,16 @@ export default function IKMatPage() {
               {format(new Date(), "EEEE d. MMMM yyyy", { locale: nb })}
             </p>
           </div>
-          <Button asChild>
-            <Link to="/ik-mat/rapport">
-              <FileText className="mr-2 h-4 w-4" />
-              Kontrollknappen
-            </Link>
+          <Button onClick={() => setShowKontrollknappen(true)}>
+            <ClipboardCheck className="mr-2 h-4 w-4" />
+            Kontrollknappen™
           </Button>
         </div>
+        
+        <KontrollknappenModal 
+          isOpen={showKontrollknappen} 
+          onClose={() => setShowKontrollknappen(false)} 
+        />
 
         {/* Status Cards */}
         <div className="grid gap-4 md:grid-cols-4">
