@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { Copy, ChevronDown, Save, Play, Settings, Star } from "lucide-react";
+import { Copy, ChevronDown, Save, Play, Settings, Star, Globe, Building2 } from "lucide-react";
 import { ShiftTemplate } from "@/hooks/useShiftTemplates";
 
 interface ShiftTemplatesDropdownProps {
@@ -29,8 +29,6 @@ export function ShiftTemplatesDropdown({
 }: ShiftTemplatesDropdownProps) {
   const [open, setOpen] = useState(false);
 
-  const defaultTemplate = templates.find((t) => t.is_default);
-
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
@@ -40,7 +38,7 @@ export function ShiftTemplatesDropdown({
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-72 bg-popover">
+      <DropdownMenuContent align="end" className="w-80 bg-popover">
         <DropdownMenuLabel className="flex items-center gap-2">
           Vaktmaler
           {templates.length > 0 && (
@@ -74,16 +72,22 @@ export function ShiftTemplatesDropdown({
                   {template.is_default && (
                     <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
                   )}
-                  <span>{template.name}</span>
+                  <span className="truncate max-w-[120px]">{template.name}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  {template.category && (
-                    <Badge variant="outline" className="text-xs">
-                      {template.category}
+                <div className="flex items-center gap-1.5">
+                  {template.department ? (
+                    <Badge variant="outline" className="text-xs px-1.5">
+                      <Building2 className="h-3 w-3 mr-1" />
+                      {template.department.name}
+                    </Badge>
+                  ) : (
+                    <Badge variant="secondary" className="text-xs px-1.5">
+                      <Globe className="h-3 w-3 mr-1" />
+                      Global
                     </Badge>
                   )}
                   <Badge variant="secondary" className="text-xs">
-                    {template.shift_count} vakter
+                    {template.shift_count}
                   </Badge>
                 </div>
               </DropdownMenuItem>
