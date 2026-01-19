@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Sparkles } from 'lucide-react';
 import crewplanLogo from '@/assets/crewplan-logo-v2.png';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,12 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+
+// Demo credentials - for testing purposes
+const DEMO_EMAIL = 'henrik@lovable.dev';
+const DEMO_PASSWORD = 'demo123';
 
 const loginSchema = z.object({
   email: z.string().email('Ugyldig e-postadresse'),
@@ -299,6 +305,39 @@ export default function AuthPage() {
                 : 'Har du allerede en konto? Logg inn'}
             </button>
           </div>
+
+          {isLogin && (
+            <>
+              <Separator className="my-6" />
+              <div className="space-y-4">
+                <Alert className="bg-primary/5 border-primary/20">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <AlertDescription className="text-sm">
+                    <strong>Demo-modus:</strong> Prøv systemet uten å opprette konto
+                  </AlertDescription>
+                </Alert>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full border-primary/30 hover:bg-primary/10"
+                  onClick={() => {
+                    loginForm.setValue('email', DEMO_EMAIL);
+                    loginForm.setValue('password', DEMO_PASSWORD);
+                    toast({
+                      title: 'Demo-credentials fylt inn',
+                      description: 'Klikk "Logg inn" for å fortsette.',
+                    });
+                  }}
+                >
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Fyll inn demo-innlogging
+                </Button>
+                <p className="text-xs text-center text-muted-foreground">
+                  E-post: {DEMO_EMAIL} / Passord: {DEMO_PASSWORD}
+                </p>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
