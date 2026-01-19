@@ -856,6 +856,607 @@ export type Database = {
           },
         ]
       }
+      disciplinary_attachments: {
+        Row: {
+          case_id: string
+          description: string | null
+          file_name: string
+          file_size: number | null
+          file_type: string | null
+          id: string
+          storage_path: string
+          uploaded_at: string | null
+          uploaded_by: string
+        }
+        Insert: {
+          case_id: string
+          description?: string | null
+          file_name: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          storage_path: string
+          uploaded_at?: string | null
+          uploaded_by: string
+        }
+        Update: {
+          case_id?: string
+          description?: string | null
+          file_name?: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          storage_path?: string
+          uploaded_at?: string | null
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disciplinary_attachments_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "disciplinary_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_attachments_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      disciplinary_audit_log: {
+        Row: {
+          action: string
+          case_id: string
+          description: string | null
+          id: string
+          ip_address: string | null
+          new_values: Json | null
+          old_values: Json | null
+          performed_at: string | null
+          performed_by: string
+        }
+        Insert: {
+          action: string
+          case_id: string
+          description?: string | null
+          id?: string
+          ip_address?: string | null
+          new_values?: Json | null
+          old_values?: Json | null
+          performed_at?: string | null
+          performed_by: string
+        }
+        Update: {
+          action?: string
+          case_id?: string
+          description?: string | null
+          id?: string
+          ip_address?: string | null
+          new_values?: Json | null
+          old_values?: Json | null
+          performed_at?: string | null
+          performed_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disciplinary_audit_log_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "disciplinary_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_audit_log_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      disciplinary_cases: {
+        Row: {
+          acknowledged_at: string | null
+          block_until_acknowledged: boolean | null
+          blocks_clock_in: boolean | null
+          blocks_timesheet: boolean | null
+          case_number: string
+          category_id: string
+          consequences_description: string | null
+          created_at: string | null
+          created_by: string
+          employee_id: string
+          expired_at: string | null
+          expiry_date: string | null
+          id: string
+          improvement_expectations: string | null
+          incident_date: string
+          incident_description: string
+          incident_location: string | null
+          incident_time: string | null
+          retention_reason: string | null
+          reviewed_by: string | null
+          sent_at: string | null
+          severity: Database["public"]["Enums"]["disciplinary_severity"]
+          status: string | null
+          updated_at: string | null
+          warning_type: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          block_until_acknowledged?: boolean | null
+          blocks_clock_in?: boolean | null
+          blocks_timesheet?: boolean | null
+          case_number: string
+          category_id: string
+          consequences_description?: string | null
+          created_at?: string | null
+          created_by: string
+          employee_id: string
+          expired_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          improvement_expectations?: string | null
+          incident_date: string
+          incident_description: string
+          incident_location?: string | null
+          incident_time?: string | null
+          retention_reason?: string | null
+          reviewed_by?: string | null
+          sent_at?: string | null
+          severity?: Database["public"]["Enums"]["disciplinary_severity"]
+          status?: string | null
+          updated_at?: string | null
+          warning_type: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          block_until_acknowledged?: boolean | null
+          blocks_clock_in?: boolean | null
+          blocks_timesheet?: boolean | null
+          case_number?: string
+          category_id?: string
+          consequences_description?: string | null
+          created_at?: string | null
+          created_by?: string
+          employee_id?: string
+          expired_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          improvement_expectations?: string | null
+          incident_date?: string
+          incident_description?: string
+          incident_location?: string | null
+          incident_time?: string | null
+          retention_reason?: string | null
+          reviewed_by?: string | null
+          sent_at?: string | null
+          severity?: Database["public"]["Enums"]["disciplinary_severity"]
+          status?: string | null
+          updated_at?: string | null
+          warning_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disciplinary_cases_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "disciplinary_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_cases_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_cases_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_cases_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      disciplinary_categories: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
+      disciplinary_incidents: {
+        Row: {
+          case_id: string | null
+          category_id: string
+          created_at: string | null
+          details: Json | null
+          employee_id: string
+          id: string
+          incident_date: string
+          incident_time: string | null
+          processed: boolean | null
+          source_id: string | null
+          source_type: string
+        }
+        Insert: {
+          case_id?: string | null
+          category_id: string
+          created_at?: string | null
+          details?: Json | null
+          employee_id: string
+          id?: string
+          incident_date: string
+          incident_time?: string | null
+          processed?: boolean | null
+          source_id?: string | null
+          source_type: string
+        }
+        Update: {
+          case_id?: string | null
+          category_id?: string
+          created_at?: string | null
+          details?: Json | null
+          employee_id?: string
+          id?: string
+          incident_date?: string
+          incident_time?: string | null
+          processed?: boolean | null
+          source_id?: string | null
+          source_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disciplinary_incidents_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "disciplinary_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_incidents_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "disciplinary_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_incidents_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      disciplinary_meetings: {
+        Row: {
+          agenda: string | null
+          case_id: string
+          completed_at: string | null
+          created_at: string | null
+          created_by: string
+          employee_companion_name: string | null
+          employee_id: string
+          follow_up_actions: string | null
+          hr_representative_id: string | null
+          id: string
+          location: string | null
+          manager_id: string
+          meeting_type: string
+          minutes: string | null
+          outcome: string | null
+          scheduled_at: string
+          status: string | null
+          union_representative_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          agenda?: string | null
+          case_id: string
+          completed_at?: string | null
+          created_at?: string | null
+          created_by: string
+          employee_companion_name?: string | null
+          employee_id: string
+          follow_up_actions?: string | null
+          hr_representative_id?: string | null
+          id?: string
+          location?: string | null
+          manager_id: string
+          meeting_type: string
+          minutes?: string | null
+          outcome?: string | null
+          scheduled_at: string
+          status?: string | null
+          union_representative_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          agenda?: string | null
+          case_id?: string
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string
+          employee_companion_name?: string | null
+          employee_id?: string
+          follow_up_actions?: string | null
+          hr_representative_id?: string | null
+          id?: string
+          location?: string | null
+          manager_id?: string
+          meeting_type?: string
+          minutes?: string | null
+          outcome?: string | null
+          scheduled_at?: string
+          status?: string | null
+          union_representative_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disciplinary_meetings_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "disciplinary_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_meetings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_meetings_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_meetings_hr_representative_id_fkey"
+            columns: ["hr_representative_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_meetings_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_meetings_union_representative_id_fkey"
+            columns: ["union_representative_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      disciplinary_responses: {
+        Row: {
+          case_id: string
+          comment: string | null
+          employee_id: string
+          id: string
+          ip_address: string | null
+          responded_at: string | null
+          response_type: string
+          signature_data: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          case_id: string
+          comment?: string | null
+          employee_id: string
+          id?: string
+          ip_address?: string | null
+          responded_at?: string | null
+          response_type: string
+          signature_data?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          case_id?: string
+          comment?: string | null
+          employee_id?: string
+          id?: string
+          ip_address?: string | null
+          responded_at?: string | null
+          response_type?: string
+          signature_data?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disciplinary_responses_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "disciplinary_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_responses_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      disciplinary_rules: {
+        Row: {
+          category_id: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          required_previous_days: number | null
+          required_previous_severity:
+            | Database["public"]["Enums"]["disciplinary_severity"]
+            | null
+          requires_previous_warning: boolean | null
+          sort_order: number | null
+          suggest_block_clock_in: boolean | null
+          suggest_block_timesheet: boolean | null
+          suggested_severity: Database["public"]["Enums"]["disciplinary_severity"]
+          suggested_warning_type: string
+          threshold_count: number
+          threshold_days: number
+          updated_at: string | null
+        }
+        Insert: {
+          category_id: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          required_previous_days?: number | null
+          required_previous_severity?:
+            | Database["public"]["Enums"]["disciplinary_severity"]
+            | null
+          requires_previous_warning?: boolean | null
+          sort_order?: number | null
+          suggest_block_clock_in?: boolean | null
+          suggest_block_timesheet?: boolean | null
+          suggested_severity: Database["public"]["Enums"]["disciplinary_severity"]
+          suggested_warning_type: string
+          threshold_count: number
+          threshold_days: number
+          updated_at?: string | null
+        }
+        Update: {
+          category_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          required_previous_days?: number | null
+          required_previous_severity?:
+            | Database["public"]["Enums"]["disciplinary_severity"]
+            | null
+          requires_previous_warning?: boolean | null
+          sort_order?: number | null
+          suggest_block_clock_in?: boolean | null
+          suggest_block_timesheet?: boolean | null
+          suggested_severity?: Database["public"]["Enums"]["disciplinary_severity"]
+          suggested_warning_type?: string
+          threshold_count?: number
+          threshold_days?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disciplinary_rules_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "disciplinary_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_rules_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      disciplinary_witnesses: {
+        Row: {
+          case_id: string
+          created_at: string | null
+          employee_id: string | null
+          external_contact: string | null
+          external_name: string | null
+          id: string
+          role: string
+          statement: string | null
+        }
+        Insert: {
+          case_id: string
+          created_at?: string | null
+          employee_id?: string | null
+          external_contact?: string | null
+          external_name?: string | null
+          id?: string
+          role: string
+          statement?: string | null
+        }
+        Update: {
+          case_id?: string
+          created_at?: string | null
+          employee_id?: string | null
+          external_contact?: string | null
+          external_name?: string | null
+          id?: string
+          role?: string
+          statement?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disciplinary_witnesses_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "disciplinary_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_witnesses_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_accounts: {
         Row: {
           account_type: string
@@ -3772,6 +4373,7 @@ export type Database = {
     }
     Enums: {
       app_role: "superadmin" | "daglig_leder" | "avdelingsleder" | "ansatt"
+      disciplinary_severity: "low" | "medium" | "high"
       employee_type:
         | "fast"
         | "deltid"
@@ -3920,6 +4522,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["superadmin", "daglig_leder", "avdelingsleder", "ansatt"],
+      disciplinary_severity: ["low", "medium", "high"],
       employee_type: [
         "fast",
         "deltid",
