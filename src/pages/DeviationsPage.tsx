@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useDeviations, useDeviationStats } from "@/hooks/useDeviations";
+import { useDeviations, useDeviationStats, Deviation } from "@/hooks/useDeviations";
+import { AssignDeviationModal } from "@/components/deviation/AssignDeviationModal";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
@@ -15,6 +16,8 @@ import {
   CheckCircle2,
   Lightbulb,
   AlertOctagon,
+  UserPlus,
+  XCircle,
 } from "lucide-react";
 
 const statusColors: Record<string, string> = {
@@ -41,6 +44,14 @@ export default function DeviationsPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const { data: deviations = [], isLoading } = useDeviations(statusFilter);
   const { data: stats } = useDeviationStats();
+
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
+  const [selectedDeviation, setSelectedDeviation] = useState<Deviation | null>(null);
+
+  const handleAssign = (deviation: Deviation) => {
+    setSelectedDeviation(deviation);
+    setAssignModalOpen(true);
+  };
 
   return (
     <MainLayout>
@@ -151,24 +162,55 @@ export default function DeviationsPage() {
                             </div>
                             <div>
                               <p className="font-medium">{deviation.title}</p>
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                                 <span>
                                   {format(new Date(deviation.created_at), "d. MMM yyyy", {
                                     locale: nb,
                                   })}
                                 </span>
+                                {deviation.department?.name && (
+                                  <>
+                                    <span>•</span>
+                                    <span>{deviation.department.name}</span>
+                                  </>
+                                )}
                                 {deviation.location && (
                                   <>
                                     <span>•</span>
                                     <span>{deviation.location}</span>
                                   </>
                                 )}
+                                {deviation.assignee?.full_name && (
+                                  <>
+                                    <span>•</span>
+                                    <span className="text-primary">
+                                      Tildelt: {deviation.assignee.full_name}
+                                    </span>
+                                  </>
+                                )}
                               </div>
                             </div>
                           </div>
-                          <Badge variant={statusColors[deviation.status] as "destructive" | "warning" | "default" | "secondary"}>
-                            {statusLabels[deviation.status]}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            {deviation.require_clock_out_confirmation && (
+                              <Badge variant="outline" className="border-warning text-warning">
+                                Må bekreftes
+                              </Badge>
+                            )}
+                            <Badge variant={statusColors[deviation.status] as "destructive" | "warning" | "default" | "secondary"}>
+                              {statusLabels[deviation.status]}
+                            </Badge>
+                            {deviation.status === "open" && !deviation.assigned_to && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleAssign(deviation)}
+                              >
+                                <UserPlus className="mr-1 h-4 w-4" />
+                                Tildel
+                              </Button>
+                            )}
+                          </div>
                         </div>
                       );
                     })}
@@ -179,6 +221,12 @@ export default function DeviationsPage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      <AssignDeviationModal
+        deviation={selectedDeviation}
+        open={assignModalOpen}
+        onOpenChange={setAssignModalOpen}
+      />
     </MainLayout>
   );
 }

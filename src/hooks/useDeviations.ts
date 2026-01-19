@@ -8,6 +8,7 @@ export interface Deviation {
   title: string;
   description: string | null;
   location: string | null;
+  department_id: string | null;
   severity: string;
   status: string;
   is_anonymous: boolean | null;
@@ -20,11 +21,17 @@ export interface Deviation {
   closed_by: string | null;
   closed_at: string | null;
   due_date: string | null;
+  require_clock_out_confirmation: boolean | null;
+  confirmed_at: string | null;
+  confirmed_by: string | null;
+  confirmation_notes: string | null;
+  confirmation_image_url: string | null;
   created_at: string;
   updated_at: string;
   reporter?: { id: string; full_name: string } | null;
   assignee?: { id: string; full_name: string } | null;
   closer?: { id: string; full_name: string } | null;
+  department?: { id: string; name: string } | null;
 }
 
 export interface DeviationComment {
@@ -51,7 +58,8 @@ export function useDeviations(status?: string) {
           *,
           reporter:profiles!deviations_reported_by_fkey (id, full_name),
           assignee:profiles!deviations_assigned_to_fkey (id, full_name),
-          closer:profiles!deviations_closed_by_fkey (id, full_name)
+          closer:profiles!deviations_closed_by_fkey (id, full_name),
+          department:departments (id, name)
         `)
         .order("created_at", { ascending: false });
 
@@ -79,7 +87,8 @@ export function useDeviation(id: string | null) {
           *,
           reporter:profiles!deviations_reported_by_fkey (id, full_name),
           assignee:profiles!deviations_assigned_to_fkey (id, full_name),
-          closer:profiles!deviations_closed_by_fkey (id, full_name)
+          closer:profiles!deviations_closed_by_fkey (id, full_name),
+          department:departments (id, name)
         `)
         .eq("id", id)
         .maybeSingle();
@@ -124,6 +133,7 @@ export function useCreateDeviation() {
       title: string;
       description?: string;
       location?: string;
+      department_id?: string;
       severity: string;
       is_anonymous?: boolean;
       image_url?: string;
@@ -292,6 +302,138 @@ export function useDeviationStats() {
         bySeverity,
         byCategory,
       };
+    },
+  });
+}
+
+// Get deviations assigned to user that need confirmation
+export function useMyAssignedDeviations(userId: string | undefined) {
+  return useQuery({
+    queryKey: ["my-assigned-deviations", userId],
+    queryFn: async () => {
+      if (!userId) return [];
+
+      const { data, error } = await supabase
+        .from("deviations")
+        .select(`
+          *,
+          department:departments (id, name)
+        `)
+        .eq("assigned_to", userId)
+        .in("status", ["open", "in_progress"])
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data as unknown as Deviation[];
+    },
+    enabled: !!userId,
+  });
+}
+
+// Get deviations requiring clock-out confirmation for a user
+export function useDeviationsRequiringConfirmation(userId: string | undefined) {
+  return useQuery({
+    queryKey: ["deviations-requiring-confirmation", userId],
+    queryFn: async () => {
+      if (!userId) return [];
+
+      const { data, error } = await supabase
+        .from("deviations")
+        .select(`
+          *,
+          department:departments (id, name)
+        `)
+        .eq("assigned_to", userId)
+        .eq("require_clock_out_confirmation", true)
+        .is("confirmed_at", null)
+        .in("status", ["open", "in_progress"])
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data as unknown as Deviation[];
+    },
+    enabled: !!userId,
+  });
+}
+
+// Assign deviation to employee
+export function useAssignDeviation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      assignedTo,
+      requireClockOutConfirmation,
+      dueDate,
+    }: {
+      id: string;
+      assignedTo: string;
+      requireClockOutConfirmation?: boolean;
+      dueDate?: string;
+    }) => {
+      const { error } = await supabase
+        .from("deviations")
+        .update({
+          assigned_to: assignedTo,
+          require_clock_out_confirmation: requireClockOutConfirmation || false,
+          due_date: dueDate,
+          status: "in_progress",
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["deviations"] });
+      queryClient.invalidateQueries({ queryKey: ["deviation", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["my-assigned-deviations"] });
+      toast.success("Avvik tildelt");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke tildele avvik: " + error.message);
+    },
+  });
+}
+
+// Confirm deviation (employee confirms they've handled it)
+export function useConfirmDeviation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      confirmedBy,
+      notes,
+      imageUrl,
+    }: {
+      id: string;
+      confirmedBy: string;
+      notes?: string;
+      imageUrl?: string;
+    }) => {
+      const { error } = await supabase
+        .from("deviations")
+        .update({
+          confirmed_at: new Date().toISOString(),
+          confirmed_by: confirmedBy,
+          confirmation_notes: notes,
+          confirmation_image_url: imageUrl,
+          status: "resolved",
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["deviations"] });
+      queryClient.invalidateQueries({ queryKey: ["deviation", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["my-assigned-deviations"] });
+      queryClient.invalidateQueries({ queryKey: ["deviations-requiring-confirmation"] });
+      toast.success("Avvik bekreftet");
+    },
+    onError: (error) => {
+      toast.error("Kunne ikke bekrefte avvik: " + error.message);
     },
   });
 }

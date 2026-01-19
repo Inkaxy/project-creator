@@ -7,7 +7,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useCreateDeviation } from "@/hooks/useDeviations";
+import { useDepartments } from "@/hooks/useEmployees";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Lightbulb, AlertTriangle, AlertOctagon, Send } from "lucide-react";
@@ -30,10 +38,12 @@ export default function ReportDeviationPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const createDeviation = useCreateDeviation();
+  const { data: departments = [] } = useDepartments();
 
   const [category, setCategory] = useState("concern");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [departmentId, setDepartmentId] = useState("");
   const [location, setLocation] = useState("");
   const [severity, setSeverity] = useState("medium");
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -48,6 +58,7 @@ export default function ReportDeviationPage() {
       title: title.trim(),
       description: description.trim() || undefined,
       location: location.trim() || undefined,
+      department_id: departmentId || undefined,
       severity,
       is_anonymous: isAnonymous,
       reported_by: user?.id || null,
@@ -123,12 +134,28 @@ export default function ReportDeviationPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="location">Plassering / Avdeling</Label>
+                <Label htmlFor="department">Avdeling</Label>
+                <Select value={departmentId} onValueChange={setDepartmentId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Velg avdeling" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.map((dept) => (
+                      <SelectItem key={dept.id} value={dept.id}>
+                        {dept.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="location">Spesifikk plassering</Label>
                 <Input
                   id="location"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Hvor skjedde det?"
+                  placeholder="F.eks. kjøkken, bar, lager..."
                 />
               </div>
 

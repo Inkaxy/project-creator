@@ -739,8 +739,13 @@ export type Database = {
           category: string
           closed_at: string | null
           closed_by: string | null
+          confirmation_image_url: string | null
+          confirmation_notes: string | null
+          confirmed_at: string | null
+          confirmed_by: string | null
           corrective_action: string | null
           created_at: string
+          department_id: string | null
           description: string | null
           due_date: string | null
           id: string
@@ -750,6 +755,7 @@ export type Database = {
           location: string | null
           preventive_action: string | null
           reported_by: string | null
+          require_clock_out_confirmation: boolean | null
           root_cause: string | null
           severity: string
           status: string
@@ -761,8 +767,13 @@ export type Database = {
           category?: string
           closed_at?: string | null
           closed_by?: string | null
+          confirmation_image_url?: string | null
+          confirmation_notes?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
           corrective_action?: string | null
           created_at?: string
+          department_id?: string | null
           description?: string | null
           due_date?: string | null
           id?: string
@@ -772,6 +783,7 @@ export type Database = {
           location?: string | null
           preventive_action?: string | null
           reported_by?: string | null
+          require_clock_out_confirmation?: boolean | null
           root_cause?: string | null
           severity?: string
           status?: string
@@ -783,8 +795,13 @@ export type Database = {
           category?: string
           closed_at?: string | null
           closed_by?: string | null
+          confirmation_image_url?: string | null
+          confirmation_notes?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
           corrective_action?: string | null
           created_at?: string
+          department_id?: string | null
           description?: string | null
           due_date?: string | null
           id?: string
@@ -794,6 +811,7 @@ export type Database = {
           location?: string | null
           preventive_action?: string | null
           reported_by?: string | null
+          require_clock_out_confirmation?: boolean | null
           root_cause?: string | null
           severity?: string
           status?: string
@@ -813,6 +831,20 @@ export type Database = {
             columns: ["closed_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deviations_confirmed_by_fkey"
+            columns: ["confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deviations_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
             referencedColumns: ["id"]
           },
           {
