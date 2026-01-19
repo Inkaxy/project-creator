@@ -24,6 +24,7 @@ import FireSafetyPage from "./pages/FireSafetyPage";
 import TrainingPage from "./pages/TrainingPage";
 import CrewsharePage from "./pages/CrewsharePage";
 import HandbookPage from "./pages/HandbookPage";
+import SettingsPage from "./pages/SettingsPage";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/opplaering" element={<ProtectedRoute><TrainingPage /></ProtectedRoute>} />
             <Route path="/crewshare" element={<ProtectedRoute><CrewsharePage /></ProtectedRoute>} />
             <Route path="/personalhandbok" element={<ProtectedRoute><HandbookPage /></ProtectedRoute>} />
+            <Route path="/innstillinger" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
