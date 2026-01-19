@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound";
 import IKMatPage from "./pages/IKMatPage";
 import ReportDeviationPage from "./pages/ReportDeviationPage";
 import DeviationsPage from "./pages/DeviationsPage";
+import HMSPage from "./pages/HMSPage";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/ik-mat" element={<ProtectedRoute><IKMatPage /></ProtectedRoute>} />
             <Route path="/meld-avvik" element={<ProtectedRoute><ReportDeviationPage /></ProtectedRoute>} />
             <Route path="/avvik" element={<ProtectedRoute><DeviationsPage /></ProtectedRoute>} />
+            <Route path="/hms" element={<ProtectedRoute><HMSPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
