@@ -1,7 +1,16 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatCard } from "@/components/ui/stat-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { 
   GraduationCap, 
   BookOpen, 
@@ -11,7 +20,8 @@ import {
   Utensils, 
   Flame, 
   Users,
-  ChevronRight
+  ChevronRight,
+  Home
 } from "lucide-react";
 import { useCourses, useCourseStats, useExpiringCertificates, useAllEnrollments } from "@/hooks/useCourses";
 import { CourseLibraryPanel } from "@/components/training/CourseLibraryPanel";
@@ -179,6 +189,24 @@ export default function TrainingPage() {
 
       {/* Main content */}
       <div className="flex-1 min-w-0 space-y-6">
+        {/* Breadcrumb navigation */}
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to="/" className="flex items-center gap-1">
+                  <Home className="h-4 w-4" />
+                  <span>Dashboard</span>
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Opplæring</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Opplæring</h1>
