@@ -1127,6 +1127,115 @@ export type Database = {
           },
         ]
       }
+      employee_pool_ratings: {
+        Row: {
+          average_rating: number | null
+          employee_id: string
+          id: string
+          late_count: number | null
+          no_show_count: number | null
+          reliability_score: number | null
+          total_pool_shifts: number | null
+          total_ratings: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          average_rating?: number | null
+          employee_id: string
+          id?: string
+          late_count?: number | null
+          no_show_count?: number | null
+          reliability_score?: number | null
+          total_pool_shifts?: number | null
+          total_ratings?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          average_rating?: number | null
+          employee_id?: string
+          id?: string
+          late_count?: number | null
+          no_show_count?: number | null
+          reliability_score?: number | null
+          total_pool_shifts?: number | null
+          total_ratings?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_pool_ratings_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_pool_settings: {
+        Row: {
+          available_from_time: string | null
+          available_to_time: string | null
+          available_weekdays: boolean[] | null
+          bio: string | null
+          blocked_partner_ids: string[] | null
+          created_at: string | null
+          employee_id: string
+          external_hourly_rate: number | null
+          id: string
+          is_available_for_pooling: boolean | null
+          max_pool_percentage: number | null
+          max_travel_distance_km: number | null
+          min_notice_hours: number | null
+          pooling_consent_given_at: string | null
+          preferred_partner_ids: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          available_from_time?: string | null
+          available_to_time?: string | null
+          available_weekdays?: boolean[] | null
+          bio?: string | null
+          blocked_partner_ids?: string[] | null
+          created_at?: string | null
+          employee_id: string
+          external_hourly_rate?: number | null
+          id?: string
+          is_available_for_pooling?: boolean | null
+          max_pool_percentage?: number | null
+          max_travel_distance_km?: number | null
+          min_notice_hours?: number | null
+          pooling_consent_given_at?: string | null
+          preferred_partner_ids?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          available_from_time?: string | null
+          available_to_time?: string | null
+          available_weekdays?: boolean[] | null
+          bio?: string | null
+          blocked_partner_ids?: string[] | null
+          created_at?: string | null
+          employee_id?: string
+          external_hourly_rate?: number | null
+          id?: string
+          is_available_for_pooling?: boolean | null
+          max_pool_percentage?: number | null
+          max_travel_distance_km?: number | null
+          min_notice_hours?: number | null
+          pooling_consent_given_at?: string | null
+          preferred_partner_ids?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_pool_settings_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       equipment_inspections: {
         Row: {
           equipment_id: string
@@ -1922,6 +2031,458 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partner_organizations: {
+        Row: {
+          address: string | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string | null
+          default_hourly_markup: number | null
+          id: string
+          is_active: boolean | null
+          is_staffing_agency: boolean | null
+          name: string
+          org_number: string | null
+          settings: Json | null
+          staffing_agency_approval_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          default_hourly_markup?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_staffing_agency?: boolean | null
+          name: string
+          org_number?: string | null
+          settings?: Json | null
+          staffing_agency_approval_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          default_hourly_markup?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_staffing_agency?: boolean | null
+          name?: string
+          org_number?: string | null
+          settings?: Json | null
+          staffing_agency_approval_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      pool_compliance_snapshots: {
+        Row: {
+          created_at: string | null
+          employee_id: string
+          id: string
+          partner_tenure: Json | null
+          pool_hours_worked: number | null
+          pool_percentage: number | null
+          snapshot_date: string
+          total_hours_worked: number | null
+          warnings: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          employee_id: string
+          id?: string
+          partner_tenure?: Json | null
+          pool_hours_worked?: number | null
+          pool_percentage?: number | null
+          snapshot_date: string
+          total_hours_worked?: number | null
+          warnings?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          employee_id?: string
+          id?: string
+          partner_tenure?: Json | null
+          pool_hours_worked?: number | null
+          pool_percentage?: number | null
+          snapshot_date?: string
+          total_hours_worked?: number | null
+          warnings?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pool_compliance_snapshots_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pool_memberships: {
+        Row: {
+          created_at: string | null
+          employee_consented_at: string | null
+          employee_id: string
+          employer_approved_at: string | null
+          employer_approved_by: string | null
+          id: string
+          notes: string | null
+          partner_approved_at: string | null
+          partner_organization_id: string
+          status: Database["public"]["Enums"]["pool_membership_status"] | null
+          updated_at: string | null
+          valid_from: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          employee_consented_at?: string | null
+          employee_id: string
+          employer_approved_at?: string | null
+          employer_approved_by?: string | null
+          id?: string
+          notes?: string | null
+          partner_approved_at?: string | null
+          partner_organization_id: string
+          status?: Database["public"]["Enums"]["pool_membership_status"] | null
+          updated_at?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          employee_consented_at?: string | null
+          employee_id?: string
+          employer_approved_at?: string | null
+          employer_approved_by?: string | null
+          id?: string
+          notes?: string | null
+          partner_approved_at?: string | null
+          partner_organization_id?: string
+          status?: Database["public"]["Enums"]["pool_membership_status"] | null
+          updated_at?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pool_memberships_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pool_memberships_employer_approved_by_fkey"
+            columns: ["employer_approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pool_memberships_partner_organization_id_fkey"
+            columns: ["partner_organization_id"]
+            isOneToOne: false
+            referencedRelation: "partner_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pool_shift_requests: {
+        Row: {
+          created_at: string | null
+          employee_accepted_at: string | null
+          employee_id: string
+          employee_note: string | null
+          employer_approved_at: string | null
+          employer_approved_by: string | null
+          employer_response_note: string | null
+          id: string
+          pool_shift_id: string
+          rejected_at: string | null
+          rejected_by: string | null
+          rejection_reason: string | null
+          response_deadline: string | null
+          status:
+            | Database["public"]["Enums"]["pool_shift_request_status"]
+            | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          employee_accepted_at?: string | null
+          employee_id: string
+          employee_note?: string | null
+          employer_approved_at?: string | null
+          employer_approved_by?: string | null
+          employer_response_note?: string | null
+          id?: string
+          pool_shift_id: string
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
+          response_deadline?: string | null
+          status?:
+            | Database["public"]["Enums"]["pool_shift_request_status"]
+            | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          employee_accepted_at?: string | null
+          employee_id?: string
+          employee_note?: string | null
+          employer_approved_at?: string | null
+          employer_approved_by?: string | null
+          employer_response_note?: string | null
+          id?: string
+          pool_shift_id?: string
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
+          response_deadline?: string | null
+          status?:
+            | Database["public"]["Enums"]["pool_shift_request_status"]
+            | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pool_shift_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pool_shift_requests_employer_approved_by_fkey"
+            columns: ["employer_approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pool_shift_requests_pool_shift_id_fkey"
+            columns: ["pool_shift_id"]
+            isOneToOne: false
+            referencedRelation: "pool_shifts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pool_shift_requests_rejected_by_fkey"
+            columns: ["rejected_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pool_shifts: {
+        Row: {
+          application_deadline: string | null
+          assigned_at: string | null
+          assigned_employee_id: string | null
+          break_minutes: number | null
+          check_in_time: string | null
+          check_out_time: string | null
+          contact_person: string | null
+          contact_phone: string | null
+          created_at: string | null
+          created_by: string | null
+          date: string
+          description: string | null
+          dress_code: string | null
+          employee_feedback: string | null
+          employee_rating: number | null
+          employer_feedback: string | null
+          employer_rating: number | null
+          end_time: string
+          function_id: string | null
+          hourly_rate: number
+          hours_worked: number | null
+          id: string
+          location_address: string | null
+          location_notes: string | null
+          max_applicants: number | null
+          partner_organization_id: string
+          required_certifications: string[] | null
+          start_time: string
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          application_deadline?: string | null
+          assigned_at?: string | null
+          assigned_employee_id?: string | null
+          break_minutes?: number | null
+          check_in_time?: string | null
+          check_out_time?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          date: string
+          description?: string | null
+          dress_code?: string | null
+          employee_feedback?: string | null
+          employee_rating?: number | null
+          employer_feedback?: string | null
+          employer_rating?: number | null
+          end_time: string
+          function_id?: string | null
+          hourly_rate: number
+          hours_worked?: number | null
+          id?: string
+          location_address?: string | null
+          location_notes?: string | null
+          max_applicants?: number | null
+          partner_organization_id: string
+          required_certifications?: string[] | null
+          start_time: string
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          application_deadline?: string | null
+          assigned_at?: string | null
+          assigned_employee_id?: string | null
+          break_minutes?: number | null
+          check_in_time?: string | null
+          check_out_time?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          date?: string
+          description?: string | null
+          dress_code?: string | null
+          employee_feedback?: string | null
+          employee_rating?: number | null
+          employer_feedback?: string | null
+          employer_rating?: number | null
+          end_time?: string
+          function_id?: string | null
+          hourly_rate?: number
+          hours_worked?: number | null
+          id?: string
+          location_address?: string | null
+          location_notes?: string | null
+          max_applicants?: number | null
+          partner_organization_id?: string
+          required_certifications?: string[] | null
+          start_time?: string
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pool_shifts_assigned_employee_id_fkey"
+            columns: ["assigned_employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pool_shifts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pool_shifts_function_id_fkey"
+            columns: ["function_id"]
+            isOneToOne: false
+            referencedRelation: "functions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pool_shifts_partner_organization_id_fkey"
+            columns: ["partner_organization_id"]
+            isOneToOne: false
+            referencedRelation: "partner_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pool_work_log: {
+        Row: {
+          created_at: string | null
+          date: string
+          employee_id: string
+          hourly_rate: number
+          hours_worked: number
+          id: string
+          invoice_reference: string | null
+          invoiced: boolean | null
+          invoiced_at: string | null
+          partner_organization_id: string
+          pool_shift_id: string | null
+          total_amount: number
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          employee_id: string
+          hourly_rate: number
+          hours_worked: number
+          id?: string
+          invoice_reference?: string | null
+          invoiced?: boolean | null
+          invoiced_at?: string | null
+          partner_organization_id: string
+          pool_shift_id?: string | null
+          total_amount: number
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          employee_id?: string
+          hourly_rate?: number
+          hours_worked?: number
+          id?: string
+          invoice_reference?: string | null
+          invoiced?: boolean | null
+          invoiced_at?: string | null
+          partner_organization_id?: string
+          pool_shift_id?: string | null
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pool_work_log_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pool_work_log_partner_organization_id_fkey"
+            columns: ["partner_organization_id"]
+            isOneToOne: false
+            referencedRelation: "partner_organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pool_work_log_pool_shift_id_fkey"
+            columns: ["pool_shift_id"]
+            isOneToOne: false
+            referencedRelation: "pool_shifts"
             referencedColumns: ["id"]
           },
         ]
@@ -3049,6 +3610,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_pool_percentage: {
+        Args: { _employee_id: string; _from_date?: string; _to_date?: string }
+        Returns: number
+      }
+      can_employee_be_pooled: {
+        Args: { _employee_id: string }
+        Returns: boolean
+      }
       get_user_department_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
@@ -3068,6 +3637,19 @@ export type Database = {
         | "vikar"
         | "laerling"
         | "sesong"
+      pool_membership_status:
+        | "pending"
+        | "active"
+        | "suspended"
+        | "rejected"
+        | "expired"
+      pool_shift_request_status:
+        | "pending_employer"
+        | "pending_employee"
+        | "approved"
+        | "rejected"
+        | "cancelled"
+        | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3203,6 +3785,21 @@ export const Constants = {
         "vikar",
         "laerling",
         "sesong",
+      ],
+      pool_membership_status: [
+        "pending",
+        "active",
+        "suspended",
+        "rejected",
+        "expired",
+      ],
+      pool_shift_request_status: [
+        "pending_employer",
+        "pending_employee",
+        "approved",
+        "rejected",
+        "cancelled",
+        "completed",
       ],
     },
   },
