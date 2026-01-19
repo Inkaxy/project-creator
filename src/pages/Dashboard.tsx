@@ -5,7 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { PendingWageAdjustmentsWidget } from "@/components/dashboard/PendingWageAdjustmentsWidget";
 import { employees, pendingApprovals, shifts } from "@/data/mockData";
+import { useWageAdjustments } from "@/hooks/useWageAdjustments";
 import {
   Users,
   Clock,
@@ -15,6 +17,7 @@ import {
   TrendingUp,
   ArrowRight,
   CalendarClock,
+  DollarSign,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -22,6 +25,7 @@ export default function Dashboard() {
   const activeEmployees = employees.filter((e) => e.status === "active").length;
   const todayShifts = shifts.filter((s) => s.date === "2026-01-19");
   const openShifts = shifts.filter((s) => s.status === "open").length;
+  const { data: pendingWageAdjustments = [] } = useWageAdjustments("pending");
 
   return (
     <MainLayout>
@@ -35,7 +39,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <StatCard
             title="Ansatte i dag"
             value={todayShifts.filter((s) => s.employeeId).length}
@@ -49,6 +53,13 @@ export default function Dashboard() {
             subtitle="fraværssøknader & bytter"
             icon={CheckCircle}
             variant="warning"
+          />
+          <StatCard
+            title="Etterbetalinger"
+            value={pendingWageAdjustments.length}
+            subtitle="ventende godkjenning"
+            icon={DollarSign}
+            variant={pendingWageAdjustments.length > 0 ? "warning" : "default"}
           />
           <StatCard
             title="Ledige vakter"
@@ -70,7 +81,7 @@ export default function Dashboard() {
         {/* Main Content Grid */}
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Today's Shifts */}
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2 lg:row-span-2">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
@@ -174,6 +185,9 @@ export default function Dashboard() {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Pending Wage Adjustments Widget */}
+          <PendingWageAdjustmentsWidget />
         </div>
 
         {/* Quick Actions */}
