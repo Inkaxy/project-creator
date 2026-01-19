@@ -97,6 +97,27 @@ export interface PoolShift {
   };
 }
 
+export interface CreatePoolShiftInput {
+  partner_organization_id: string;
+  title: string;
+  description?: string | null;
+  date: string;
+  start_time: string;
+  end_time: string;
+  break_minutes?: number;
+  function_id?: string | null;
+  required_certifications?: string[];
+  hourly_rate: number;
+  location_address?: string | null;
+  location_notes?: string | null;
+  dress_code?: string | null;
+  contact_person?: string | null;
+  contact_phone?: string | null;
+  status?: 'draft' | 'open' | 'offered' | 'assigned' | 'completed' | 'cancelled';
+  max_applicants?: number;
+  application_deadline?: string | null;
+}
+
 export interface PoolShiftRequest {
   id: string;
   pool_shift_id: string;
@@ -440,7 +461,7 @@ export function useCreatePoolShift() {
   const { user } = useAuth();
   
   return useMutation({
-    mutationFn: async (shift: Omit<PoolShift, 'id' | 'created_at' | 'updated_at' | 'partner_organization' | 'function' | 'assigned_employee'>) => {
+    mutationFn: async (shift: CreatePoolShiftInput) => {
       const { data, error } = await supabase
         .from("pool_shifts")
         .insert([{

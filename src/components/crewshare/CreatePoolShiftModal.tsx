@@ -40,23 +40,8 @@ export function CreatePoolShiftModal({ open, onOpenChange }: Props) {
       function_id: functionId || null,
       required_certifications: [],
       hourly_rate: hourlyRate,
-      location_address: null,
-      location_notes: null,
-      dress_code: null,
-      contact_person: null,
-      contact_phone: null,
       status: 'open',
       max_applicants: 10,
-      application_deadline: null,
-      assigned_employee_id: null,
-      assigned_at: null,
-      check_in_time: null,
-      check_out_time: null,
-      hours_worked: null,
-      employer_rating: null,
-      employer_feedback: null,
-      employee_rating: null,
-      employee_feedback: null,
     }, {
       onSuccess: () => onOpenChange(false)
     });
