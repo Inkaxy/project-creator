@@ -1,17 +1,22 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { ChecklistsPanel } from "@/components/checklist/ChecklistsPanel";
+import { IKFolderPanel } from "@/components/ik-mat/IKFolderPanel";
+import { IKDocumentList } from "@/components/ik-mat/IKDocumentList";
 import {
   useTemperatureUnits,
   useTodayTemperatureLogs,
   useTemperatureDeviationsToday,
 } from "@/hooks/useTemperature";
 import { useOpenDeviationsCount } from "@/hooks/useDeviations";
+import { useIKDocumentStats, IKDocumentFolder } from "@/hooks/useIKDocuments";
 import {
   ClipboardCheck,
   Thermometer,
@@ -19,19 +24,22 @@ import {
   CheckCircle2,
   Calendar,
   FileText,
-  TrendingUp,
+  FolderOpen,
+  Home,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 import { KontrollknappenModal } from "@/components/kontrollknappen/KontrollknappenModal";
 
 export default function IKMatPage() {
   const [showKontrollknappen, setShowKontrollknappen] = useState(false);
+  const [selectedFolder, setSelectedFolder] = useState<IKDocumentFolder | null>(null);
+  
   const { data: units = [] } = useTemperatureUnits();
   const { data: todayLogs = [] } = useTodayTemperatureLogs();
   const { data: deviationCount = 0 } = useTemperatureDeviationsToday();
   const { data: openDeviations = 0 } = useOpenDeviationsCount();
+  const docStats = useIKDocumentStats();
 
   const unitsLoggedToday = new Set(todayLogs.map((l) => l.unit_id)).size;
   const tempProgress = units.length > 0 ? (unitsLoggedToday / units.length) * 100 : 0;
@@ -39,6 +47,24 @@ export default function IKMatPage() {
   return (
     <MainLayout>
       <div className="space-y-6">
+        {/* Breadcrumb */}
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to="/" className="flex items-center gap-1">
+                  <Home className="h-4 w-4" />
+                  <span>Dashboard</span>
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>IK-Mat / HACCP</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -59,7 +85,7 @@ export default function IKMatPage() {
         />
 
         {/* Status Cards */}
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-5">
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
@@ -111,6 +137,20 @@ export default function IKMatPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <FileText className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Dokumenter</p>
+                  <p className="text-2xl font-bold">{docStats.active}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                   <Calendar className="h-5 w-5 text-primary" />
                 </div>
                 <div>
@@ -122,9 +162,13 @@ export default function IKMatPage() {
           </Card>
         </div>
 
-        {/* Main Content */}
-        <Tabs defaultValue="checklists" className="space-y-4">
+        {/* Main Content with Tabs */}
+        <Tabs defaultValue="folder" className="space-y-4">
           <TabsList>
+            <TabsTrigger value="folder">
+              <FolderOpen className="mr-2 h-4 w-4" />
+              Internkontroll-mappe
+            </TabsTrigger>
             <TabsTrigger value="checklists">
               <ClipboardCheck className="mr-2 h-4 w-4" />
               Sjekklister
@@ -134,6 +178,16 @@ export default function IKMatPage() {
               Temperatur
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="folder">
+            <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+              <IKFolderPanel
+                selectedFolder={selectedFolder}
+                onSelectFolder={setSelectedFolder}
+              />
+              <IKDocumentList selectedFolder={selectedFolder} />
+            </div>
+          </TabsContent>
 
           <TabsContent value="checklists">
             <ChecklistsPanel />

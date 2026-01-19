@@ -2425,6 +2425,314 @@ export type Database = {
           },
         ]
       }
+      ik_document_folders: {
+        Row: {
+          code: string
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_required: boolean | null
+          is_system: boolean | null
+          legal_reference: string | null
+          name: string
+          parent_id: string | null
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_required?: boolean | null
+          is_system?: boolean | null
+          legal_reference?: string | null
+          name: string
+          parent_id?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_required?: boolean | null
+          is_system?: boolean | null
+          legal_reference?: string | null
+          name?: string
+          parent_id?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ik_document_folders_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "ik_document_folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ik_document_reads: {
+        Row: {
+          acknowledged: boolean | null
+          document_id: string
+          employee_id: string
+          id: string
+          read_at: string | null
+          version_number: string
+        }
+        Insert: {
+          acknowledged?: boolean | null
+          document_id: string
+          employee_id: string
+          id?: string
+          read_at?: string | null
+          version_number: string
+        }
+        Update: {
+          acknowledged?: boolean | null
+          document_id?: string
+          employee_id?: string
+          id?: string
+          read_at?: string | null
+          version_number?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ik_document_reads_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "ik_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ik_document_reads_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ik_document_reviews: {
+        Row: {
+          document_id: string
+          id: string
+          next_review_date: string | null
+          notes: string | null
+          outcome: string
+          reviewed_at: string | null
+          reviewed_by: string
+        }
+        Insert: {
+          document_id: string
+          id?: string
+          next_review_date?: string | null
+          notes?: string | null
+          outcome: string
+          reviewed_at?: string | null
+          reviewed_by: string
+        }
+        Update: {
+          document_id?: string
+          id?: string
+          next_review_date?: string | null
+          notes?: string | null
+          outcome?: string
+          reviewed_at?: string | null
+          reviewed_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ik_document_reviews_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "ik_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ik_document_reviews_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ik_document_versions: {
+        Row: {
+          change_description: string | null
+          content: string | null
+          created_at: string | null
+          created_by: string | null
+          document_id: string
+          file_url: string | null
+          id: string
+          version_number: string
+        }
+        Insert: {
+          change_description?: string | null
+          content?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          document_id: string
+          file_url?: string | null
+          id?: string
+          version_number: string
+        }
+        Update: {
+          change_description?: string | null
+          content?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          document_id?: string
+          file_url?: string | null
+          id?: string
+          version_number?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ik_document_versions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ik_document_versions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "ik_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ik_documents: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          change_description: string | null
+          content: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          document_type: string
+          file_mime_type: string | null
+          file_name: string | null
+          file_size: number | null
+          file_url: string | null
+          folder_id: string
+          id: string
+          is_required: boolean | null
+          last_reviewed_at: string | null
+          last_reviewed_by: string | null
+          legal_reference: string | null
+          linked_checklist_id: string | null
+          name: string
+          next_review_date: string | null
+          review_interval_days: number | null
+          status: string | null
+          updated_at: string | null
+          version_number: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          change_description?: string | null
+          content?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          document_type?: string
+          file_mime_type?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          folder_id: string
+          id?: string
+          is_required?: boolean | null
+          last_reviewed_at?: string | null
+          last_reviewed_by?: string | null
+          legal_reference?: string | null
+          linked_checklist_id?: string | null
+          name: string
+          next_review_date?: string | null
+          review_interval_days?: number | null
+          status?: string | null
+          updated_at?: string | null
+          version_number?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          change_description?: string | null
+          content?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          document_type?: string
+          file_mime_type?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          folder_id?: string
+          id?: string
+          is_required?: boolean | null
+          last_reviewed_at?: string | null
+          last_reviewed_by?: string | null
+          legal_reference?: string | null
+          linked_checklist_id?: string | null
+          name?: string
+          next_review_date?: string | null
+          review_interval_days?: number | null
+          status?: string | null
+          updated_at?: string | null
+          version_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ik_documents_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ik_documents_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ik_documents_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "ik_document_folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ik_documents_last_reviewed_by_fkey"
+            columns: ["last_reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ik_documents_linked_checklist_id_fkey"
+            columns: ["linked_checklist_id"]
+            isOneToOne: false
+            referencedRelation: "checklist_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inspection_reports: {
         Row: {
           created_at: string | null
