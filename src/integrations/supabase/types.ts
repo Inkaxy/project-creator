@@ -447,6 +447,168 @@ export type Database = {
           },
         ]
       }
+      course_enrollments: {
+        Row: {
+          certificate_expires_at: string | null
+          certificate_url: string | null
+          completed_at: string | null
+          course_id: string
+          created_at: string
+          current_module_id: string | null
+          employee_id: string
+          id: string
+          progress_percent: number | null
+          score: number | null
+          started_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          certificate_expires_at?: string | null
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id: string
+          created_at?: string
+          current_module_id?: string | null
+          employee_id: string
+          id?: string
+          progress_percent?: number | null
+          score?: number | null
+          started_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          certificate_expires_at?: string | null
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id?: string
+          created_at?: string
+          current_module_id?: string | null
+          employee_id?: string
+          id?: string
+          progress_percent?: number | null
+          score?: number | null
+          started_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_enrollments_current_module_id_fkey"
+            columns: ["current_module_id"]
+            isOneToOne: false
+            referencedRelation: "course_modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_enrollments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      course_modules: {
+        Row: {
+          content: Json | null
+          content_type: string
+          course_id: string
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          sort_order: number | null
+          title: string
+        }
+        Insert: {
+          content?: Json | null
+          content_type?: string
+          course_id: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          sort_order?: number | null
+          title: string
+        }
+        Update: {
+          content?: Json | null
+          content_type?: string
+          course_id?: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          sort_order?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_modules_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          category: string | null
+          certificate_valid_months: number | null
+          created_at: string
+          description: string | null
+          duration_minutes: number | null
+          external_url: string | null
+          id: string
+          is_active: boolean | null
+          is_external: boolean | null
+          is_required: boolean | null
+          required_for_functions: string[] | null
+          required_for_roles: string[] | null
+          sort_order: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          certificate_valid_months?: number | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          external_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_external?: boolean | null
+          is_required?: boolean | null
+          required_for_functions?: string[] | null
+          required_for_roles?: string[] | null
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          certificate_valid_months?: number | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          external_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_external?: boolean | null
+          is_required?: boolean | null
+          required_for_functions?: string[] | null
+          required_for_roles?: string[] | null
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       departments: {
         Row: {
           color: string | null
@@ -478,6 +640,133 @@ export type Database = {
             columns: ["location_id"]
             isOneToOne: false
             referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deviation_comments: {
+        Row: {
+          comment: string
+          created_at: string
+          created_by: string | null
+          deviation_id: string
+          id: string
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          created_by?: string | null
+          deviation_id: string
+          id?: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          created_by?: string | null
+          deviation_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deviation_comments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deviation_comments_deviation_id_fkey"
+            columns: ["deviation_id"]
+            isOneToOne: false
+            referencedRelation: "deviations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deviations: {
+        Row: {
+          assigned_to: string | null
+          category: string
+          closed_at: string | null
+          closed_by: string | null
+          corrective_action: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          image_url: string | null
+          is_anonymous: boolean | null
+          location: string | null
+          preventive_action: string | null
+          reported_by: string | null
+          root_cause: string | null
+          severity: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          category?: string
+          closed_at?: string | null
+          closed_by?: string | null
+          corrective_action?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          image_url?: string | null
+          is_anonymous?: boolean | null
+          location?: string | null
+          preventive_action?: string | null
+          reported_by?: string | null
+          root_cause?: string | null
+          severity?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: string
+          closed_at?: string | null
+          closed_by?: string | null
+          corrective_action?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          image_url?: string | null
+          is_anonymous?: boolean | null
+          location?: string | null
+          preventive_action?: string | null
+          reported_by?: string | null
+          root_cause?: string | null
+          severity?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deviations_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deviations_closed_by_fkey"
+            columns: ["closed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deviations_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -753,6 +1042,170 @@ export type Database = {
           },
         ]
       }
+      equipment_inspections: {
+        Row: {
+          equipment_id: string
+          id: string
+          image_url: string | null
+          inspected_at: string
+          inspected_by: string | null
+          inspection_type: string
+          notes: string | null
+          status: string
+        }
+        Insert: {
+          equipment_id: string
+          id?: string
+          image_url?: string | null
+          inspected_at?: string
+          inspected_by?: string | null
+          inspection_type?: string
+          notes?: string | null
+          status?: string
+        }
+        Update: {
+          equipment_id?: string
+          id?: string
+          image_url?: string | null
+          inspected_at?: string
+          inspected_by?: string | null
+          inspection_type?: string
+          notes?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_inspections_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "fire_equipment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_inspections_inspected_by_fkey"
+            columns: ["inspected_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fire_drills: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          drill_type: string
+          duration_minutes: number | null
+          evacuation_time_seconds: number | null
+          evaluation: string | null
+          id: string
+          improvement_points: string | null
+          meeting_point: string | null
+          notes: string | null
+          participants_count: number | null
+          responsible: string | null
+          scheduled_date: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          drill_type?: string
+          duration_minutes?: number | null
+          evacuation_time_seconds?: number | null
+          evaluation?: string | null
+          id?: string
+          improvement_points?: string | null
+          meeting_point?: string | null
+          notes?: string | null
+          participants_count?: number | null
+          responsible?: string | null
+          scheduled_date: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          drill_type?: string
+          duration_minutes?: number | null
+          evacuation_time_seconds?: number | null
+          evaluation?: string | null
+          id?: string
+          improvement_points?: string | null
+          meeting_point?: string | null
+          notes?: string | null
+          participants_count?: number | null
+          responsible?: string | null
+          scheduled_date?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fire_drills_responsible_fkey"
+            columns: ["responsible"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fire_equipment: {
+        Row: {
+          created_at: string
+          equipment_type: string
+          id: string
+          last_inspected_at: string | null
+          last_service_at: string | null
+          location: string
+          name: string
+          next_inspection_date: string | null
+          next_service_date: string | null
+          notes: string | null
+          qr_code: string | null
+          serial_number: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          equipment_type: string
+          id?: string
+          last_inspected_at?: string | null
+          last_service_at?: string | null
+          location: string
+          name: string
+          next_inspection_date?: string | null
+          next_service_date?: string | null
+          notes?: string | null
+          qr_code?: string | null
+          serial_number?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          equipment_type?: string
+          id?: string
+          last_inspected_at?: string | null
+          last_service_at?: string | null
+          location?: string
+          name?: string
+          next_inspection_date?: string | null
+          next_service_date?: string | null
+          notes?: string | null
+          qr_code?: string | null
+          serial_number?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       functions: {
         Row: {
           category: string | null
@@ -817,6 +1270,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      inspections: {
+        Row: {
+          authority: string
+          completed_date: string | null
+          created_at: string
+          id: string
+          inspection_type: string
+          inspector_name: string | null
+          notes: string | null
+          outcome: string | null
+          report_url: string | null
+          scheduled_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          authority: string
+          completed_date?: string | null
+          created_at?: string
+          id?: string
+          inspection_type: string
+          inspector_name?: string | null
+          notes?: string | null
+          outcome?: string | null
+          report_url?: string | null
+          scheduled_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          authority?: string
+          completed_date?: string | null
+          created_at?: string
+          id?: string
+          inspection_type?: string
+          inspector_name?: string | null
+          notes?: string | null
+          outcome?: string | null
+          report_url?: string | null
+          scheduled_date?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       locations: {
         Row: {
@@ -978,6 +1473,192 @@ export type Database = {
             columns: ["function_id"]
             isOneToOne: false
             referencedRelation: "functions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      risk_assessments: {
+        Row: {
+          category: string | null
+          consequence: number
+          created_at: string
+          created_by: string | null
+          current_measures: string | null
+          description: string | null
+          id: string
+          planned_measures: string | null
+          probability: number
+          responsible: string | null
+          review_date: string | null
+          risk_score: number | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          consequence?: number
+          created_at?: string
+          created_by?: string | null
+          current_measures?: string | null
+          description?: string | null
+          id?: string
+          planned_measures?: string | null
+          probability?: number
+          responsible?: string | null
+          review_date?: string | null
+          risk_score?: number | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          consequence?: number
+          created_at?: string
+          created_by?: string | null
+          current_measures?: string | null
+          description?: string | null
+          id?: string
+          planned_measures?: string | null
+          probability?: number
+          responsible?: string | null
+          review_date?: string | null
+          risk_score?: number | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "risk_assessments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "risk_assessments_responsible_fkey"
+            columns: ["responsible"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      safety_round_items: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          finding: string | null
+          id: string
+          image_url: string | null
+          round_id: string
+          sort_order: number | null
+          status: string | null
+          title: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          finding?: string | null
+          id?: string
+          image_url?: string | null
+          round_id: string
+          sort_order?: number | null
+          status?: string | null
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          finding?: string | null
+          id?: string
+          image_url?: string | null
+          round_id?: string
+          sort_order?: number | null
+          status?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "safety_round_items_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "safety_rounds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      safety_rounds: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          department_id: string | null
+          description: string | null
+          id: string
+          notes: string | null
+          scheduled_date: string
+          signature_url: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          id?: string
+          notes?: string | null
+          scheduled_date: string
+          signature_url?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          id?: string
+          notes?: string | null
+          scheduled_date?: string
+          signature_url?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "safety_rounds_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "safety_rounds_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "safety_rounds_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
             referencedColumns: ["id"]
           },
         ]
@@ -1257,6 +1938,99 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      temperature_logs: {
+        Row: {
+          created_at: string
+          deviation_action: string | null
+          id: string
+          is_deviation: boolean | null
+          logged_at: string
+          logged_by: string | null
+          source: string | null
+          temperature: number
+          unit_id: string
+        }
+        Insert: {
+          created_at?: string
+          deviation_action?: string | null
+          id?: string
+          is_deviation?: boolean | null
+          logged_at?: string
+          logged_by?: string | null
+          source?: string | null
+          temperature: number
+          unit_id: string
+        }
+        Update: {
+          created_at?: string
+          deviation_action?: string | null
+          id?: string
+          is_deviation?: boolean | null
+          logged_at?: string
+          logged_by?: string | null
+          source?: string | null
+          temperature?: number
+          unit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "temperature_logs_logged_by_fkey"
+            columns: ["logged_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "temperature_logs_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "temperature_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      temperature_units: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          is_iot: boolean | null
+          location: string | null
+          max_temp: number
+          min_temp: number
+          name: string
+          sensor_id: string | null
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          is_iot?: boolean | null
+          location?: string | null
+          max_temp?: number
+          min_temp?: number
+          name: string
+          sensor_id?: string | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          is_iot?: boolean | null
+          location?: string | null
+          max_temp?: number
+          min_temp?: number
+          name?: string
+          sensor_id?: string | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       template_shifts: {
         Row: {
