@@ -21,6 +21,7 @@ import ReportDeviationPage from "./pages/ReportDeviationPage";
 import DeviationsPage from "./pages/DeviationsPage";
 import HMSPage from "./pages/HMSPage";
 import FireSafetyPage from "./pages/FireSafetyPage";
+import TrainingPage from "./pages/TrainingPage";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/avvik" element={<ProtectedRoute><DeviationsPage /></ProtectedRoute>} />
             <Route path="/hms" element={<ProtectedRoute><HMSPage /></ProtectedRoute>} />
             <Route path="/brann" element={<ProtectedRoute><FireSafetyPage /></ProtectedRoute>} />
+            <Route path="/opplaering" element={<ProtectedRoute><TrainingPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

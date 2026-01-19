@@ -67,7 +67,7 @@ const navigation: NavSection[] = [
   {
     title: "INTERNKONTROLL",
     items: [
-      { title: "E-læring", href: "/e-laering", icon: GraduationCap },
+      { title: "Opplæring", href: "/opplaering", icon: GraduationCap },
       { title: "IK-Mat", href: "/ik-mat", icon: ClipboardList },
       { title: "HMS", href: "/hms", icon: Shield },
       { title: "Brann", href: "/brann", icon: Flame },
