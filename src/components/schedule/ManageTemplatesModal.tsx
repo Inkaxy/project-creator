@@ -3,11 +3,13 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -38,6 +40,7 @@ import {
   useShiftTemplate,
   useUpdateShiftTemplate,
   useDeleteShiftTemplate,
+  useDuplicateTemplate,
   ShiftTemplate,
   TemplateShift,
 } from "@/hooks/useShiftTemplates";
@@ -50,7 +53,9 @@ import {
   Copy,
   ChevronDown,
   ChevronRight,
+  Play,
 } from "lucide-react";
+import { EditTemplateModal } from "./EditTemplateModal";
 
 interface ManageTemplatesModalProps {
   open: boolean;
@@ -136,10 +141,18 @@ export function ManageTemplatesModal({
   const [editName, setEditName] = useState("");
   const [deleteConfirmTemplate, setDeleteConfirmTemplate] = useState<ShiftTemplate | null>(null);
   const [expandedTemplateId, setExpandedTemplateId] = useState<string | null>(null);
+  
+  // Edit template modal state
+  const [editTemplateId, setEditTemplateId] = useState<string | null>(null);
+  
+  // Duplicate state
+  const [duplicateTemplate, setDuplicateTemplate] = useState<ShiftTemplate | null>(null);
+  const [duplicateName, setDuplicateName] = useState("");
 
   const { data: templates = [], isLoading } = useShiftTemplates();
   const updateTemplate = useUpdateShiftTemplate();
   const deleteTemplate = useDeleteShiftTemplate();
+  const duplicate = useDuplicateTemplate();
 
   const handleStartEdit = (template: ShiftTemplate) => {
     setEditingTemplate(template);
@@ -171,6 +184,16 @@ export function ManageTemplatesModal({
 
     await deleteTemplate.mutateAsync(deleteConfirmTemplate.id);
     setDeleteConfirmTemplate(null);
+  };
+
+  const handleDuplicate = async () => {
+    if (!duplicateTemplate || !duplicateName.trim()) return;
+    await duplicate.mutateAsync({
+      templateId: duplicateTemplate.id,
+      newName: duplicateName.trim(),
+    });
+    setDuplicateTemplate(null);
+    setDuplicateName("");
   };
 
   const toggleExpand = (templateId: string) => {
@@ -291,12 +314,25 @@ export function ManageTemplatesModal({
                                   onOpenChange(false);
                                 }}
                               >
-                                <Copy className="h-4 w-4 mr-2" />
+                                <Play className="h-4 w-4 mr-2" />
                                 Rull ut mal
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => setEditTemplateId(template.id)}>
+                                <Pencil className="h-4 w-4 mr-2" />
+                                Rediger vakter
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => handleStartEdit(template)}>
                                 <Pencil className="h-4 w-4 mr-2" />
                                 Endre navn
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setDuplicateTemplate(template);
+                                  setDuplicateName(`${template.name} (kopi)`);
+                                }}
+                              >
+                                <Copy className="h-4 w-4 mr-2" />
+                                Dupliser
                               </DropdownMenuItem>
                               {!template.is_default && (
                                 <DropdownMenuItem
@@ -359,6 +395,61 @@ export function ManageTemplatesModal({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Duplicate Template Dialog */}
+      <Dialog 
+        open={!!duplicateTemplate} 
+        onOpenChange={(openState) => !openState && setDuplicateTemplate(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Copy className="h-5 w-5" />
+              Dupliser mal
+            </DialogTitle>
+            <DialogDescription>
+              Opprett en kopi av "{duplicateTemplate?.name}"
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Navn på ny mal</Label>
+              <Input
+                value={duplicateName}
+                onChange={(e) => setDuplicateName(e.target.value)}
+                placeholder="F.eks. Standard Uke (kopi)"
+              />
+            </div>
+            
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Badge variant="secondary">{duplicateTemplate?.shift_count}</Badge>
+              <span>vakter vil bli kopiert</span>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDuplicateTemplate(null)}>
+              Avbryt
+            </Button>
+            <Button
+              onClick={handleDuplicate}
+              disabled={!duplicateName.trim() || duplicate.isPending}
+            >
+              {duplicate.isPending ? "Dupliserer..." : "Dupliser"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Template Modal */}
+      {editTemplateId && (
+        <EditTemplateModal
+          open={!!editTemplateId}
+          onOpenChange={(openState) => !openState && setEditTemplateId(null)}
+          templateId={editTemplateId}
+        />
+      )}
     </>
   );
 }
