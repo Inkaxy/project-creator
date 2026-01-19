@@ -207,19 +207,21 @@ export interface DisciplinaryCaseFilter {
 }
 
 export interface CreateDisciplinaryCaseInput {
+  case_number: string;
   employee_id: string;
   category_id: string;
   severity: DisciplinarySeverity;
   incident_date: string;
-  incident_time?: string;
+  incident_time?: string | null;
   incident_description: string;
-  incident_location?: string;
+  incident_location?: string | null;
   warning_type: WarningType;
-  consequences_description?: string;
-  improvement_expectations?: string;
-  expiry_date?: string;
+  consequences_description?: string | null;
+  improvement_expectations?: string | null;
+  expiry_date?: string | null;
   blocks_clock_in?: boolean;
   blocks_timesheet?: boolean;
+  block_until_acknowledged?: boolean;
 }
 
 export interface CreateDisciplinaryMeetingInput {

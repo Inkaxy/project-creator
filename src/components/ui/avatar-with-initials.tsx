@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 
 interface AvatarWithInitialsProps {
   name: string;
+  avatarUrl?: string | null;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
@@ -12,13 +13,27 @@ const sizeStyles = {
   lg: "h-14 w-14 text-lg",
 };
 
-export function AvatarWithInitials({ name, size = "md", className }: AvatarWithInitialsProps) {
+export function AvatarWithInitials({ name, avatarUrl, size = "md", className }: AvatarWithInitialsProps) {
   const initials = name
     .split(" ")
     .map((n) => n[0])
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
+  if (avatarUrl) {
+    return (
+      <img
+        src={avatarUrl}
+        alt={name}
+        className={cn(
+          "rounded-full object-cover",
+          sizeStyles[size],
+          className
+        )}
+      />
+    );
+  }
 
   return (
     <div

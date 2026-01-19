@@ -120,9 +120,23 @@ export function useCreateDisciplinaryCase() {
       const { data, error } = await supabase
         .from("disciplinary_cases")
         .insert({
-          ...input,
-          status: "draft",
-          created_by: userData.user?.id,
+          case_number: input.case_number,
+          employee_id: input.employee_id,
+          category_id: input.category_id,
+          warning_type: input.warning_type,
+          severity: input.severity,
+          incident_date: input.incident_date,
+          incident_time: input.incident_time,
+          incident_location: input.incident_location,
+          incident_description: input.incident_description,
+          improvement_expectations: input.improvement_expectations,
+          consequences_description: input.consequences_description,
+          blocks_clock_in: input.blocks_clock_in,
+          blocks_timesheet: input.blocks_timesheet,
+          block_until_acknowledged: input.block_until_acknowledged,
+          expiry_date: input.expiry_date,
+          status: "draft" as const,
+          created_by: userData.user?.id!,
         })
         .select()
         .single();
