@@ -56,7 +56,7 @@ export function SaveTemplateModal({
   const [category, setCategory] = useState<string>("");
   const [isDefault, setIsDefault] = useState(false);
   const [includeEmployees, setIncludeEmployees] = useState(false);
-  const [departmentId, setDepartmentId] = useState<string>("");
+  const [departmentId, setDepartmentId] = useState<string>("all");
 
   const saveTemplate = useSaveCurrentWeekAsTemplate();
   const { data: departments = [] } = useDepartments();
@@ -67,7 +67,7 @@ export function SaveTemplateModal({
 
   // Filter shifts based on selected department
   const filteredShifts = useMemo(() => {
-    if (!departmentId) return shifts;
+    if (!departmentId || departmentId === "all") return shifts;
 
     return shifts.filter((shift) => {
       const func = functions.find((f) => f.id === shift.function_id);
@@ -109,7 +109,7 @@ export function SaveTemplateModal({
     setCategory("");
     setIsDefault(false);
     setIncludeEmployees(false);
-    setDepartmentId("");
+    setDepartmentId("all");
   };
 
   const selectedDepartment = departments.find((d) => d.id === departmentId);
@@ -176,7 +176,7 @@ export function SaveTemplateModal({
                   <SelectValue placeholder="Alle avdelinger" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Alle avdelinger</SelectItem>
+                  <SelectItem value="all">Alle avdelinger</SelectItem>
                   {departments.map((dept) => (
                     <SelectItem key={dept.id} value={dept.id}>
                       <div className="flex items-center gap-2">
@@ -195,7 +195,7 @@ export function SaveTemplateModal({
             </div>
           </div>
 
-          {departmentId && (
+          {departmentId && departmentId !== "all" && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 p-2 rounded-md">
               <Building2 className="h-4 w-4" />
               Filtrerer vakter til kun {selectedDepartment?.name} ({filteredShifts.length} av {shifts.length} vakter)
@@ -248,7 +248,7 @@ export function SaveTemplateModal({
               </div>
               <div className="mt-2 text-center text-sm text-muted-foreground">
                 Totalt {filteredShifts.length} vakter
-                {departmentId && shifts.length !== filteredShifts.length && (
+                {departmentId && departmentId !== "all" && shifts.length !== filteredShifts.length && (
                   <span className="text-xs ml-1">
                     (filtrert fra {shifts.length})
                   </span>
