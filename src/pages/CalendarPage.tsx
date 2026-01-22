@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -12,7 +13,12 @@ import {
   UserX,
   Flame,
   Shield,
-  ClipboardCheck
+  ClipboardCheck,
+  Cloud,
+  Sun,
+  CloudRain,
+  CloudSnow,
+  Wind
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format, startOfMonth, endOfMonth, addMonths, subMonths, getWeek } from "date-fns";
@@ -26,8 +32,8 @@ import {
 import { CalendarEventBadge, EventTypeLegend } from "@/components/calendar/CalendarEventBadge";
 import { CalendarDayDetail } from "@/components/calendar/CalendarDayDetail";
 import { StatCard } from "@/components/ui/stat-card";
-import { WeatherForecastWidget } from "@/components/weather/WeatherForecastWidget";
 import { useWeatherSettings } from "@/hooks/useWeatherSettings";
+import { getWeatherForDate, weatherIcons, weatherColors, weatherLabels } from "@/lib/weather-utils";
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -167,11 +173,6 @@ export default function CalendarPage() {
             />
           </div>
 
-          {/* Weather Forecast */}
-          {showWeather && (
-            <WeatherForecastWidget startDate={monthStart} days={7} />
-          )}
-
           {/* Calendar Navigation */}
           <div className="flex items-center justify-between">
             <Button variant="outline" size="icon" onClick={() => navigateMonth(-1)}>
@@ -260,15 +261,36 @@ export default function CalendarPage() {
                           >
                             {day && (
                               <>
-                                <div
-                                  className={cn(
-                                    "mb-2 flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium",
-                                    isToday
-                                      ? "bg-primary text-primary-foreground"
-                                      : "text-foreground"
-                                  )}
-                                >
-                                  {day}
+                                <div className="flex items-center justify-between mb-1">
+                                  <div
+                                    className={cn(
+                                      "flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium",
+                                      isToday
+                                        ? "bg-primary text-primary-foreground"
+                                        : "text-foreground"
+                                    )}
+                                  >
+                                    {day}
+                                  </div>
+                                  {/* Weather inline */}
+                                  {showWeather && (() => {
+                                    const weather = getWeatherForDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
+                                    const WeatherIcon = weatherIcons[weather.condition];
+                                    return (
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <div className="flex items-center gap-0.5 text-xs">
+                                            <WeatherIcon className={cn("h-3.5 w-3.5", weatherColors[weather.condition])} />
+                                            <span className="text-muted-foreground">{weather.temp}°</span>
+                                          </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top" className="text-xs">
+                                          <p>{weatherLabels[weather.condition]}</p>
+                                          <p>Min: {weather.tempMin}° / Max: {weather.tempMax}°</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    );
+                                  })()}
                                 </div>
                                 <div className="space-y-1">
                                   {dayEvents.slice(0, 3).map((event) => (

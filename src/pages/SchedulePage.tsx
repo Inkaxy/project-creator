@@ -32,7 +32,7 @@ import { DepartmentFilter } from "@/components/schedule/DepartmentFilter";
 import { FunctionFilterButtons } from "@/components/schedule/FunctionFilterButtons";
 import { ScheduleViewToggle, ViewMode } from "@/components/schedule/ScheduleViewToggle";
 import { EmployeeBasedScheduleGrid } from "@/components/schedule/EmployeeBasedScheduleGrid";
-import { WeatherForecastWidget } from "@/components/weather/WeatherForecastWidget";
+import { getWeatherForDate, weatherIcons, weatherColors, weatherLabels } from "@/lib/weather-utils";
 import { useWeatherSettings } from "@/hooks/useWeatherSettings";
 import {
   ChevronLeft,
@@ -328,15 +328,10 @@ export default function SchedulePage() {
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            {showWeather && (
-              <WeatherForecastWidget startDate={weekDays[0]} days={7} compact />
-            )}
-            <ScheduleViewToggle
-              viewMode={scheduleViewMode}
-              onViewModeChange={setScheduleViewMode}
-            />
-          </div>
+          <ScheduleViewToggle
+            viewMode={scheduleViewMode}
+            onViewModeChange={setScheduleViewMode}
+          />
         </div>
 
         {/* Function Filter Buttons */}
@@ -415,10 +410,31 @@ export default function SchedulePage() {
                   {weekDays.map((day, i) => {
                     const isToday = formatDate(day) === "2026-01-19";
                     const dayAbsences = getAbsencesForDate(approvedAbsences, formatDate(day));
+                    const weather = showWeather ? getWeatherForDate(day) : null;
+                    const WeatherIcon = weather ? weatherIcons[weather.condition] : null;
+                    
                     return (
                       <div key={i} className={cn("border-r border-border p-3 last:border-r-0", isToday && "bg-primary/5")}>
                         <div className="text-center">
-                          <p className="text-sm text-muted-foreground">{dayNames[i]}</p>
+                          <div className="flex items-center justify-center gap-2">
+                            <p className="text-sm text-muted-foreground">{dayNames[i]}</p>
+                            {/* Weather inline in header */}
+                            {weather && WeatherIcon && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className="flex items-center gap-0.5">
+                                    <WeatherIcon className={cn("h-3.5 w-3.5", weatherColors[weather.condition])} />
+                                    <span className="text-xs text-muted-foreground">{weather.temp}°</span>
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent side="top" className="text-xs">
+                                  <p className="font-medium">{weatherLabels[weather.condition]}</p>
+                                  <p>Min: {weather.tempMin}° / Max: {weather.tempMax}°</p>
+                                  <p>Vind: {weather.wind} m/s</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                          </div>
                           <p className={cn("text-lg font-semibold", isToday ? "text-primary" : "text-foreground")}>{day.getDate()}</p>
                           {dayAbsences.length > 0 && (
                             <Tooltip>
