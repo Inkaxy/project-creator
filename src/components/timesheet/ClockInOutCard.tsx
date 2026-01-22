@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +22,9 @@ import {
   Sun,
   MapPin,
   AlertTriangle,
+  MapPinOff,
+  ClipboardCheck,
+  Loader2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -29,8 +33,13 @@ import {
   useClockIn,
   useClockOut,
 } from "@/hooks/useTimeEntries";
+import { useGpsValidation } from "@/hooks/useGeoLocation";
+import { ClockOutBlocker, useCanClockOut } from "@/components/checklist/ClockOutBlocker";
+import { useRequiredChecklistsForClockOut, ChecklistTemplate } from "@/hooks/useChecklists";
+import { ChecklistFillModal } from "@/components/checklist/ChecklistFillModal";
 import { format, differenceInMinutes } from "date-fns";
 import { nb } from "date-fns/locale";
+import { toast } from "sonner";
 
 export function ClockInOutCard() {
   const { user } = useAuth();
@@ -39,11 +48,21 @@ export function ClockInOutCard() {
   const clockIn = useClockIn();
   const clockOut = useClockOut();
 
+  // GPS validation
+  const { gpsRequired, hasWorkLocation, validate: validateGps, validationResult, isLoading: loadingGps } = useGpsValidation();
+
+  // Checklist blocking
+  const shiftId = activeEntry?.shift_id || todayShift?.id;
+  const { canClockOut, pendingCount, isLoading: loadingChecklists } = useCanClockOut(shiftId);
+  const [selectedChecklist, setSelectedChecklist] = useState<ChecklistTemplate | null>(null);
+
   const [elapsedTime, setElapsedTime] = useState<string>("00:00:00");
   const [showClockOutDialog, setShowClockOutDialog] = useState(false);
   const [breakMinutes, setBreakMinutes] = useState(30);
   const [deviationReason, setDeviationReason] = useState("");
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [gpsError, setGpsError] = useState<string | null>(null);
+  const [isValidatingGps, setIsValidatingGps] = useState(false);
 
   // Update elapsed time every second when clocked in
   useEffect(() => {
@@ -87,6 +106,33 @@ export function ClockInOutCard() {
 
   const handleClockIn = async () => {
     if (!user?.id) return;
+    
+    // Validate GPS if required
+    if (gpsRequired && hasWorkLocation) {
+      setIsValidatingGps(true);
+      setGpsError(null);
+      
+      try {
+        const result = await validateGps();
+        if (!result.isValid) {
+          setGpsError(result.message || "Du er utenfor tillatt område");
+          toast.error(result.message || "Du er utenfor tillatt område");
+          setIsValidatingGps(false);
+          return;
+        }
+        // Update location from GPS validation
+        if (validationResult?.distance !== null) {
+          toast.success(`GPS verifisert - ${validationResult?.distance}m fra arbeidsplass`);
+        }
+      } catch (err) {
+        setGpsError("Kunne ikke verifisere GPS-posisjon");
+        toast.error("Kunne ikke verifisere GPS-posisjon");
+        setIsValidatingGps(false);
+        return;
+      }
+      setIsValidatingGps(false);
+    }
+
     await clockIn.mutateAsync({
       employeeId: user.id,
       shiftId: todayShift?.id,
@@ -95,11 +141,22 @@ export function ClockInOutCard() {
   };
 
   const handleClockOutClick = () => {
+    // Check for pending checklists
+    if (!canClockOut && pendingCount > 0) {
+      toast.error(`Du må fullføre ${pendingCount} sjekkliste(r) før du kan stemple ut`);
+      return;
+    }
     setShowClockOutDialog(true);
   };
 
   const handleClockOutConfirm = async () => {
     if (!activeEntry?.id) return;
+
+    // Double-check checklists
+    if (!canClockOut) {
+      toast.error("Du må fullføre alle påkrevde sjekklister først");
+      return;
+    }
 
     // Check if there's a significant deviation
     const requiresReason = activeEntry.shifts && activeEntry.clock_in
@@ -118,6 +175,10 @@ export function ClockInOutCard() {
     });
     setShowClockOutDialog(false);
     setDeviationReason("");
+  };
+
+  const handleOpenChecklist = (template: ChecklistTemplate) => {
+    setSelectedChecklist(template);
   };
 
   const calculateDeviation = (): number => {
@@ -159,6 +220,23 @@ export function ClockInOutCard() {
 
   return (
     <>
+      {/* GPS Warning */}
+      {gpsError && (
+        <Alert variant="destructive" className="mb-4">
+          <MapPinOff className="h-4 w-4" />
+          <AlertTitle>GPS-verifisering feilet</AlertTitle>
+          <AlertDescription>{gpsError}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Checklist Blocker for clock-out */}
+      {isClockedIn && !canClockOut && pendingCount > 0 && (
+        <ClockOutBlocker 
+          shiftId={shiftId || ""} 
+          onOpenChecklist={handleOpenChecklist} 
+        />
+      )}
+
       <Card className="border-primary/20 bg-gradient-to-r from-primary-light to-background">
         <CardContent className="p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -185,6 +263,12 @@ export function ClockInOutCard() {
                       </Badge>
                       {location && (
                         <MapPin className="h-3 w-3 text-muted-foreground" />
+                      )}
+                      {!canClockOut && pendingCount > 0 && (
+                        <Badge variant="outline" className="text-warning border-warning">
+                          <ClipboardCheck className="h-3 w-3 mr-1" />
+                          {pendingCount} sjekklister
+                        </Badge>
                       )}
                     </div>
                   </>
@@ -225,10 +309,19 @@ export function ClockInOutCard() {
                   size="lg" 
                   className="gap-2"
                   onClick={handleClockIn}
-                  disabled={clockIn.isPending}
+                  disabled={clockIn.isPending || isValidatingGps}
                 >
-                  <PlayCircle className="h-5 w-5" />
-                  {clockIn.isPending ? "Stempler inn..." : "Stemple inn"}
+                  {isValidatingGps ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      GPS-sjekk...
+                    </>
+                  ) : (
+                    <>
+                      <PlayCircle className="h-5 w-5" />
+                      {clockIn.isPending ? "Stempler inn..." : "Stemple inn"}
+                    </>
+                  )}
                 </Button>
               )}
             </div>
@@ -328,6 +421,16 @@ export function ClockInOutCard() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Checklist Fill Modal */}
+      {selectedChecklist && (
+        <ChecklistFillModal
+          template={selectedChecklist}
+          shiftId={shiftId || undefined}
+          open={!!selectedChecklist}
+          onOpenChange={(open) => !open && setSelectedChecklist(null)}
+        />
+      )}
     </>
   );
 }
