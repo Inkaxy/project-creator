@@ -235,7 +235,7 @@ export function TimesheetApprovalPanel() {
               status === "approved" && "bg-success/10 text-success",
               status === "rejected" && "bg-destructive/10 text-destructive",
               status === "submitted" && !hasDeviation && "bg-primary/10 text-primary hover:bg-primary/20",
-              status === "submitted" && hasDeviation && "bg-warning/20 text-warning-foreground border-2 border-warning hover:bg-warning/30",
+              status === "submitted" && hasDeviation && "bg-amber-100 dark:bg-amber-900/30 text-amber-900 dark:text-amber-200 border-2 border-amber-500 hover:bg-amber-200 dark:hover:bg-amber-900/50",
               status === "draft" && "bg-muted text-muted-foreground",
               isSelected && "ring-2 ring-primary"
             )}
@@ -511,7 +511,7 @@ export function TimesheetApprovalPanel() {
               <span>Venter godkjenning</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-4 h-4 rounded bg-warning/20 border-2 border-warning" />
+              <div className="w-4 h-4 rounded bg-amber-100 dark:bg-amber-900/30 border-2 border-amber-500" />
               <span>Avvik (klikk for å håndtere)</span>
             </div>
             <div className="flex items-center gap-1">
