@@ -43,6 +43,7 @@ import { WageLaddersManagementModal } from "@/components/employees/WageLaddersMa
 import { WageAdjustmentsPanel } from "@/components/employees/WageAdjustmentsPanel";
 import { WageLadderHistoryPanel } from "@/components/employees/WageLadderHistoryPanel";
 import { TariffImportModal } from "@/components/employees/TariffImportModal";
+import { WageLaddersOverviewPanel } from "@/components/seniority/WageLaddersOverviewPanel";
 import { useWageLadders } from "@/hooks/useWageLadders";
 import { useWageAdjustments } from "@/hooks/useWageAdjustments";
 
@@ -377,67 +378,10 @@ export default function WageSupplementsPage() {
 
           {/* Wage Ladders Tab */}
           <TabsContent value="ladders" className="space-y-4">
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setTariffImportModalOpen(true)}>
-                <Upload className="mr-2 h-4 w-4" />
-                Importer tariff
-              </Button>
-              <Button onClick={() => setWageLaddersModalOpen(true)}>
-                <TrendingUp className="mr-2 h-4 w-4" />
-                Administrer lønnsstiger
-              </Button>
-            </div>
-
-            {wageLadders.length === 0 ? (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <TrendingUp className="mx-auto h-12 w-12 text-muted-foreground/50" />
-                  <h3 className="mt-4 text-lg font-medium">Ingen lønnsstiger</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Opprett lønnsstiger for å administrere timelønn basert på ansiennitet.
-                  </p>
-                  <Button className="mt-4" onClick={() => setWageLaddersModalOpen(true)}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Opprett lønnsstige
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {wageLadders.map((ladder) => (
-                  <Card key={ladder.id} className="hover:shadow-md transition-shadow">
-                    <CardHeader>
-                      <CardTitle className="flex items-center justify-between">
-                        <span>{ladder.name}</span>
-                        <Badge variant="secondary">
-                          {ladder.competence_level === 'faglaert' ? 'Faglært' : 
-                           ladder.competence_level === 'laerling' ? 'Lærling' : 'Ufaglært'}
-                        </Badge>
-                      </CardTitle>
-                      {ladder.description && (
-                        <CardDescription>{ladder.description}</CardDescription>
-                      )}
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground">
-                          {ladder.levels?.length || 0} nivå{(ladder.levels?.length || 0) !== 1 ? 'er' : ''}
-                        </p>
-                        {ladder.levels && ladder.levels.length > 0 && (
-                          <div className="text-sm">
-                            <span className="text-muted-foreground">Satser: </span>
-                            <span className="font-medium">
-                              {Math.min(...ladder.levels.map(l => l.hourly_rate)).toLocaleString('nb-NO')} - {' '}
-                              {Math.max(...ladder.levels.map(l => l.hourly_rate)).toLocaleString('nb-NO')} kr/t
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
+            <WageLaddersOverviewPanel
+              onOpenModal={() => setWageLaddersModalOpen(true)}
+              onOpenImport={() => setTariffImportModalOpen(true)}
+            />
           </TabsContent>
 
           {/* Adjustments Tab */}

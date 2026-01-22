@@ -1,13 +1,13 @@
 import { EmployeeProfile } from "@/hooks/useEmployees";
 import { EmployeeDetails } from "@/hooks/useEmployeeDetails";
-import { useWageLadder, calculateCurrentLevel } from "@/hooks/useWageLadders";
+import { useWageLadder } from "@/hooks/useWageLadders";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   DollarSign,
   Clock,
 } from "lucide-react";
-import { SeniorityProgressCard } from "./SeniorityProgressCard";
+import { SeniorityGamificationCard } from "@/components/seniority/SeniorityGamificationCard";
 
 interface EmployeeSalaryTabProps {
   employee: EmployeeProfile;
@@ -61,7 +61,7 @@ export function EmployeeSalaryTab({ employee, employeeDetails }: EmployeeSalaryT
         // HOURLY WAGE VIEW
         <div className="space-y-4">
           {/* Seniority Progress Card - Main feature */}
-          <SeniorityProgressCard
+          <SeniorityGamificationCard
             employeeId={employee.id}
             employeeName={employee.full_name || "Ansatt"}
             accumulatedHours={employeeDetails?.accumulated_hours || 0}
