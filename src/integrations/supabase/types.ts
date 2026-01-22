@@ -269,6 +269,39 @@ export type Database = {
           },
         ]
       }
+      building_maps: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_url: string
+          floor: string | null
+          id: string
+          map_type: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_url: string
+          floor?: string | null
+          id?: string
+          map_type?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_url?: string
+          floor?: string | null
+          id?: string
+          map_type?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       certificates: {
         Row: {
           certificate_type: string

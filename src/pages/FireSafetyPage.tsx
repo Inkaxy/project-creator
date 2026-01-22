@@ -11,7 +11,8 @@ import {
   FileText,
   CheckCircle2,
   Clock,
-  Wrench
+  Wrench,
+  Map
 } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
 import { nb } from "date-fns/locale";
@@ -24,6 +25,7 @@ import {
 import { FireDrillsPanel } from "@/components/fire-safety/FireDrillsPanel";
 import { FireEquipmentPanel } from "@/components/fire-safety/FireEquipmentPanel";
 import { FireInstructionsPanel } from "@/components/fire-safety/FireInstructionsPanel";
+import { BuildingMapsPanel } from "@/components/fire-safety/BuildingMapsPanel";
 import { StatCard } from "@/components/ui/stat-card";
 
 export default function FireSafetyPage() {
@@ -112,6 +114,10 @@ export default function FireSafetyPage() {
               )}
             </TabsTrigger>
             <TabsTrigger value="instructions">Branninstruks</TabsTrigger>
+            <TabsTrigger value="maps" className="flex items-center gap-2">
+              <Map className="h-4 w-4" />
+              Bygningskart
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
@@ -283,6 +289,10 @@ export default function FireSafetyPage() {
 
           <TabsContent value="instructions">
             <FireInstructionsPanel />
+          </TabsContent>
+
+          <TabsContent value="maps">
+            <BuildingMapsPanel />
           </TabsContent>
         </Tabs>
       </div>
