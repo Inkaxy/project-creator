@@ -1878,6 +1878,392 @@ export type Database = {
           },
         ]
       }
+      equipment: {
+        Row: {
+          brand: string | null
+          category_id: string | null
+          created_at: string | null
+          criticality: string | null
+          department_id: string | null
+          description: string | null
+          expected_lifetime_years: number | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          lease_expires: string | null
+          lease_monthly_cost: number | null
+          location_description: string | null
+          location_id: string | null
+          manual_url: string | null
+          model: string | null
+          name: string
+          notes: string | null
+          ownership_type: string | null
+          purchase_date: string | null
+          purchase_price: number | null
+          qr_code: string | null
+          responsible_employee_id: string | null
+          serial_number: string | null
+          status: string | null
+          supplier_id: string | null
+          updated_at: string | null
+          warranty_expires: string | null
+          warranty_months: number | null
+        }
+        Insert: {
+          brand?: string | null
+          category_id?: string | null
+          created_at?: string | null
+          criticality?: string | null
+          department_id?: string | null
+          description?: string | null
+          expected_lifetime_years?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          lease_expires?: string | null
+          lease_monthly_cost?: number | null
+          location_description?: string | null
+          location_id?: string | null
+          manual_url?: string | null
+          model?: string | null
+          name: string
+          notes?: string | null
+          ownership_type?: string | null
+          purchase_date?: string | null
+          purchase_price?: number | null
+          qr_code?: string | null
+          responsible_employee_id?: string | null
+          serial_number?: string | null
+          status?: string | null
+          supplier_id?: string | null
+          updated_at?: string | null
+          warranty_expires?: string | null
+          warranty_months?: number | null
+        }
+        Update: {
+          brand?: string | null
+          category_id?: string | null
+          created_at?: string | null
+          criticality?: string | null
+          department_id?: string | null
+          description?: string | null
+          expected_lifetime_years?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          lease_expires?: string | null
+          lease_monthly_cost?: number | null
+          location_description?: string | null
+          location_id?: string | null
+          manual_url?: string | null
+          model?: string | null
+          name?: string
+          notes?: string | null
+          ownership_type?: string | null
+          purchase_date?: string | null
+          purchase_price?: number | null
+          qr_code?: string | null
+          responsible_employee_id?: string | null
+          serial_number?: string | null
+          status?: string | null
+          supplier_id?: string | null
+          updated_at?: string | null
+          warranty_expires?: string | null
+          warranty_months?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_responsible_employee_id_fkey"
+            columns: ["responsible_employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      equipment_categories: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          default_service_interval_days: number | null
+          icon: string | null
+          id: string
+          name: string
+          requires_certification: boolean | null
+          requires_temp_monitoring: boolean | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          default_service_interval_days?: number | null
+          icon?: string | null
+          id?: string
+          name: string
+          requires_certification?: boolean | null
+          requires_temp_monitoring?: boolean | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          default_service_interval_days?: number | null
+          icon?: string | null
+          id?: string
+          name?: string
+          requires_certification?: boolean | null
+          requires_temp_monitoring?: boolean | null
+        }
+        Relationships: []
+      }
+      equipment_checklist_completions: {
+        Row: {
+          checklist_id: string | null
+          completed_at: string | null
+          completed_by: string
+          deviation_ids: string[] | null
+          equipment_id: string | null
+          id: string
+          results: Json
+        }
+        Insert: {
+          checklist_id?: string | null
+          completed_at?: string | null
+          completed_by: string
+          deviation_ids?: string[] | null
+          equipment_id?: string | null
+          id?: string
+          results: Json
+        }
+        Update: {
+          checklist_id?: string | null
+          completed_at?: string | null
+          completed_by?: string
+          deviation_ids?: string[] | null
+          equipment_id?: string | null
+          id?: string
+          results?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_checklist_completions_checklist_id_fkey"
+            columns: ["checklist_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_checklists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_checklist_completions_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_checklist_completions_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      equipment_checklists: {
+        Row: {
+          category_id: string | null
+          created_at: string | null
+          frequency: string
+          id: string
+          is_active: boolean | null
+          items: Json
+          name: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string | null
+          frequency: string
+          id?: string
+          is_active?: boolean | null
+          items: Json
+          name: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string | null
+          frequency?: string
+          id?: string
+          is_active?: boolean | null
+          items?: Json
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_checklists_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      equipment_deviations: {
+        Row: {
+          assigned_to: string | null
+          cost: number | null
+          created_at: string | null
+          description: string | null
+          equipment_id: string | null
+          id: string
+          images: Json | null
+          reported_by: string
+          resolution: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          cost?: number | null
+          created_at?: string | null
+          description?: string | null
+          equipment_id?: string | null
+          id?: string
+          images?: Json | null
+          reported_by: string
+          resolution?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          cost?: number | null
+          created_at?: string | null
+          description?: string | null
+          equipment_id?: string | null
+          id?: string
+          images?: Json | null
+          reported_by?: string
+          resolution?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_deviations_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_deviations_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_deviations_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_deviations_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      equipment_documents: {
+        Row: {
+          document_type: string
+          equipment_id: string | null
+          expires_at: string | null
+          file_url: string
+          id: string
+          name: string
+          uploaded_at: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          document_type: string
+          equipment_id?: string | null
+          expires_at?: string | null
+          file_url: string
+          id?: string
+          name: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          document_type?: string
+          equipment_id?: string | null
+          expires_at?: string | null
+          file_url?: string
+          id?: string
+          name?: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_documents_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       equipment_inspections: {
         Row: {
           equipment_id: string
@@ -1920,6 +2306,257 @@ export type Database = {
           {
             foreignKeyName: "equipment_inspections_inspected_by_fkey"
             columns: ["inspected_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      equipment_service_intervals: {
+        Row: {
+          alert_days_before: number | null
+          created_at: string | null
+          equipment_id: string | null
+          id: string
+          interval_type: string
+          interval_value: number
+          is_active: boolean | null
+          last_performed: string | null
+          name: string
+          next_due: string | null
+        }
+        Insert: {
+          alert_days_before?: number | null
+          created_at?: string | null
+          equipment_id?: string | null
+          id?: string
+          interval_type: string
+          interval_value: number
+          is_active?: boolean | null
+          last_performed?: string | null
+          name: string
+          next_due?: string | null
+        }
+        Update: {
+          alert_days_before?: number | null
+          created_at?: string | null
+          equipment_id?: string | null
+          id?: string
+          interval_type?: string
+          interval_value?: number
+          is_active?: boolean | null
+          last_performed?: string | null
+          name?: string
+          next_due?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_service_intervals_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      equipment_services: {
+        Row: {
+          attachments: Json | null
+          cost_labor: number | null
+          cost_parts: number | null
+          created_at: string | null
+          description: string | null
+          equipment_id: string | null
+          id: string
+          invoice_number: string | null
+          next_service_date: string | null
+          parts_replaced: string | null
+          performed_by_employee_id: string | null
+          performed_by_external: string | null
+          performed_date: string
+          service_interval_id: string | null
+          service_type: string
+          supplier_id: string | null
+        }
+        Insert: {
+          attachments?: Json | null
+          cost_labor?: number | null
+          cost_parts?: number | null
+          created_at?: string | null
+          description?: string | null
+          equipment_id?: string | null
+          id?: string
+          invoice_number?: string | null
+          next_service_date?: string | null
+          parts_replaced?: string | null
+          performed_by_employee_id?: string | null
+          performed_by_external?: string | null
+          performed_date: string
+          service_interval_id?: string | null
+          service_type: string
+          supplier_id?: string | null
+        }
+        Update: {
+          attachments?: Json | null
+          cost_labor?: number | null
+          cost_parts?: number | null
+          created_at?: string | null
+          description?: string | null
+          equipment_id?: string | null
+          id?: string
+          invoice_number?: string | null
+          next_service_date?: string | null
+          parts_replaced?: string | null
+          performed_by_employee_id?: string | null
+          performed_by_external?: string | null
+          performed_date?: string
+          service_interval_id?: string | null
+          service_type?: string
+          supplier_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_services_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_services_performed_by_employee_id_fkey"
+            columns: ["performed_by_employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_services_service_interval_id_fkey"
+            columns: ["service_interval_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_service_intervals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_services_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      equipment_suppliers: {
+        Row: {
+          address: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string | null
+          customer_number: string | null
+          email: string | null
+          email_service: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          notes: string | null
+          org_number: string | null
+          phone_emergency: string | null
+          phone_main: string | null
+          phone_service: string | null
+          sla_response_hours: number | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          customer_number?: string | null
+          email?: string | null
+          email_service?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          notes?: string | null
+          org_number?: string | null
+          phone_emergency?: string | null
+          phone_main?: string | null
+          phone_service?: string | null
+          sla_response_hours?: number | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          customer_number?: string | null
+          email?: string | null
+          email_service?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          notes?: string | null
+          org_number?: string | null
+          phone_emergency?: string | null
+          phone_main?: string | null
+          phone_service?: string | null
+          sla_response_hours?: number | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      equipment_training: {
+        Row: {
+          certificate_url: string | null
+          created_at: string | null
+          employee_id: string | null
+          equipment_id: string | null
+          expires_at: string | null
+          id: string
+          notes: string | null
+          trained_at: string
+          trained_by: string | null
+        }
+        Insert: {
+          certificate_url?: string | null
+          created_at?: string | null
+          employee_id?: string | null
+          equipment_id?: string | null
+          expires_at?: string | null
+          id?: string
+          notes?: string | null
+          trained_at: string
+          trained_by?: string | null
+        }
+        Update: {
+          certificate_url?: string | null
+          created_at?: string | null
+          employee_id?: string | null
+          equipment_id?: string | null
+          expires_at?: string | null
+          id?: string
+          notes?: string | null
+          trained_at?: string
+          trained_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_training_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_training_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_training_trained_by_fkey"
+            columns: ["trained_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
