@@ -11,6 +11,7 @@ export interface TimesheetSettings {
   default_positive_deviation_handling: string;
   default_negative_deviation_handling: string;
   require_explanation_above_minutes: number;
+  show_weather_forecast: boolean;
   created_at: string;
   updated_at: string;
 }
