@@ -26,6 +26,8 @@ import {
 import { CalendarEventBadge, EventTypeLegend } from "@/components/calendar/CalendarEventBadge";
 import { CalendarDayDetail } from "@/components/calendar/CalendarDayDetail";
 import { StatCard } from "@/components/ui/stat-card";
+import { WeatherForecastWidget } from "@/components/weather/WeatherForecastWidget";
+import { useWeatherSettings } from "@/hooks/useWeatherSettings";
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -46,6 +48,9 @@ export default function CalendarPage() {
     endDate,
     filters: activeFilters,
   });
+
+  // Weather settings
+  const { data: showWeather = true } = useWeatherSettings();
 
   // Generate calendar grid with week numbers
   const { calendarDays, weekNumbers } = useMemo(() => {
@@ -161,6 +166,11 @@ export default function CalendarPage() {
               variant="default"
             />
           </div>
+
+          {/* Weather Forecast */}
+          {showWeather && (
+            <WeatherForecastWidget startDate={monthStart} days={7} />
+          )}
 
           {/* Calendar Navigation */}
           <div className="flex items-center justify-between">

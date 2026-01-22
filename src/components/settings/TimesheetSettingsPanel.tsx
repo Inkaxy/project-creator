@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Clock, Settings, CheckCircle, Zap } from "lucide-react";
+import { Loader2, Clock, Settings, CheckCircle, Zap, Cloud } from "lucide-react";
 import { useTimesheetSettings, useUpdateTimesheetSettings, deviationHandlingLabels } from "@/hooks/useTimesheetApproval";
 
 export function TimesheetSettingsPanel() {
@@ -24,6 +24,7 @@ export function TimesheetSettingsPanel() {
     default_positive_deviation_handling: "time_bank",
     default_negative_deviation_handling: "ignore",
     require_explanation_above_minutes: 30,
+    show_weather_forecast: true,
   });
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export function TimesheetSettingsPanel() {
         default_positive_deviation_handling: settings.default_positive_deviation_handling,
         default_negative_deviation_handling: settings.default_negative_deviation_handling,
         require_explanation_above_minutes: settings.require_explanation_above_minutes,
+        show_weather_forecast: settings.show_weather_forecast ?? true,
       });
     }
   }, [settings]);
@@ -195,6 +197,35 @@ export function TimesheetSettingsPanel() {
                 }))
               }
               className="w-32"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Weather settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Cloud className="h-5 w-5" />
+            Værmelding
+          </CardTitle>
+          <CardDescription>
+            Vis fiktiv værmelding i kalender og vaktplan
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <Label>Vis værmelding</Label>
+              <p className="text-sm text-muted-foreground">
+                Viser en fiktiv værmelding på kalender- og vaktplan-sidene
+              </p>
+            </div>
+            <Switch
+              checked={formData.show_weather_forecast}
+              onCheckedChange={(checked) =>
+                setFormData((prev) => ({ ...prev, show_weather_forecast: checked }))
+              }
             />
           </div>
         </CardContent>

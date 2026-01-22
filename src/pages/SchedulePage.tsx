@@ -32,6 +32,8 @@ import { DepartmentFilter } from "@/components/schedule/DepartmentFilter";
 import { FunctionFilterButtons } from "@/components/schedule/FunctionFilterButtons";
 import { ScheduleViewToggle, ViewMode } from "@/components/schedule/ScheduleViewToggle";
 import { EmployeeBasedScheduleGrid } from "@/components/schedule/EmployeeBasedScheduleGrid";
+import { WeatherForecastWidget } from "@/components/weather/WeatherForecastWidget";
+import { useWeatherSettings } from "@/hooks/useWeatherSettings";
 import {
   ChevronLeft,
   ChevronRight,
@@ -144,6 +146,7 @@ export default function SchedulePage() {
   const { data: shifts = [], isLoading: loadingShifts } = useShifts(startDate, endDate);
   const { violations, criticalCount, warningCount } = useWorkTimeViolations(shifts);
   const { data: approvedAbsences = [] } = useApprovedAbsences(startDate, endDate);
+  const { data: showWeather = true } = useWeatherSettings();
 
   const dayNames = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"];
 
@@ -326,6 +329,9 @@ export default function SchedulePage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            {showWeather && (
+              <WeatherForecastWidget startDate={weekDays[0]} days={7} compact />
+            )}
             <ScheduleViewToggle
               viewMode={scheduleViewMode}
               onViewModeChange={setScheduleViewMode}

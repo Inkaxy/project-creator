@@ -5044,6 +5044,7 @@ export type Database = {
           id: string
           margin_minutes: number | null
           require_explanation_above_minutes: number | null
+          show_weather_forecast: boolean | null
           updated_at: string | null
         }
         Insert: {
@@ -5054,6 +5055,7 @@ export type Database = {
           id?: string
           margin_minutes?: number | null
           require_explanation_above_minutes?: number | null
+          show_weather_forecast?: boolean | null
           updated_at?: string | null
         }
         Update: {
@@ -5064,6 +5066,7 @@ export type Database = {
           id?: string
           margin_minutes?: number | null
           require_explanation_above_minutes?: number | null
+          show_weather_forecast?: boolean | null
           updated_at?: string | null
         }
         Relationships: []
