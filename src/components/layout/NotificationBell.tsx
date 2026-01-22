@@ -35,6 +35,8 @@ import { useNavigate } from "react-router-dom";
 const typeConfig: Record<NotificationType, { icon: typeof Bell; className: string }> = {
   timesheet_approved: { icon: CheckCircle, className: "text-success" },
   timesheet_rejected: { icon: XCircle, className: "text-destructive" },
+  timesheet_auto_approved: { icon: CheckCircle, className: "text-success" },
+  daily_timesheet_summary: { icon: FileText, className: "text-primary" },
   shift_assigned: { icon: Calendar, className: "text-primary" },
   shift_changed: { icon: Clock, className: "text-warning" },
   approval_request: { icon: FileText, className: "text-primary" },

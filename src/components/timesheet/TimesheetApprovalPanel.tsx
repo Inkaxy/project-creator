@@ -42,6 +42,7 @@ import { useAllTimeEntries, useApproveTimeEntries, type TimeEntryData } from "@/
 import { useTimesheetSettings, calculateDeviations, shouldAutoApprove } from "@/hooks/useTimesheetApproval";
 import { useEmployees } from "@/hooks/useEmployees";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLogAutoApproval, useLogMultipleAutoApprovals } from "@/hooks/useAutoApprovalLog";
 import { DeviationHandlerModal } from "./DeviationHandlerModal";
 
 interface GroupedEntry {
@@ -81,6 +82,8 @@ export function TimesheetApprovalPanel() {
   const { data: employees = [] } = useEmployees();
   const { data: settings } = useTimesheetSettings();
   const approveEntries = useApproveTimeEntries();
+  const logAutoApproval = useLogAutoApproval();
+  const logMultipleAutoApprovals = useLogMultipleAutoApprovals();
 
   // Group entries by employee
   const groupedData = useMemo(() => {
@@ -157,6 +160,30 @@ export function TimesheetApprovalPanel() {
 
   const handleApproveSelected = async () => {
     if (!user?.id || selectedIds.length === 0) return;
+    
+    // Find entries that are within margin (auto-approvable) to log them
+    const selectedEntries = entries.filter(e => selectedIds.includes(e.id));
+    const autoApprovableEntries = selectedEntries.filter(e => 
+      shouldAutoApprove(Math.abs(e.deviation_minutes), settings)
+    );
+    
+    // Log auto-approvals for daily summary
+    if (autoApprovableEntries.length > 0) {
+      const logsToCreate = autoApprovableEntries.map(e => ({
+        timeEntryId: e.id,
+        employeeId: e.employee_id,
+        approverId: user.id,
+        deviationMinutes: e.deviation_minutes,
+      }));
+      
+      try {
+        await logMultipleAutoApprovals.mutateAsync(logsToCreate);
+      } catch (error) {
+        console.error("Failed to log auto-approvals:", error);
+        // Continue with approval even if logging fails
+      }
+    }
+    
     await approveEntries.mutateAsync({
       timeEntryIds: selectedIds,
       approverId: user.id,
@@ -164,7 +191,7 @@ export function TimesheetApprovalPanel() {
     setSelectedIds([]);
   };
 
-  const handleCellClick = (entry: TimeEntryData | null) => {
+  const handleCellClick = async (entry: TimeEntryData | null) => {
     if (!entry || entry.status !== "submitted") return;
 
     // Calculate detailed deviations
@@ -192,8 +219,21 @@ export function TimesheetApprovalPanel() {
       }
     }
 
-    // Otherwise just approve directly
+    // Otherwise just approve directly (this is an auto-approval within margin)
     if (user?.id) {
+      // Log this as an auto-approval for daily summary
+      try {
+        await logAutoApproval.mutateAsync({
+          timeEntryId: entry.id,
+          employeeId: entry.employee_id,
+          approverId: user.id,
+          deviationMinutes: entry.deviation_minutes,
+        });
+      } catch (error) {
+        console.error("Failed to log auto-approval:", error);
+        // Continue with approval even if logging fails
+      }
+      
       approveEntries.mutate({
         timeEntryIds: [entry.id],
         approverId: user.id,

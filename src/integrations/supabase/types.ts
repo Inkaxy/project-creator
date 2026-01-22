@@ -228,6 +228,47 @@ export type Database = {
           },
         ]
       }
+      auto_approvals_log: {
+        Row: {
+          approver_id: string | null
+          auto_approved_at: string
+          created_at: string
+          deviation_minutes: number
+          employee_id: string
+          id: string
+          summary_sent: boolean
+          time_entry_id: string
+        }
+        Insert: {
+          approver_id?: string | null
+          auto_approved_at?: string
+          created_at?: string
+          deviation_minutes?: number
+          employee_id: string
+          id?: string
+          summary_sent?: boolean
+          time_entry_id: string
+        }
+        Update: {
+          approver_id?: string | null
+          auto_approved_at?: string
+          created_at?: string
+          deviation_minutes?: number
+          employee_id?: string
+          id?: string
+          summary_sent?: boolean
+          time_entry_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auto_approvals_log_time_entry_id_fkey"
+            columns: ["time_entry_id"]
+            isOneToOne: false
+            referencedRelation: "time_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       certificates: {
         Row: {
           certificate_type: string
