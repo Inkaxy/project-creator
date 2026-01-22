@@ -426,8 +426,8 @@ export function CourseEditorModal({
                 </div>
               </div>
 
-              <div className="flex items-center gap-6 pt-4 border-t">
-                <div className="flex items-center gap-2">
+              <div className="space-y-4 pt-4 border-t">
+                <div className="flex items-start gap-3">
                   <Switch
                     id="is_required"
                     checked={formData.is_required}
@@ -435,10 +435,19 @@ export function CourseEditorModal({
                       setFormData({ ...formData, is_required: checked })
                     }
                   />
-                  <Label htmlFor="is_required">Obligatorisk kurs</Label>
+                  <div className="space-y-1">
+                    <Label htmlFor="is_required" className="cursor-pointer">
+                      Obligatorisk kurs
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      {formData.is_required 
+                        ? "Ansatte må fullføre kurset for å bli sertifisert i tilknyttede funksjoner"
+                        : "Kurset er frivillig og kan brukes som oppslagsverk eller referansemateriale"}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-start gap-3">
                   <Switch
                     id="is_active"
                     checked={formData.is_active}
@@ -446,7 +455,14 @@ export function CourseEditorModal({
                       setFormData({ ...formData, is_active: checked })
                     }
                   />
-                  <Label htmlFor="is_active">Aktiv</Label>
+                  <div className="space-y-1">
+                    <Label htmlFor="is_active" className="cursor-pointer">
+                      Aktiv
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      Deaktiverte kurs vises ikke for ansatte
+                    </p>
+                  </div>
                 </div>
               </div>
             </TabsContent>
