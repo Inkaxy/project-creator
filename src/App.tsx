@@ -34,6 +34,7 @@ import EquipmentPage from "./pages/EquipmentPage";
 import EquipmentDetailPage from "./pages/EquipmentDetailPage";
 import EquipmentScanPage from "./pages/EquipmentScanPage";
 import SuppliersPage from "./pages/SuppliersPage";
+import KioskPage from "./pages/KioskPage";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/kiosk" element={<KioskPage />} />
             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/ansatte" element={<ProtectedRoute><EmployeesPage /></ProtectedRoute>} />
             <Route path="/vaktplan" element={<ProtectedRoute><SchedulePage /></ProtectedRoute>} />
