@@ -7,8 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
-import { Search, Users, GraduationCap, AlertCircle, MoreHorizontal, Mail } from "lucide-react";
-import { CourseEnrollment, useExpiringCertificates, useCourses } from "@/hooks/useCourses";
+import { Search, Users, GraduationCap, AlertCircle, MoreHorizontal, Mail, Plus, Pencil } from "lucide-react";
+import { CourseEnrollment, useExpiringCertificates, useCourses, useCourseModules, Course } from "@/hooks/useCourses";
 import { useEmployees } from "@/hooks/useEmployees";
 import { format, differenceInDays } from "date-fns";
 import { nb } from "date-fns/locale";
@@ -18,6 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { CourseEditorModal } from "./CourseEditorModal";
 
 interface AdminEnrollmentsPanelProps {
   enrollments: CourseEnrollment[];
@@ -27,11 +28,23 @@ export function AdminEnrollmentsPanel({ enrollments }: AdminEnrollmentsPanelProp
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [courseFilter, setCourseFilter] = useState("all");
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
 
   const { data: courses = [] } = useCourses();
   const { data: employees = [] } = useEmployees();
   const { data: expiringCerts = [] } = useExpiringCertificates(30);
+  const { data: editingModules = [] } = useCourseModules(editingCourse?.id || null);
 
+  const handleCreateCourse = () => {
+    setEditingCourse(null);
+    setEditorOpen(true);
+  };
+
+  const handleEditCourse = (course: Course) => {
+    setEditingCourse(course);
+    setEditorOpen(true);
+  };
   // Stats
   const totalEnrollments = enrollments.length;
   const completedEnrollments = enrollments.filter(e => e.completed_at).length;
@@ -68,8 +81,22 @@ export function AdminEnrollmentsPanel({ enrollments }: AdminEnrollmentsPanelProp
     return <Badge variant="outline">Ikke startet</Badge>;
   };
 
-  return (
+    return (
     <div className="space-y-6">
+      {/* Header with create button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold">Administrer kurs</h2>
+          <p className="text-sm text-muted-foreground">
+            Opprett egne kurs med videoer og beskrivelser
+          </p>
+        </div>
+        <Button onClick={handleCreateCourse}>
+          <Plus className="mr-2 h-4 w-4" />
+          Opprett kurs
+        </Button>
+      </div>
+
       {/* Stats cards */}
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
@@ -270,6 +297,55 @@ export function AdminEnrollmentsPanel({ enrollments }: AdminEnrollmentsPanelProp
           </Table>
         </CardContent>
       </Card>
+
+      {/* Course list for editing */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Kursbibliotek</CardTitle>
+          <CardDescription>Rediger eksisterende kurs eller opprett nye</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            {courses.map((course) => (
+              <Card 
+                key={course.id} 
+                className="cursor-pointer hover:bg-accent/50 transition-colors"
+                onClick={() => handleEditCourse(course)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-medium truncate">{course.title}</h4>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {course.description || "Ingen beskrivelse"}
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        {course.is_required && (
+                          <Badge variant="destructive" className="text-xs">Obligatorisk</Badge>
+                        )}
+                        <Badge variant="outline" className="text-xs">
+                          {course.duration_minutes} min
+                        </Badge>
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="icon" className="shrink-0">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Course Editor Modal */}
+      <CourseEditorModal
+        open={editorOpen}
+        onOpenChange={setEditorOpen}
+        course={editingCourse}
+        modules={editingModules}
+      />
     </div>
   );
 }
