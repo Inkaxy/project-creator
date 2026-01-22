@@ -25,6 +25,7 @@ import { useAllTimeEntries, useApproveTimeEntries, useRejectTimeEntry, TimeEntry
 import { useShifts } from "@/hooks/useShifts";
 import { AbsenceApprovalDetailModal } from "@/components/absence/AbsenceApprovalDetailModal";
 import { AdminAbsenceModal } from "@/components/absence/AdminAbsenceModal";
+import { TimesheetApprovalPanel } from "@/components/timesheet/TimesheetApprovalPanel";
 import {
   Search,
   Calendar,
@@ -532,6 +533,7 @@ export default function ApprovalsPage() {
               </TabsTrigger>
               <TabsTrigger value="approved">Godkjent</TabsTrigger>
               <TabsTrigger value="rejected">Avslått</TabsTrigger>
+              <TabsTrigger value="timesheets">Timer</TabsTrigger>
               <TabsTrigger value="all">Alle</TabsTrigger>
             </TabsList>
 
@@ -554,6 +556,10 @@ export default function ApprovalsPage() {
             ) : (
               filteredApprovals.map(approval => renderApprovalCard(approval))
             )}
+          </TabsContent>
+
+          <TabsContent value="timesheets">
+            <TimesheetApprovalPanel />
           </TabsContent>
 
           <TabsContent value="approved" className="space-y-4">

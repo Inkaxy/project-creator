@@ -4303,6 +4303,93 @@ export type Database = {
           },
         ]
       }
+      time_entry_deviations: {
+        Row: {
+          account_transaction_id: string | null
+          created_at: string | null
+          deviation_minutes: number
+          deviation_type: string
+          handled_at: string | null
+          handled_by: string | null
+          handling: string | null
+          id: string
+          notes: string | null
+          time_entry_id: string
+        }
+        Insert: {
+          account_transaction_id?: string | null
+          created_at?: string | null
+          deviation_minutes: number
+          deviation_type: string
+          handled_at?: string | null
+          handled_by?: string | null
+          handling?: string | null
+          id?: string
+          notes?: string | null
+          time_entry_id: string
+        }
+        Update: {
+          account_transaction_id?: string | null
+          created_at?: string | null
+          deviation_minutes?: number
+          deviation_type?: string
+          handled_at?: string | null
+          handled_by?: string | null
+          handling?: string | null
+          id?: string
+          notes?: string | null
+          time_entry_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_entry_deviations_account_transaction_id_fkey"
+            columns: ["account_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "account_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entry_deviations_time_entry_id_fkey"
+            columns: ["time_entry_id"]
+            isOneToOne: false
+            referencedRelation: "time_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      timesheet_settings: {
+        Row: {
+          auto_approve_within_margin: boolean | null
+          created_at: string | null
+          default_negative_deviation_handling: string | null
+          default_positive_deviation_handling: string | null
+          id: string
+          margin_minutes: number | null
+          require_explanation_above_minutes: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          auto_approve_within_margin?: boolean | null
+          created_at?: string | null
+          default_negative_deviation_handling?: string | null
+          default_positive_deviation_handling?: string | null
+          id?: string
+          margin_minutes?: number | null
+          require_explanation_above_minutes?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          auto_approve_within_margin?: boolean | null
+          created_at?: string | null
+          default_negative_deviation_handling?: string | null
+          default_positive_deviation_handling?: string | null
+          id?: string
+          margin_minutes?: number | null
+          require_explanation_above_minutes?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
