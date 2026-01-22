@@ -100,7 +100,7 @@ export function TimeBankOverviewCard() {
   const formatMinutes = (minutes: number): string => {
     const hours = Math.floor(Math.abs(minutes) / 60);
     const mins = Math.abs(minutes) % 60;
-    const sign = minutes < 0 ? "-" : "";
+    const sign = minutes < 0 ? "-" : "+";
     if (hours === 0) return `${sign}${mins}m`;
     if (mins === 0) return `${sign}${hours}t`;
     return `${sign}${hours}t ${mins}m`;

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AbsenceRequestModal } from "@/components/absence/AbsenceRequestModal";
 import { AccountBalanceCard } from "@/components/absence/AccountBalanceCard";
+import { TimeBankOverviewCard } from "@/components/timesheet/TimeBankOverviewCard";
 import { AbsenceList } from "@/components/absence/AbsenceList";
 import { AbsenceApprovalsPanel } from "@/components/absence/AbsenceApprovalsPanel";
 import { useAuth } from "@/contexts/AuthContext";
@@ -31,7 +32,10 @@ const AbsencePage = () => {
         </div>
 
         {/* Account Balances */}
-        <AccountBalanceCard />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <AccountBalanceCard />
+          {isAdminOrManager() && <TimeBankOverviewCard />}
+        </div>
 
         {/* Tabs for different views */}
         <Tabs defaultValue="mine" className="space-y-4">
