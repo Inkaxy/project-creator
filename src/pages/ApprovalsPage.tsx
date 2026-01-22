@@ -26,6 +26,7 @@ import { useShifts } from "@/hooks/useShifts";
 import { AbsenceApprovalDetailModal } from "@/components/absence/AbsenceApprovalDetailModal";
 import { AdminAbsenceModal } from "@/components/absence/AdminAbsenceModal";
 import { TimesheetApprovalPanel } from "@/components/timesheet/TimesheetApprovalPanel";
+import { TimeBankOverviewCard } from "@/components/timesheet/TimeBankOverviewCard";
 import {
   Search,
   Calendar,
@@ -559,7 +560,14 @@ export default function ApprovalsPage() {
           </TabsContent>
 
           <TabsContent value="timesheets">
-            <TimesheetApprovalPanel />
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              <div className="xl:col-span-2">
+                <TimesheetApprovalPanel />
+              </div>
+              <div>
+                <TimeBankOverviewCard />
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="approved" className="space-y-4">
