@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 export type NotificationType = 
   | "timesheet_approved" 
   | "timesheet_rejected" 
+  | "timesheet_auto_approved"
+  | "daily_timesheet_summary"
   | "shift_assigned" 
   | "shift_changed" 
   | "approval_request" 
