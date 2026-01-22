@@ -23,6 +23,8 @@ import {
   Menu,
   X,
   LogOut,
+  Wrench,
+  QrCode,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -67,6 +69,7 @@ const navigation: NavSection[] = [
   {
     title: "INTERNKONTROLL",
     items: [
+      { title: "Utstyr", href: "/utstyr", icon: Wrench },
       { title: "Opplæring", href: "/opplaering", icon: GraduationCap },
       { title: "IK-Mat", href: "/ik-mat", icon: ClipboardList },
       { title: "HMS", href: "/hms", icon: Shield },

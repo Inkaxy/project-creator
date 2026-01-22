@@ -30,6 +30,10 @@ import DisciplinaryCasesPage from "./pages/DisciplinaryCasesPage";
 import PayrollPage from "./pages/PayrollPage";
 import ReportsPage from "./pages/ReportsPage";
 import ShiftSetupPage from "./pages/ShiftSetupPage";
+import EquipmentPage from "./pages/EquipmentPage";
+import EquipmentDetailPage from "./pages/EquipmentDetailPage";
+import EquipmentScanPage from "./pages/EquipmentScanPage";
+import SuppliersPage from "./pages/SuppliersPage";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +69,10 @@ const App = () => (
             <Route path="/lonnskjoring" element={<ProtectedRoute><PayrollPage /></ProtectedRoute>} />
             <Route path="/rapporter" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
             <Route path="/vaktoppsett" element={<ProtectedRoute><ShiftSetupPage /></ProtectedRoute>} />
+            <Route path="/utstyr" element={<ProtectedRoute><EquipmentPage /></ProtectedRoute>} />
+            <Route path="/utstyr/:id" element={<ProtectedRoute><EquipmentDetailPage /></ProtectedRoute>} />
+            <Route path="/utstyr/skann" element={<ProtectedRoute><EquipmentScanPage /></ProtectedRoute>} />
+            <Route path="/utstyr/leverandorer" element={<ProtectedRoute><SuppliersPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
