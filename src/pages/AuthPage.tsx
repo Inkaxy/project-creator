@@ -46,7 +46,7 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      navigate('/');
+      navigate('/dashboard');
     }
   }, [user, loading, navigate]);
 
@@ -92,7 +92,7 @@ export default function AuthPage() {
       title: 'Velkommen!',
       description: 'Du er nå logget inn.',
     });
-    navigate('/');
+    navigate('/dashboard');
   };
 
   const handleSignup = async (data: SignupFormData) => {
