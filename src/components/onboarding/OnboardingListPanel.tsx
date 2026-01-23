@@ -39,12 +39,14 @@ import { nb } from "date-fns/locale";
 import { useOnboardings, useCancelOnboarding, useResendInvitation } from "@/hooks/useOnboardings";
 import { OnboardingStatusBadge } from "./OnboardingStatusBadge";
 import { OnboardingDetailModal } from "./OnboardingDetailModal";
+import { GenerateContractModal } from "@/components/contracts/GenerateContractModal";
 import type { EmployeeOnboarding } from "@/hooks/useOnboardings";
 import { toast } from "sonner";
 
 export function OnboardingListPanel() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedOnboarding, setSelectedOnboarding] = useState<EmployeeOnboarding | null>(null);
+  const [contractOnboarding, setContractOnboarding] = useState<EmployeeOnboarding | null>(null);
   
   const { data: onboardings = [], isLoading } = useOnboardings(statusFilter);
   const cancelOnboarding = useCancelOnboarding();
@@ -169,8 +171,8 @@ export function OnboardingListPanel() {
                               </DropdownMenuItem>
                             )}
 
-                            {(onboarding.status === 'contract_pending' || onboarding.status === 'account_pending') && (
-                              <DropdownMenuItem>
+                            {(onboarding.status === 'contract_pending' || onboarding.status === 'account_pending' || onboarding.status === 'info_pending') && (
+                              <DropdownMenuItem onClick={() => setContractOnboarding(onboarding)}>
                                 <FileSignature className="mr-2 h-4 w-4" />
                                 Generer kontrakt
                               </DropdownMenuItem>
@@ -239,6 +241,14 @@ export function OnboardingListPanel() {
           onboarding={selectedOnboarding}
           open={!!selectedOnboarding}
           onOpenChange={(open) => !open && setSelectedOnboarding(null)}
+        />
+      )}
+
+      {contractOnboarding && (
+        <GenerateContractModal
+          onboarding={contractOnboarding}
+          open={!!contractOnboarding}
+          onOpenChange={(open) => !open && setContractOnboarding(null)}
         />
       )}
     </>

@@ -1,10 +1,13 @@
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { 
   CheckCircle2, 
@@ -17,6 +20,7 @@ import {
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 import { OnboardingStatusBadge } from "./OnboardingStatusBadge";
+import { GenerateContractModal } from "@/components/contracts/GenerateContractModal";
 import type { EmployeeOnboarding } from "@/hooks/useOnboardings";
 
 interface OnboardingDetailModalProps {
@@ -34,6 +38,11 @@ interface TimelineStep {
 }
 
 export function OnboardingDetailModal({ onboarding, open, onOpenChange }: OnboardingDetailModalProps) {
+  const [showContractModal, setShowContractModal] = useState(false);
+
+  const canGenerateContract = ['info_pending', 'account_pending', 'contract_pending'].includes(onboarding.status);
+  const hasContract = !!onboarding.contract_generated_at;
+
   const steps: TimelineStep[] = [
     {
       title: "Invitasjon sendt",
@@ -213,7 +222,32 @@ export function OnboardingDetailModal({ onboarding, open, onOpenChange }: Onboar
             </div>
           </>
         )}
+
+        {/* Footer with actions */}
+        {canGenerateContract && !hasContract && (
+          <DialogFooter className="mt-4">
+            <Button onClick={() => setShowContractModal(true)}>
+              <FileSignature className="mr-2 h-4 w-4" />
+              Generer kontrakt
+            </Button>
+          </DialogFooter>
+        )}
+
+        {hasContract && (
+          <DialogFooter className="mt-4">
+            <Badge variant="outline" className="text-success border-success">
+              <CheckCircle2 className="mr-1 h-3 w-3" />
+              Kontrakt generert
+            </Badge>
+          </DialogFooter>
+        )}
       </DialogContent>
+
+      <GenerateContractModal
+        onboarding={onboarding}
+        open={showContractModal}
+        onOpenChange={setShowContractModal}
+      />
     </Dialog>
   );
 }
