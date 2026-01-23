@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Clock, Calendar, MapPin, Building2, FileText } from "lucide-react";
+import { Settings, Clock, Calendar, MapPin, Building2, FileText, Boxes } from "lucide-react";
 import { WorkTimeRulesPanel } from "@/components/settings/WorkTimeRulesPanel";
 import { AbsenceTypesPanel } from "@/components/settings/AbsenceTypesPanel";
 import { LocationsPanel } from "@/components/settings/LocationsPanel";
 import { DepartmentsSettingsPanel } from "@/components/settings/DepartmentsSettingsPanel";
 import { TimesheetSettingsPanel } from "@/components/settings/TimesheetSettingsPanel";
+import { EquipmentCategoriesPanel } from "@/components/settings/EquipmentCategoriesPanel";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("work-time");
@@ -29,7 +30,7 @@ export default function SettingsPage() {
 
         {/* Settings Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6">
             <TabsTrigger value="work-time" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
               <span className="hidden sm:inline">Arbeidstid</span>
@@ -49,6 +50,10 @@ export default function SettingsPage() {
             <TabsTrigger value="departments" className="flex items-center gap-2">
               <Building2 className="h-4 w-4" />
               <span className="hidden sm:inline">Avdelinger</span>
+            </TabsTrigger>
+            <TabsTrigger value="equipment" className="flex items-center gap-2">
+              <Boxes className="h-4 w-4" />
+              <span className="hidden sm:inline">Utstyr</span>
             </TabsTrigger>
           </TabsList>
 
@@ -70,6 +75,10 @@ export default function SettingsPage() {
 
           <TabsContent value="departments">
             <DepartmentsSettingsPanel />
+          </TabsContent>
+
+          <TabsContent value="equipment">
+            <EquipmentCategoriesPanel />
           </TabsContent>
         </Tabs>
       </div>
