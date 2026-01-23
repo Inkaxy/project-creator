@@ -91,7 +91,6 @@ interface CategoryFormData {
   department_id: string;
   requires_temp_monitoring: boolean;
   requires_certification: boolean;
-  default_service_interval_days: number | null;
 }
 
 const defaultFormData: CategoryFormData = {
@@ -102,7 +101,6 @@ const defaultFormData: CategoryFormData = {
   department_id: "",
   requires_temp_monitoring: false,
   requires_certification: false,
-  default_service_interval_days: null,
 };
 
 export function EquipmentCategoriesPanel() {
@@ -132,7 +130,6 @@ export function EquipmentCategoriesPanel() {
       department_id: category.department_id || "",
       requires_temp_monitoring: category.requires_temp_monitoring || false,
       requires_certification: category.requires_certification || false,
-      default_service_interval_days: category.default_service_interval_days,
     });
     setEditingCategory(category.id);
     setShowDialog(true);
@@ -157,7 +154,6 @@ export function EquipmentCategoriesPanel() {
         department_id: formData.department_id || null,
         requires_temp_monitoring: formData.requires_temp_monitoring,
         requires_certification: formData.requires_certification,
-        default_service_interval_days: formData.default_service_interval_days,
       };
 
       if (editingCategory) {
@@ -235,7 +231,6 @@ export function EquipmentCategoriesPanel() {
                   <TableHead>Kategori</TableHead>
                   <TableHead>Avdeling</TableHead>
                   <TableHead>Egenskaper</TableHead>
-                  <TableHead>Serviceintervall</TableHead>
                   <TableHead className="w-24"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -275,13 +270,6 @@ export function EquipmentCategoriesPanel() {
                           </Badge>
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      {category.default_service_interval_days ? (
-                        <span>{category.default_service_interval_days} dager</span>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
@@ -422,25 +410,6 @@ export function EquipmentCategoriesPanel() {
               />
             </div>
 
-            {/* Service Interval */}
-            <div className="space-y-2">
-              <Label htmlFor="service_interval">Standard serviceintervall (dager)</Label>
-              <Input
-                id="service_interval"
-                type="number"
-                min={0}
-                value={formData.default_service_interval_days || ""}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    default_service_interval_days: e.target.value
-                      ? parseInt(e.target.value)
-                      : null,
-                  })
-                }
-                placeholder="F.eks. 90"
-              />
-            </div>
 
             {/* Toggles */}
             <div className="space-y-3">
