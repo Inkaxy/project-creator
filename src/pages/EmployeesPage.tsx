@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,14 +14,31 @@ import { useEmployees, EmployeeProfile } from "@/hooks/useEmployees";
 import { EmployeeCardExpanded } from "@/components/employees/EmployeeCardExpanded";
 import { WageLaddersManagementModal } from "@/components/employees/WageLaddersManagementModal";
 import { WageAdjustmentsPanel } from "@/components/employees/WageAdjustmentsPanel";
+import { OnboardingProcessInfo } from "@/components/onboarding/OnboardingProcessInfo";
+import { OnboardingListPanel } from "@/components/onboarding/OnboardingListPanel";
+import { StartOnboardingModal } from "@/components/onboarding/StartOnboardingModal";
 import {
   Search,
   Plus,
   Upload,
   MoreHorizontal,
   DollarSign,
+  UserPlus,
 } from "lucide-react";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
   Table,
   TableBody,
   TableCell,
@@ -40,6 +58,8 @@ export default function EmployeesPage() {
   const [showInactive, setShowInactive] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeProfile | null>(null);
   const [wageLaddersModalOpen, setWageLaddersModalOpen] = useState(false);
+  const [onboardingModalOpen, setOnboardingModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("employees");
 
   const { data: employees = [], isLoading } = useEmployees(showInactive);
 
@@ -69,25 +89,63 @@ export default function EmployeesPage() {
         <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-center sm:justify-between lg:pl-0">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Ansatte</h1>
-            <p className="text-muted-foreground">Administrer ansatte og roller</p>
+            <p className="text-muted-foreground">Administrer ansatte og onboarding</p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setWageLaddersModalOpen(true)}>
               <DollarSign className="mr-2 h-4 w-4" />
               Lønnsstiger
             </Button>
-            <Button variant="outline">
-              <Upload className="mr-2 h-4 w-4" />
-              Importer ansatte
-            </Button>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Legg til
-            </Button>
+            {activeTab === "onboarding" ? (
+              <Button onClick={() => setOnboardingModalOpen(true)}>
+                <UserPlus className="mr-2 h-4 w-4" />
+                Start onboarding
+              </Button>
+            ) : (
+              <>
+                <Button variant="outline">
+                  <Upload className="mr-2 h-4 w-4" />
+                  Importer
+                </Button>
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Legg til
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList>
+            <TabsTrigger value="employees">Ansatte</TabsTrigger>
+            <TabsTrigger value="onboarding">Onboarding</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="employees" className="space-y-6">
+            {/* Filters */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="relative w-full sm:max-w-sm">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Søk på navn eller e-post..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="show-inactive"
+                  checked={showInactive}
+                  onCheckedChange={setShowInactive}
+                />
+                <Label htmlFor="show-inactive" className="text-sm text-muted-foreground">
+                  Vis inaktive
+                </Label>
+              </div>
+            </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative w-full sm:max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

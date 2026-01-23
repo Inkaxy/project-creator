@@ -38,6 +38,7 @@ import EquipmentScanPage from "./pages/EquipmentScanPage";
 import SuppliersPage from "./pages/SuppliersPage";
 import KioskPage from "./pages/KioskPage";
 import RoutinesPage from "./pages/RoutinesPage";
+import OnboardingPage from "./pages/OnboardingPage";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/kiosk" element={<KioskPage />} />
+            <Route path="/onboarding/:token" element={<OnboardingPage />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/ansatte" element={<ProtectedRoute><EmployeesPage /></ProtectedRoute>} />
             <Route path="/vaktplan" element={<ProtectedRoute><SchedulePage /></ProtectedRoute>} />
