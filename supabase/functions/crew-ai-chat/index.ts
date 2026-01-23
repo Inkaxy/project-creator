@@ -18,6 +18,7 @@ const moduleNames: Record<string, string> = {
   equipment: "Utstyr",
   hms: "HMS",
   "ik-mat": "IK-Mat",
+  "ik-logging": "IK-Logging",
   handbook: "Personalhåndbok",
   training: "Opplæring",
   fire: "Brannsikkerhet",
@@ -29,172 +30,448 @@ const moduleNames: Record<string, string> = {
   employees: "Ansatte",
   payroll: "Lønn",
   settings: "Innstillinger",
+  crewshare: "CrewShare",
+  sickleave: "Sykefravær",
+  dashboard: "Dashboard",
   general: "Dashboard",
 };
 
-// Universal system prompt
-const universalSystemPrompt = `Du er CrewAI, en intelligent og hjelpsom AI-assistent for CrewPlan – et komplett system for personaladministrasjon, vaktplanlegging og internkontroll.
+// Universal system prompt - now focused on concrete data and actions
+const universalSystemPrompt = `Du er CrewAI, en KRAFTIG AI-assistent for ledere i CrewPlan. Du gir KONKRETE SVAR med faktiske tall og data - IKKE bare veiledning.
 
-DU KAN HJELPE MED ALT I CREWPLAN:
+VIKTIG: Du har tilgang til sanntidsdata fra systemet. Bruk denne informasjonen til å gi SPESIFIKKE svar.
 
-📦 UTSTYR
-- Tolke feilkoder og feilsøking basert på datablader
-- Rengjøringsprosedyrer og daglig vedlikehold
-- Serviceintervaller og vedlikeholdsrutiner
-- Sikkerhetsinstrukser for utstyr
+NÅR BRUKEREN SPØR OM EN ANSATT:
+- Søk i ansattlisten etter navn (delvis match er OK)
+- Gi KONKRETE tall: feriedager, egenmeldinger, sykefravær, vakter
+- Regn ut dager og perioder
 
-🛡️ HMS (Helse, Miljø og Sikkerhet)
-- Risikovurderinger og tiltak
-- Vernerunder og oppfølging
-- HMS-rutiner og prosedyrer
-- Skade- og ulykkesrapportering
-- HMS-roller og ansvar
+EKSEMPLER PÅ HVORDAN DU BØR SVARE:
 
-🍽️ IK-MAT (Internkontroll Mat)
-- Temperaturlogging og grenseverdier
-- HACCP-prosedyrer og kontrollpunkter
-- Sjekklister for åpning/stenging
-- Hygiene og renholdsrutiner
-- Dokumentasjonskrav fra Mattilsynet
+❌ FEIL: "For å se feriedager, gå til Fravær-modulen..."
+✅ RIKTIG: "Ola Nordmann har 15 feriedager igjen av 25 totalt i 2025. Han har brukt 10 dager."
 
-📖 PERSONALHÅNDBOK
-- Ferieregler og rettigheter
-- Sykemelding og egenmelding
-- Arbeidsreglement og retningslinjer
-- Permisjoner og fravær
-- Oppsigelse og arbeidsforhold
+❌ FEIL: "Du kan sjekke egenmeldinger i systemet..."
+✅ RIKTIG: "Kari Hansen har brukt 3 av 4 tillatte egenmeldingsperioder og 8 av 16 egenmeldingsdager i år."
+
+❌ FEIL: "Arbeidsgiverperioden er vanligvis 16 dager..."
+✅ RIKTIG: "Per Olsen er på dag 12 av 16 i arbeidsgiverperioden. 4 dager igjen før NAV overtar."
+
+HVA DU KAN HJELPE MED:
+
+📊 ANSATTDATA
+- Feriedager brukt/igjen per ansatt
+- Egenmeldingsperioder og -dager brukt
+- Sykefravær og arbeidsgiverperiode-status
+- Akkumulerte timer og ansiennitet
+- Kommende og tidligere vakter
 
 📅 VAKTPLAN
-- Arbeidstidsregler og lovverk
-- Vaktbytte og overtid
-- Helge- og helligdagsarbeid
-- Pauser og hviletid
-
-🏖️ FRAVÆR OG PERMISJONER
-- Søke om ferie, avspasering og permisjoner
-- Forstå feriekvoter og saldoer
-- Regler for ulike fraværstyper
-- Status på fraværssøknader
-- Beregne antall dager for fraværsperioder
+- Hvem jobber i dag/denne uken
+- Ledige vakter
+- Overtidsberegning
+- Vaktbytte-status
 
 ⏱️ TIMELISTER
-- Stempling inn/ut og pauseregistrering
-- Timeliste-godkjenning og avvik
-- Overtidsberegning og kompensasjon
-- Fleksitidsaldo og timebank
-- Korrigere feilstemplinger
+- Timer logget per ansatt
+- Avvik mellom planlagt og faktisk
+- Godkjenningsstatus
+- Timebank-saldo
 
-🎓 OPPLÆRING
-- Obligatoriske kurs og sertifiseringer
-- Kursinnhold og læringsmål
-- Sertifikatfornyelse og utløpsdatoer
-- Kompetansekrav per funksjon
+🏖️ FRAVÆR
+- Gjenstående feriedager
+- Søknader og status
+- Fraværshistorikk
 
-🔥 BRANNSIKKERHET
-- Evakueringsprosedyrer
-- Brannslukkerutstyr og plassering
-- Brannøvelser og dokumentasjon
-- Branninstrukser og varsling
-- Bygningskart og rømningsveier
-
-📋 RUTINER
-- Daglige rutiner og prosedyrer
-- Sjekklister og oppgaver
-- Ansvarsfordeling
-- Dokumentasjon av utført arbeid
-
-⚠️ AVVIK
-- Rapportere HMS-avvik, bekymringer og idéer
-- Forstå avviksstatus og oppfølging
-- Bekrefte at avvik er lukket
-- Korrigerende og forebyggende tiltak
+🤒 SYKEFRAVÆR
+- Aktive sykemeldinger
+- Arbeidsgiverperiode-fremdrift
+- Oppfølgingsfrister
+- Egenmeldings-bruk
 
 RETNINGSLINJER:
 - Svar alltid på norsk
-- Vær konkret og handlingsrettet
-- Referer til spesifikke dokumenter eller rutiner når relevant
-- For kritiske HMS/sikkerhetsspørsmål, anbefal å kontakte ansvarlig person
-- Hold svarene konsise men informative
-- Hvis brukeren spør om noe utenfor nåværende side, hjelp dem likevel!`;
+- Gi KONKRETE tall fra dataene
+- Hvis data mangler, si det tydelig
+- For handlinger (opprette/slette vakter), forklar prosessen steg for steg
+- Ved kritiske HMS-spørsmål, referer til ansvarlig person`;
 
-// Type definitions for context data
-interface EquipmentData {
-  name: string;
-  brand?: string;
-  model?: string;
-  serial_number?: string;
-  status: string;
-  notes?: string;
-  category?: { name: string } | null;
+// Type definitions
+interface EmployeeData {
+  id: string;
+  full_name: string;
+  email: string;
+  phone?: string;
+  department?: { name: string } | null;
+  role: string;
+  start_date?: string;
 }
 
-interface DocumentData {
-  name: string;
-  document_type: string;
-  file_url: string;
+interface EmployeeAccountData {
+  employee_id: string;
+  employee?: { full_name: string } | null;
+  account_type: string;
+  year: number;
+  balance: number | null;
+  used: number | null;
+  carried_over: number | null;
 }
 
-interface ServiceData {
-  service_type: string;
-  performed_at: string;
-  notes?: string;
-}
-
-interface SectionData {
-  title: string;
-  content?: string;
-}
-
-interface RiskData {
-  title: string;
-  risk_level: string;
-  status: string;
-}
-
-interface FireEquipmentData {
-  type: string;
-  location: string;
-  last_inspection?: string;
-}
-
-interface CourseData {
-  title: string;
-  category?: string;
-  is_required?: boolean;
-}
-
-interface AbsenceTypeData {
-  name: string;
-  affects_salary: boolean | null;
-  requires_documentation: boolean | null;
-  from_account: string | null;
-}
-
-interface WorkTimeRulesData {
-  max_hours_per_day: number | null;
-  max_hours_per_week: number | null;
-  min_rest_hours_between_shifts: number | null;
-}
-
-interface TimesheetSettingsData {
-  auto_approve_within_margin: boolean | null;
-  margin_minutes: number | null;
-  require_explanation_above_minutes: number | null;
-}
-
-interface DeviationData {
-  title: string;
-  category: string;
-  severity: string;
+interface SickLeaveData {
+  id: string;
+  employee_id: string;
+  employee?: { full_name: string } | null;
+  start_date: string;
+  end_date?: string | null;
+  leave_type: string;
+  employer_period_start?: string | null;
+  employer_period_end?: string | null;
+  employer_period_days_used?: number | null;
+  employer_period_completed: boolean | null;
+  nav_takeover_date?: string | null;
   status: string;
 }
 
-interface FunctionData {
-  name: string;
-  short_name?: string;
+interface ShiftData {
+  id: string;
+  date: string;
+  employee_id: string;
+  employee?: { full_name: string } | null;
+  function?: { name: string; short_name?: string } | null;
+  planned_start: string;
+  planned_end: string;
+  status: string;
 }
 
-// Fetch general context that's useful across all modules
+interface TimeEntryData {
+  id: string;
+  employee_id: string;
+  employee?: { full_name: string } | null;
+  date: string;
+  clock_in: string;
+  clock_out?: string | null;
+  break_minutes?: number | null;
+  status: string;
+  deviation_minutes?: number | null;
+}
+
+interface AbsenceRequestData {
+  id: string;
+  employee_id: string;
+  employee?: { full_name: string } | null;
+  absence_type?: { name: string } | null;
+  start_date: string;
+  end_date: string;
+  total_days: number;
+  status: string;
+}
+
+// Helper function to calculate days between dates
+function daysBetween(start: string, end: string): number {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  return Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+// Fetch comprehensive manager data
+async function getManagerDashboardData(supabase: any): Promise<string> {
+  let context = "";
+  const currentYear = new Date().getFullYear();
+  const today = new Date().toISOString().split("T")[0];
+
+  try {
+    // Get all employees with details
+    const { data: employees } = await supabase
+      .from("profiles")
+      .select(`
+        id,
+        full_name,
+        email,
+        phone,
+        role,
+        start_date,
+        department:departments(name)
+      `)
+      .eq("is_active", true)
+      .order("full_name");
+
+    if (employees && employees.length > 0) {
+      context += `\n📋 ANSATTE I SYSTEMET (${employees.length} aktive):\n`;
+      employees.forEach((emp: EmployeeData) => {
+        context += `- ${emp.full_name} (${emp.role})`;
+        if (emp.department?.name) context += ` - ${emp.department.name}`;
+        context += "\n";
+      });
+    }
+
+    // Get vacation/absence balances for current year
+    const { data: accounts } = await supabase
+      .from("employee_accounts")
+      .select(`
+        employee_id,
+        account_type,
+        year,
+        balance,
+        used,
+        carried_over,
+        employee:profiles(full_name)
+      `)
+      .eq("year", currentYear);
+
+    if (accounts && accounts.length > 0) {
+      context += `\n🏖️ FERIE- OG FRAVÆRSSALDO ${currentYear}:\n`;
+      
+      // Group by employee
+      const byEmployee: Record<string, { name: string; accounts: any[] }> = {};
+      accounts.forEach((acc: EmployeeAccountData) => {
+        const empId = acc.employee_id;
+        if (!byEmployee[empId]) {
+          byEmployee[empId] = {
+            name: acc.employee?.full_name || "Ukjent",
+            accounts: [],
+          };
+        }
+        byEmployee[empId].accounts.push(acc);
+      });
+
+      Object.values(byEmployee).forEach((emp) => {
+        context += `\n${emp.name}:\n`;
+        emp.accounts.forEach((acc: any) => {
+          const total = (acc.balance || 0) + (acc.carried_over || 0);
+          const remaining = total - (acc.used || 0);
+          context += `  - ${acc.account_type}: ${remaining} igjen av ${total} (brukt: ${acc.used || 0})\n`;
+        });
+      });
+    }
+
+    // Get active sick leaves with employer period info
+    const { data: sickLeaves } = await supabase
+      .from("sick_leaves")
+      .select(`
+        id,
+        employee_id,
+        start_date,
+        end_date,
+        leave_type,
+        employer_period_start,
+        employer_period_end,
+        employer_period_days_used,
+        employer_period_completed,
+        nav_takeover_date,
+        status,
+        employee:profiles(full_name)
+      `)
+      .in("status", ["active", "pending"])
+      .order("start_date", { ascending: false });
+
+    if (sickLeaves && sickLeaves.length > 0) {
+      context += `\n🤒 AKTIVE SYKEMELDINGER:\n`;
+      sickLeaves.forEach((sl: SickLeaveData) => {
+        const empName = sl.employee?.full_name || "Ukjent";
+        context += `\n${empName}:\n`;
+        context += `  - Type: ${sl.leave_type}\n`;
+        context += `  - Start: ${sl.start_date}`;
+        if (sl.end_date) context += `, Slutt: ${sl.end_date}`;
+        context += "\n";
+        
+        if (sl.employer_period_start && !sl.employer_period_completed) {
+          const daysUsed = sl.employer_period_days_used || 0;
+          const daysRemaining = 16 - daysUsed;
+          context += `  - Arbeidsgiverperiode: Dag ${daysUsed} av 16 (${daysRemaining} dager igjen)\n`;
+          if (sl.employer_period_end) {
+            context += `  - Arbeidsgiverperiode slutter: ${sl.employer_period_end}\n`;
+          }
+        } else if (sl.employer_period_completed) {
+          context += `  - Arbeidsgiverperiode: Fullført (NAV overtar)\n`;
+          if (sl.nav_takeover_date) {
+            context += `  - NAV overtok: ${sl.nav_takeover_date}\n`;
+          }
+        }
+      });
+    }
+
+    // Get self-certification usage (egenmeldinger)
+    const { data: selfCertifications } = await supabase
+      .from("sick_leaves")
+      .select(`
+        employee_id,
+        start_date,
+        end_date,
+        employee:profiles(full_name)
+      `)
+      .eq("leave_type", "egenmelding")
+      .gte("start_date", `${currentYear}-01-01`);
+
+    if (selfCertifications && selfCertifications.length > 0) {
+      context += `\n📝 EGENMELDINGER ${currentYear}:\n`;
+      
+      // Group by employee
+      const byEmp: Record<string, { name: string; periods: number; days: number }> = {};
+      selfCertifications.forEach((sc: any) => {
+        const empId = sc.employee_id;
+        if (!byEmp[empId]) {
+          byEmp[empId] = {
+            name: sc.employee?.full_name || "Ukjent",
+            periods: 0,
+            days: 0,
+          };
+        }
+        byEmp[empId].periods += 1;
+        if (sc.end_date) {
+          byEmp[empId].days += daysBetween(sc.start_date, sc.end_date) + 1;
+        } else {
+          byEmp[empId].days += 1;
+        }
+      });
+
+      Object.values(byEmp).forEach((emp) => {
+        context += `- ${emp.name}: ${emp.periods} periode(r), ${emp.days} dager (maks: 4 perioder/16 dager per år)\n`;
+      });
+    }
+
+    // Get today's shifts
+    const { data: todayShifts } = await supabase
+      .from("shifts")
+      .select(`
+        id,
+        date,
+        employee_id,
+        planned_start,
+        planned_end,
+        status,
+        employee:profiles(full_name),
+        function:functions(name, short_name)
+      `)
+      .eq("date", today)
+      .order("planned_start");
+
+    if (todayShifts && todayShifts.length > 0) {
+      context += `\n📅 VAKTER I DAG (${today}):\n`;
+      todayShifts.forEach((shift: ShiftData) => {
+        const empName = shift.employee?.full_name || "Ikke tildelt";
+        const funcName = shift.function?.short_name || shift.function?.name || "";
+        context += `- ${shift.planned_start.slice(0, 5)}-${shift.planned_end.slice(0, 5)}: ${empName}`;
+        if (funcName) context += ` (${funcName})`;
+        context += ` [${shift.status}]\n`;
+      });
+    }
+
+    // Get this week's shifts
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+
+    const { data: weekShifts } = await supabase
+      .from("shifts")
+      .select(`
+        date,
+        employee_id,
+        employee:profiles(full_name)
+      `)
+      .gte("date", weekStart.toISOString().split("T")[0])
+      .lte("date", weekEnd.toISOString().split("T")[0]);
+
+    if (weekShifts && weekShifts.length > 0) {
+      context += `\n📆 VAKTER DENNE UKEN (${weekStart.toISOString().split("T")[0]} - ${weekEnd.toISOString().split("T")[0]}):\n`;
+      
+      // Count shifts per employee
+      const shiftCounts: Record<string, { name: string; count: number }> = {};
+      weekShifts.forEach((s: any) => {
+        const empId = s.employee_id;
+        if (!shiftCounts[empId]) {
+          shiftCounts[empId] = {
+            name: s.employee?.full_name || "Ukjent",
+            count: 0,
+          };
+        }
+        shiftCounts[empId].count += 1;
+      });
+
+      Object.values(shiftCounts).forEach((emp) => {
+        context += `- ${emp.name}: ${emp.count} vakt(er)\n`;
+      });
+    }
+
+    // Get pending time entries for approval
+    const { data: pendingTimeEntries } = await supabase
+      .from("time_entries")
+      .select(`
+        id,
+        employee_id,
+        date,
+        clock_in,
+        clock_out,
+        status,
+        deviation_minutes,
+        employee:profiles(full_name)
+      `)
+      .eq("status", "pending")
+      .order("date", { ascending: false })
+      .limit(20);
+
+    if (pendingTimeEntries && pendingTimeEntries.length > 0) {
+      context += `\n⏱️ TIMELISTER TIL GODKJENNING (${pendingTimeEntries.length}):\n`;
+      pendingTimeEntries.slice(0, 10).forEach((te: TimeEntryData) => {
+        const empName = te.employee?.full_name || "Ukjent";
+        context += `- ${te.date}: ${empName}`;
+        if (te.deviation_minutes && te.deviation_minutes !== 0) {
+          context += ` (avvik: ${te.deviation_minutes > 0 ? "+" : ""}${te.deviation_minutes} min)`;
+        }
+        context += "\n";
+      });
+    }
+
+    // Get pending absence requests
+    const { data: pendingAbsence } = await supabase
+      .from("absence_requests")
+      .select(`
+        id,
+        employee_id,
+        start_date,
+        end_date,
+        total_days,
+        status,
+        employee:profiles(full_name),
+        absence_type:absence_types(name)
+      `)
+      .eq("status", "pending")
+      .order("created_at", { ascending: false });
+
+    if (pendingAbsence && pendingAbsence.length > 0) {
+      context += `\n📨 FRAVÆRSSØKNADER TIL BEHANDLING (${pendingAbsence.length}):\n`;
+      pendingAbsence.forEach((ar: AbsenceRequestData) => {
+        const empName = ar.employee?.full_name || "Ukjent";
+        const typeName = ar.absence_type?.name || "Fravær";
+        context += `- ${empName}: ${typeName} (${ar.start_date} - ${ar.end_date}, ${ar.total_days} dager)\n`;
+      });
+    }
+
+    // Get open deviations
+    const { data: openDeviations } = await supabase
+      .from("deviations")
+      .select("id, title, severity, status, due_date")
+      .in("status", ["open", "in_progress"])
+      .order("created_at", { ascending: false })
+      .limit(10);
+
+    if (openDeviations && openDeviations.length > 0) {
+      context += `\n⚠️ ÅPNE AVVIK (${openDeviations.length}):\n`;
+      openDeviations.forEach((d: any) => {
+        context += `- ${d.title} [${d.severity}]`;
+        if (d.due_date) context += ` - Frist: ${d.due_date}`;
+        context += "\n";
+      });
+    }
+
+  } catch (error) {
+    console.error("Error fetching manager data:", error);
+  }
+
+  return context;
+}
+
+// Fetch general context
 async function getGeneralContext(supabase: any): Promise<string> {
   let context = "";
 
@@ -205,13 +482,12 @@ async function getGeneralContext(supabase: any): Promise<string> {
       .select("name, affects_salary, requires_documentation, from_account")
       .eq("is_active", true);
 
-    const absTypes = absenceTypes as AbsenceTypeData[] | null;
-    if (absTypes && absTypes.length > 0) {
-      context += "\nTilgjengelige fraværstyper:\n";
-      absTypes.forEach((t) => {
+    if (absenceTypes && absenceTypes.length > 0) {
+      context += "\n📋 FRAVÆRSTYPER TILGJENGELIG:\n";
+      absenceTypes.forEach((t: any) => {
         context += `- ${t.name}`;
-        if (t.from_account) context += ` (fra konto: ${t.from_account})`;
-        if (t.requires_documentation) context += " [Krever dokumentasjon]";
+        if (t.from_account) context += ` (trekkes fra: ${t.from_account})`;
+        if (t.requires_documentation) context += " [Krever dok.]";
         context += "\n";
       });
     }
@@ -223,27 +499,13 @@ async function getGeneralContext(supabase: any): Promise<string> {
       .limit(1)
       .single();
 
-    const rules = workRules as WorkTimeRulesData | null;
-    if (rules) {
-      context += "\nArbeidstidsregler:\n";
-      if (rules.max_hours_per_day) context += `- Maks timer/dag: ${rules.max_hours_per_day}\n`;
-      if (rules.max_hours_per_week) context += `- Maks timer/uke: ${rules.max_hours_per_week}\n`;
-      if (rules.min_rest_hours_between_shifts) context += `- Min hviletid mellom vakter: ${rules.min_rest_hours_between_shifts} timer\n`;
+    if (workRules) {
+      context += "\n⚙️ ARBEIDSTIDSREGLER:\n";
+      if (workRules.max_hours_per_day) context += `- Maks timer/dag: ${workRules.max_hours_per_day}\n`;
+      if (workRules.max_hours_per_week) context += `- Maks timer/uke: ${workRules.max_hours_per_week}\n`;
+      if (workRules.min_rest_hours_between_shifts) context += `- Min hviletid: ${workRules.min_rest_hours_between_shifts} timer\n`;
     }
 
-    // Get timesheet settings
-    const { data: tsSettings } = await supabase
-      .from("timesheet_settings")
-      .select("*")
-      .limit(1)
-      .single();
-
-    const settings = tsSettings as TimesheetSettingsData | null;
-    if (settings) {
-      context += "\nTimelisteinnstillinger:\n";
-      context += `- Auto-godkjenning: ${settings.auto_approve_within_margin ? "Ja" : "Nei"}\n`;
-      if (settings.margin_minutes) context += `- Margin for godkjenning: ${settings.margin_minutes} minutter\n`;
-    }
   } catch (error) {
     console.error("Error fetching general context:", error);
   }
@@ -263,7 +525,6 @@ async function getModuleContext(
     switch (module) {
       case "equipment":
         if (contextId) {
-          // Get equipment details
           const { data: equipment } = await supabase
             .from("equipment")
             .select(`
@@ -276,29 +537,26 @@ async function getModuleContext(
             .eq("id", contextId)
             .single();
 
-          const eq = equipment as EquipmentData | null;
-          if (eq) {
-            context += `\nAktuelt utstyr:\n`;
-            context += `- Navn: ${eq.name}\n`;
-            context += `- Merke/Modell: ${eq.brand || "Ukjent"} ${eq.model || ""}\n`;
-            context += `- Serienummer: ${eq.serial_number || "Ikke oppgitt"}\n`;
-            context += `- Kategori: ${eq.category?.name || "Ukjent"}\n`;
-            context += `- Status: ${eq.status}\n`;
-            if (eq.notes) context += `- Notater: ${eq.notes}\n`;
+          if (equipment) {
+            context += `\n🔧 AKTUELT UTSTYR:\n`;
+            context += `- Navn: ${equipment.name}\n`;
+            context += `- Merke/Modell: ${equipment.brand || "Ukjent"} ${equipment.model || ""}\n`;
+            context += `- Serienummer: ${equipment.serial_number || "Ikke oppgitt"}\n`;
+            context += `- Kategori: ${equipment.category?.name || "Ukjent"}\n`;
+            context += `- Status: ${equipment.status}\n`;
+            if (equipment.notes) context += `- Notater: ${equipment.notes}\n`;
           }
 
-          // Get datasheets
+          // Get documents
           const { data: documents } = await supabase
             .from("equipment_documents")
-            .select("name, document_type, file_url")
-            .eq("equipment_id", contextId)
-            .eq("document_type", "datasheet");
+            .select("name, document_type")
+            .eq("equipment_id", contextId);
 
-          const docs = documents as DocumentData[] | null;
-          if (docs && docs.length > 0) {
-            context += `\nTilgjengelige datablader:\n`;
-            docs.forEach((doc) => {
-              context += `- ${doc.name}\n`;
+          if (documents && documents.length > 0) {
+            context += `\nDokumenter:\n`;
+            documents.forEach((doc: any) => {
+              context += `- ${doc.name} (${doc.document_type})\n`;
             });
           }
 
@@ -310,10 +568,9 @@ async function getModuleContext(
             .order("performed_at", { ascending: false })
             .limit(3);
 
-          const svcs = services as ServiceData[] | null;
-          if (svcs && svcs.length > 0) {
+          if (services && services.length > 0) {
             context += `\nSiste service:\n`;
-            svcs.forEach((s) => {
+            services.forEach((s: any) => {
               context += `- ${s.service_type} (${new Date(s.performed_at).toLocaleDateString("nb-NO")})\n`;
             });
           }
@@ -321,104 +578,89 @@ async function getModuleContext(
         break;
 
       case "handbook":
-        // Get handbook sections overview
         const { data: sections } = await supabase
           .from("handbook_sections")
           .select("title, content")
           .eq("is_published", true)
           .order("sort_order")
-          .limit(10);
+          .limit(20);
 
-        const secs = sections as SectionData[] | null;
-        if (secs && secs.length > 0) {
-          context += `\nPersonalhåndbok kapitler:\n`;
-          secs.forEach((s) => {
-            context += `- ${s.title}\n`;
+        if (sections && sections.length > 0) {
+          context += `\n📖 PERSONALHÅNDBOK INNHOLD:\n`;
+          sections.forEach((s: any) => {
+            context += `\n## ${s.title}\n`;
+            if (s.content) {
+              // Include first 500 chars of content
+              const preview = s.content.substring(0, 500);
+              context += preview + (s.content.length > 500 ? "..." : "") + "\n";
+            }
           });
         }
         break;
 
       case "hms":
-        // Get active risks
         const { data: risks } = await supabase
           .from("hms_risks")
           .select("title, risk_level, status, mitigation")
           .eq("status", "active")
-          .limit(5);
+          .limit(10);
 
-        const riskList = risks as RiskData[] | null;
-        if (riskList && riskList.length > 0) {
-          context += `\nAktive risikovurderinger:\n`;
-          riskList.forEach((r) => {
-            context += `- ${r.title} (Risikonivå: ${r.risk_level})\n`;
+        if (risks && risks.length > 0) {
+          context += `\n🛡️ AKTIVE RISIKOVURDERINGER:\n`;
+          risks.forEach((r: any) => {
+            context += `\n${r.title}:\n`;
+            context += `- Risikonivå: ${r.risk_level}\n`;
+            if (r.mitigation) context += `- Tiltak: ${r.mitigation}\n`;
           });
         }
         break;
 
       case "fire":
-        // Get fire equipment
         const { data: fireEquipment } = await supabase
           .from("fire_equipment")
           .select("type, location, last_inspection")
-          .limit(10);
+          .limit(15);
 
-        const fireEq = fireEquipment as FireEquipmentData[] | null;
-        if (fireEq && fireEq.length > 0) {
-          context += `\nBrannutstyr:\n`;
-          fireEq.forEach((e) => {
-            context += `- ${e.type}: ${e.location}\n`;
+        if (fireEquipment && fireEquipment.length > 0) {
+          context += `\n🔥 BRANNUTSTYR:\n`;
+          fireEquipment.forEach((e: any) => {
+            context += `- ${e.type}: ${e.location}`;
+            if (e.last_inspection) {
+              context += ` (sist sjekket: ${new Date(e.last_inspection).toLocaleDateString("nb-NO")})`;
+            }
+            context += "\n";
+          });
+        }
+
+        const { data: drills } = await supabase
+          .from("fire_drills")
+          .select("date, participants_count, notes")
+          .order("date", { ascending: false })
+          .limit(3);
+
+        if (drills && drills.length > 0) {
+          context += `\nSiste brannøvelser:\n`;
+          drills.forEach((d: any) => {
+            context += `- ${new Date(d.date).toLocaleDateString("nb-NO")} (${d.participants_count} deltakere)\n`;
           });
         }
         break;
 
       case "training":
-        // Get courses overview
         const { data: courses } = await supabase
           .from("courses")
-          .select("title, category, is_required")
+          .select("title, category, is_required, description")
           .eq("is_active", true)
-          .limit(10);
+          .limit(15);
 
-        const courseList = courses as CourseData[] | null;
-        if (courseList && courseList.length > 0) {
-          context += `\nTilgjengelige kurs:\n`;
-          courseList.forEach((c) => {
-            context += `- ${c.title} (${c.category || "Generelt"})${c.is_required ? " - Obligatorisk" : ""}\n`;
-          });
-        }
-        break;
-
-      case "schedule":
-        // Get functions/roles
-        const { data: functions } = await supabase
-          .from("functions")
-          .select("name, short_name")
-          .eq("is_active", true)
-          .limit(10);
-
-        const funcList = functions as FunctionData[] | null;
-        if (funcList && funcList.length > 0) {
-          context += `\nRoller/Funksjoner:\n`;
-          funcList.forEach((f) => {
-            context += `- ${f.name}${f.short_name ? ` (${f.short_name})` : ""}\n`;
-          });
-        }
-        break;
-
-      case "deviations":
-        // Get recent open deviations
-        const { data: openDeviations } = await supabase
-          .from("deviations")
-          .select("title, category, severity, status")
-          .in("status", ["open", "in_progress"])
-          .order("created_at", { ascending: false })
-          .limit(5);
-
-        const devList = openDeviations as DeviationData[] | null;
-        if (devList && devList.length > 0) {
-          context += `\nÅpne avvik:\n`;
-          devList.forEach((d) => {
-            context += `- ${d.title} (${d.category}, ${d.severity})\n`;
+        if (courses && courses.length > 0) {
+          context += `\n🎓 TILGJENGELIGE KURS:\n`;
+          courses.forEach((c: any) => {
+            context += `\n${c.title}`;
+            if (c.is_required) context += " ⭐ Obligatorisk";
+            context += "\n";
+            if (c.category) context += `- Kategori: ${c.category}\n`;
+            if (c.description) context += `- ${c.description.substring(0, 200)}\n`;
           });
         }
         break;
@@ -431,7 +673,6 @@ async function getModuleContext(
 }
 
 serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -439,40 +680,42 @@ serve(async (req) => {
   try {
     const { messages, module, contextId }: ChatRequest = await req.json();
 
-    // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get LOVABLE_API_KEY
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Get contexts
-    const [moduleContext, generalContext] = await Promise.all([
+    // Fetch all contexts in parallel
+    const [managerData, moduleContext, generalContext] = await Promise.all([
+      getManagerDashboardData(supabase),
       getModuleContext(supabase, module, contextId),
       getGeneralContext(supabase),
     ]);
 
-    // Build full context
     const moduleName = moduleNames[module] || "CrewPlan";
     const fullContext = `
+═══════════════════════════════════════════════
 BRUKERENS NÅVÆRENDE SIDE: ${moduleName}
+DAGENS DATO: ${new Date().toLocaleDateString("nb-NO")}
+═══════════════════════════════════════════════
+
+${managerData}
+
 ${moduleContext}
 
-GENERELL INFORMASJON:
-${generalContext}`;
+${generalContext}
+═══════════════════════════════════════════════`;
 
-    // Build system prompt with context
     const systemPrompt = `${universalSystemPrompt}
 
 ${fullContext}`;
 
     console.log("CrewAI request:", { module, contextId, messageCount: messages.length });
 
-    // Call Lovable AI Gateway
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -510,7 +753,6 @@ ${fullContext}`;
       );
     }
 
-    // Return streaming response
     return new Response(response.body, {
       headers: {
         ...corsHeaders,
