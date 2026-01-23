@@ -737,6 +737,7 @@ export type Database = {
         Row: {
           color: string | null
           created_at: string
+          icon: string | null
           id: string
           location_id: string | null
           name: string
@@ -745,6 +746,7 @@ export type Database = {
         Insert: {
           color?: string | null
           created_at?: string
+          icon?: string | null
           id?: string
           location_id?: string | null
           name: string
@@ -753,6 +755,7 @@ export type Database = {
         Update: {
           color?: string | null
           created_at?: string
+          icon?: string | null
           id?: string
           location_id?: string | null
           name?: string

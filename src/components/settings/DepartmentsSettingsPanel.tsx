@@ -21,15 +21,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Plus, Pencil, Trash2, Building2 } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
 import { useCreateDepartment, useUpdateDepartment, useDeleteDepartment } from "@/hooks/useDepartmentsMutations";
 import { useLocations } from "@/hooks/useSettingsMutations";
+import { IconPicker, getIconComponent } from "@/components/ui/icon-picker";
 
 interface DepartmentData {
   id: string;
   name: string;
   color: string | null;
   location_id: string | null;
+  icon: string | null;
 }
 
 function useDepartments() {
@@ -71,6 +73,7 @@ export function DepartmentsSettingsPanel() {
     name: "",
     color: "#3B82F6",
     location_id: "none",
+    icon: "building-2",
   });
 
   const resetForm = () => {
@@ -78,6 +81,7 @@ export function DepartmentsSettingsPanel() {
       name: "",
       color: "#3B82F6",
       location_id: "none",
+      icon: "building-2",
     });
     setEditingDept(null);
   };
@@ -93,6 +97,7 @@ export function DepartmentsSettingsPanel() {
       name: dept.name,
       color: dept.color || "#3B82F6",
       location_id: dept.location_id || "none",
+      icon: dept.icon || "building-2",
     });
     setIsOpen(true);
   };
@@ -102,6 +107,7 @@ export function DepartmentsSettingsPanel() {
       name: formData.name,
       color: formData.color,
       location_id: formData.location_id === "none" ? null : formData.location_id,
+      icon: formData.icon,
     };
 
     if (editingDept) {
@@ -171,6 +177,14 @@ export function DepartmentsSettingsPanel() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label>Ikon</Label>
+                  <IconPicker
+                    value={formData.icon}
+                    onChange={(icon) => setFormData({ ...formData, icon })}
+                    color={formData.color}
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label>Farge</Label>
                   <div className="flex gap-2 flex-wrap">
                     {PRESET_COLORS.map((color) => (
@@ -236,12 +250,17 @@ export function DepartmentsSettingsPanel() {
                   className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className="h-10 w-10 rounded-lg flex items-center justify-center"
-                      style={{ backgroundColor: (dept.color || "#3B82F6") + "20" }}
-                    >
-                      <Building2 className="h-5 w-5" style={{ color: dept.color || "#3B82F6" }} />
-                    </div>
+                    {(() => {
+                      const DeptIcon = getIconComponent(dept.icon);
+                      return (
+                        <div
+                          className="h-10 w-10 rounded-lg flex items-center justify-center"
+                          style={{ backgroundColor: (dept.color || "#3B82F6") + "20" }}
+                        >
+                          <DeptIcon className="h-5 w-5" style={{ color: dept.color || "#3B82F6" }} />
+                        </div>
+                      );
+                    })()}
                     <div>
                       <div className="font-medium">{dept.name}</div>
                       {location && (
