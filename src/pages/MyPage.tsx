@@ -10,6 +10,7 @@ import { ClockHistoryCard } from "@/components/timesheet/ClockHistoryCard";
 import { ChecklistsPanel } from "@/components/checklist/ChecklistsPanel";
 import { MyDeviationsPanel } from "@/components/deviation/MyDeviationsPanel";
 import { MySickLeaveCard } from "@/components/sick-leave/MySickLeaveCard";
+import { PendingContractsCard } from "@/components/contracts/PendingContractsCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useShifts } from "@/hooks/useShifts";
 import { useEmployeeAccounts } from "@/hooks/useEmployeeAccounts";
@@ -107,6 +108,9 @@ export default function MyPage() {
             </div>
           </div>
         </div>
+
+        {/* Pending Contracts - Digital signing */}
+        <PendingContractsCard userId={user?.id} />
 
         {/* Clock In/Out Card - Functional! */}
         <ClockInOutCard />
