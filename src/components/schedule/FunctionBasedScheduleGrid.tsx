@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 import { ShiftData } from "@/hooks/useShifts";
+import { useActiveSickLeavesForPeriod, SickLeaveType } from "@/hooks/useSickLeave";
 import { ImprovedShiftCard } from "./ImprovedShiftCard";
 import { DroppableScheduleCell } from "./DroppableScheduleCell";
 import { Badge } from "@/components/ui/badge";
@@ -10,8 +11,16 @@ import { getWeatherForDate, weatherIcons, weatherColors, weatherLabels } from "@
 import { getAbsencesForDate } from "@/hooks/useApprovedAbsences";
 import { CostSummaryTooltip } from "./CostSummaryTooltip";
 import { calculateDayCost } from "@/hooks/useWageSupplements";
-import { Clock, DollarSign, Moon, Palmtree, Users, Building2 } from "lucide-react";
+import { Clock, DollarSign, Moon, Palmtree, Users, Building2, Thermometer } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+interface SickLeaveInfo {
+  employee_id: string;
+  start_date: string;
+  end_date: string | null;
+  leave_type: SickLeaveType;
+  sick_leave_percentage: number;
+}
 
 interface FunctionData {
   id: string;
@@ -64,10 +73,34 @@ export function FunctionBasedScheduleGrid({
   const selectedShifts = externalSelectedShifts ?? internalSelectedShifts;
   const setSelectedShifts = onSelectedShiftsChange ?? setInternalSelectedShifts;
 
+  // Fetch active sick leaves for the displayed period
+  const startDate = weekDays[0] ? formatDate(weekDays[0]) : "";
+  const endDate = weekDays[weekDays.length - 1] ? formatDate(weekDays[weekDays.length - 1]) : "";
+  const { data: sickLeaves = [] } = useActiveSickLeavesForPeriod(startDate, endDate);
+
   const getShiftsForDayAndFunction = (date: Date, functionId: string) => {
     return shifts.filter(
       (shift) => shift.date === formatDate(date) && shift.function_id === functionId
     );
+  };
+
+  // Check if an employee is on sick leave on a given date
+  const getSickLeaveForEmployeeOnDate = (employeeId: string | null, date: Date): SickLeaveInfo | null => {
+    if (!employeeId) return null;
+    const dateStr = formatDate(date);
+    const sl = sickLeaves.find((s) => {
+      if (s.employee_id !== employeeId) return false;
+      const startOk = s.start_date <= dateStr;
+      const endOk = !s.end_date || s.end_date >= dateStr;
+      return startOk && endOk;
+    });
+    return sl ? {
+      employee_id: sl.employee_id,
+      start_date: sl.start_date,
+      end_date: sl.end_date,
+      leave_type: sl.leave_type,
+      sick_leave_percentage: sl.sick_leave_percentage,
+    } : null;
   };
 
   const handleShiftSelect = (shiftId: string, selected: boolean) => {
@@ -236,6 +269,7 @@ export function FunctionBasedScheduleGrid({
               selectedShifts={selectedShifts}
               onShiftSelect={handleShiftSelect}
               getShiftsForDayAndFunction={getShiftsForDayAndFunction}
+              getSickLeaveForEmployeeOnDate={getSickLeaveForEmployeeOnDate}
             />
           ))}
         </div>
@@ -262,6 +296,7 @@ export function FunctionBasedScheduleGrid({
               selectedShifts={selectedShifts}
               onShiftSelect={handleShiftSelect}
               getShiftsForDayAndFunction={getShiftsForDayAndFunction}
+              getSickLeaveForEmployeeOnDate={getSickLeaveForEmployeeOnDate}
             />
           ))}
         </>
@@ -316,6 +351,7 @@ function FunctionRow({
   selectedShifts,
   onShiftSelect,
   getShiftsForDayAndFunction,
+  getSickLeaveForEmployeeOnDate,
 }: {
   func: FunctionData;
   weekDays: Date[];
@@ -327,6 +363,7 @@ function FunctionRow({
   selectedShifts: Set<string>;
   onShiftSelect: (shiftId: string, selected: boolean) => void;
   getShiftsForDayAndFunction: (date: Date, functionId: string) => ShiftData[];
+  getSickLeaveForEmployeeOnDate: (employeeId: string | null, date: Date) => SickLeaveInfo | null;
 }) {
   // Dynamic grid columns based on weekDays length
   const getGridCols = () => {
@@ -382,17 +419,21 @@ function FunctionRow({
             className="min-h-[60px] overflow-y-auto"
           >
             <div className="space-y-0.5">
-              {dayShifts.map((shift) => (
-                <ImprovedShiftCard
-                  key={shift.id}
-                  shift={shift}
-                  onShiftClick={onShiftClick}
-                  isAdminOrManager={isAdminOrManager}
-                  isSelected={selectedShifts.has(shift.id)}
-                  onSelect={onShiftSelect}
-                  compact={isCompact}
-                />
-              ))}
+              {dayShifts.map((shift) => {
+                const sickLeave = getSickLeaveForEmployeeOnDate(shift.employee_id, day);
+                return (
+                  <ImprovedShiftCard
+                    key={shift.id}
+                    shift={shift}
+                    onShiftClick={onShiftClick}
+                    isAdminOrManager={isAdminOrManager}
+                    isSelected={selectedShifts.has(shift.id)}
+                    onSelect={onShiftSelect}
+                    compact={isCompact}
+                    sickLeave={sickLeave}
+                  />
+                );
+              })}
             </div>
           </DroppableScheduleCell>
         );
