@@ -13,72 +13,109 @@ interface ChatRequest {
   contextType?: string;
 }
 
-// Module-specific system prompts
-const modulePrompts: Record<string, string> = {
-  equipment: `Du er CrewAI, en intelligent AI-assistent for utstyrsforvaltning i CrewPlan.
-Du hjelper ansatte med:
+// Module name mapping
+const moduleNames: Record<string, string> = {
+  equipment: "Utstyr",
+  hms: "HMS",
+  "ik-mat": "IK-Mat",
+  handbook: "Personalhåndbok",
+  training: "Opplæring",
+  fire: "Brannsikkerhet",
+  routines: "Rutiner",
+  schedule: "Vaktplan",
+  absence: "Fravær",
+  timesheets: "Timelister",
+  deviations: "Avvik",
+  employees: "Ansatte",
+  payroll: "Lønn",
+  settings: "Innstillinger",
+  general: "Dashboard",
+};
+
+// Universal system prompt
+const universalSystemPrompt = `Du er CrewAI, en intelligent og hjelpsom AI-assistent for CrewPlan – et komplett system for personaladministrasjon, vaktplanlegging og internkontroll.
+
+DU KAN HJELPE MED ALT I CREWPLAN:
+
+📦 UTSTYR
 - Tolke feilkoder og feilsøking basert på datablader
 - Rengjøringsprosedyrer og daglig vedlikehold
 - Serviceintervaller og vedlikeholdsrutiner
 - Sikkerhetsinstrukser for utstyr
-- Finne informasjon i tekniske datablader`,
 
-  hms: `Du er CrewAI, en intelligent AI-assistent for HMS (Helse, Miljø og Sikkerhet) i CrewPlan.
-Du hjelper ansatte med:
+🛡️ HMS (Helse, Miljø og Sikkerhet)
 - Risikovurderinger og tiltak
 - Vernerunder og oppfølging
 - HMS-rutiner og prosedyrer
 - Skade- og ulykkesrapportering
-- HMS-roller og ansvar`,
+- HMS-roller og ansvar
 
-  "ik-mat": `Du er CrewAI, en intelligent AI-assistent for internkontroll mat (IK-Mat) i CrewPlan.
-Du hjelper ansatte med:
+🍽️ IK-MAT (Internkontroll Mat)
 - Temperaturlogging og grenseverdier
 - HACCP-prosedyrer og kontrollpunkter
 - Sjekklister for åpning/stenging
 - Hygiene og renholdsrutiner
-- Dokumentasjonskrav fra Mattilsynet`,
+- Dokumentasjonskrav fra Mattilsynet
 
-  handbook: `Du er CrewAI, en intelligent AI-assistent for personalhåndboken i CrewPlan.
-Du hjelper ansatte med:
+📖 PERSONALHÅNDBOK
 - Ferieregler og rettigheter
 - Sykemelding og egenmelding
 - Arbeidsreglement og retningslinjer
 - Permisjoner og fravær
-- Oppsigelse og arbeidsforhold`,
+- Oppsigelse og arbeidsforhold
 
-  training: `Du er CrewAI, en intelligent AI-assistent for opplæring i CrewPlan.
-Du hjelper ansatte med:
+📅 VAKTPLAN
+- Arbeidstidsregler og lovverk
+- Vaktbytte og overtid
+- Helge- og helligdagsarbeid
+- Pauser og hviletid
+
+🏖️ FRAVÆR OG PERMISJONER
+- Søke om ferie, avspasering og permisjoner
+- Forstå feriekvoter og saldoer
+- Regler for ulike fraværstyper
+- Status på fraværssøknader
+- Beregne antall dager for fraværsperioder
+
+⏱️ TIMELISTER
+- Stempling inn/ut og pauseregistrering
+- Timeliste-godkjenning og avvik
+- Overtidsberegning og kompensasjon
+- Fleksitidsaldo og timebank
+- Korrigere feilstemplinger
+
+🎓 OPPLÆRING
 - Obligatoriske kurs og sertifiseringer
 - Kursinnhold og læringsmål
 - Sertifikatfornyelse og utløpsdatoer
-- Kompetansekrav per funksjon`,
+- Kompetansekrav per funksjon
 
-  fire: `Du er CrewAI, en intelligent AI-assistent for brannsikkerhet i CrewPlan.
-Du hjelper ansatte med:
+🔥 BRANNSIKKERHET
 - Evakueringsprosedyrer
 - Brannslukkerutstyr og plassering
 - Brannøvelser og dokumentasjon
 - Branninstrukser og varsling
-- Bygningskart og rømningsveier`,
+- Bygningskart og rømningsveier
 
-  routines: `Du er CrewAI, en intelligent AI-assistent for rutiner i CrewPlan.
-Du hjelper ansatte med:
+📋 RUTINER
 - Daglige rutiner og prosedyrer
 - Sjekklister og oppgaver
 - Ansvarsfordeling
-- Dokumentasjon av utført arbeid`,
+- Dokumentasjon av utført arbeid
 
-  schedule: `Du er CrewAI, en intelligent AI-assistent for vaktplanlegging i CrewPlan.
-Du hjelper ansatte med:
-- Arbeidstidsregler og lovverk
-- Vaktbytte og overtid
-- Helge- og helligdagsarbeid
-- Pauser og hviletid`,
+⚠️ AVVIK
+- Rapportere HMS-avvik, bekymringer og idéer
+- Forstå avviksstatus og oppfølging
+- Bekrefte at avvik er lukket
+- Korrigerende og forebyggende tiltak
 
-  general: `Du er CrewAI, en intelligent AI-assistent for CrewPlan.
-Du hjelper ansatte med generelle spørsmål om systemet og arbeidsplassen.`,
-};
+RETNINGSLINJER:
+- Svar alltid på norsk
+- Vær konkret og handlingsrettet
+- Referer til spesifikke dokumenter eller rutiner når relevant
+- For kritiske HMS/sikkerhetsspørsmål, anbefal å kontakte ansvarlig person
+- Hold svarene konsise men informative
+- Hvis brukeren spør om noe utenfor nåværende side, hjelp dem likevel!`;
 
 // Type definitions for context data
 interface EquipmentData {
@@ -126,6 +163,94 @@ interface CourseData {
   is_required?: boolean;
 }
 
+interface AbsenceTypeData {
+  name: string;
+  affects_salary: boolean | null;
+  requires_documentation: boolean | null;
+  from_account: string | null;
+}
+
+interface WorkTimeRulesData {
+  max_hours_per_day: number | null;
+  max_hours_per_week: number | null;
+  min_rest_hours_between_shifts: number | null;
+}
+
+interface TimesheetSettingsData {
+  auto_approve_within_margin: boolean | null;
+  margin_minutes: number | null;
+  require_explanation_above_minutes: number | null;
+}
+
+interface DeviationData {
+  title: string;
+  category: string;
+  severity: string;
+  status: string;
+}
+
+interface FunctionData {
+  name: string;
+  short_name?: string;
+}
+
+// Fetch general context that's useful across all modules
+async function getGeneralContext(supabase: any): Promise<string> {
+  let context = "";
+
+  try {
+    // Get absence types
+    const { data: absenceTypes } = await supabase
+      .from("absence_types")
+      .select("name, affects_salary, requires_documentation, from_account")
+      .eq("is_active", true);
+
+    const absTypes = absenceTypes as AbsenceTypeData[] | null;
+    if (absTypes && absTypes.length > 0) {
+      context += "\nTilgjengelige fraværstyper:\n";
+      absTypes.forEach((t) => {
+        context += `- ${t.name}`;
+        if (t.from_account) context += ` (fra konto: ${t.from_account})`;
+        if (t.requires_documentation) context += " [Krever dokumentasjon]";
+        context += "\n";
+      });
+    }
+
+    // Get work time rules
+    const { data: workRules } = await supabase
+      .from("work_time_rules")
+      .select("*")
+      .limit(1)
+      .single();
+
+    const rules = workRules as WorkTimeRulesData | null;
+    if (rules) {
+      context += "\nArbeidstidsregler:\n";
+      if (rules.max_hours_per_day) context += `- Maks timer/dag: ${rules.max_hours_per_day}\n`;
+      if (rules.max_hours_per_week) context += `- Maks timer/uke: ${rules.max_hours_per_week}\n`;
+      if (rules.min_rest_hours_between_shifts) context += `- Min hviletid mellom vakter: ${rules.min_rest_hours_between_shifts} timer\n`;
+    }
+
+    // Get timesheet settings
+    const { data: tsSettings } = await supabase
+      .from("timesheet_settings")
+      .select("*")
+      .limit(1)
+      .single();
+
+    const settings = tsSettings as TimesheetSettingsData | null;
+    if (settings) {
+      context += "\nTimelisteinnstillinger:\n";
+      context += `- Auto-godkjenning: ${settings.auto_approve_within_margin ? "Ja" : "Nei"}\n`;
+      if (settings.margin_minutes) context += `- Margin for godkjenning: ${settings.margin_minutes} minutter\n`;
+    }
+  } catch (error) {
+    console.error("Error fetching general context:", error);
+  }
+
+  return context;
+}
+
 // Fetch module-specific context from database
 async function getModuleContext(
   supabase: any,
@@ -153,7 +278,7 @@ async function getModuleContext(
 
           const eq = equipment as EquipmentData | null;
           if (eq) {
-            context += `\n\nAktuelt utstyr:\n`;
+            context += `\nAktuelt utstyr:\n`;
             context += `- Navn: ${eq.name}\n`;
             context += `- Merke/Modell: ${eq.brand || "Ukjent"} ${eq.model || ""}\n`;
             context += `- Serienummer: ${eq.serial_number || "Ikke oppgitt"}\n`;
@@ -173,7 +298,7 @@ async function getModuleContext(
           if (docs && docs.length > 0) {
             context += `\nTilgjengelige datablader:\n`;
             docs.forEach((doc) => {
-              context += `- ${doc.name}: ${doc.file_url}\n`;
+              context += `- ${doc.name}\n`;
             });
           }
 
@@ -206,7 +331,7 @@ async function getModuleContext(
 
         const secs = sections as SectionData[] | null;
         if (secs && secs.length > 0) {
-          context += `\n\nPersonalhåndbok kapitler:\n`;
+          context += `\nPersonalhåndbok kapitler:\n`;
           secs.forEach((s) => {
             context += `- ${s.title}\n`;
           });
@@ -223,7 +348,7 @@ async function getModuleContext(
 
         const riskList = risks as RiskData[] | null;
         if (riskList && riskList.length > 0) {
-          context += `\n\nAktive risikovurderinger:\n`;
+          context += `\nAktive risikovurderinger:\n`;
           riskList.forEach((r) => {
             context += `- ${r.title} (Risikonivå: ${r.risk_level})\n`;
           });
@@ -239,7 +364,7 @@ async function getModuleContext(
 
         const fireEq = fireEquipment as FireEquipmentData[] | null;
         if (fireEq && fireEq.length > 0) {
-          context += `\n\nBrannutstyr:\n`;
+          context += `\nBrannutstyr:\n`;
           fireEq.forEach((e) => {
             context += `- ${e.type}: ${e.location}\n`;
           });
@@ -256,15 +381,50 @@ async function getModuleContext(
 
         const courseList = courses as CourseData[] | null;
         if (courseList && courseList.length > 0) {
-          context += `\n\nTilgjengelige kurs:\n`;
+          context += `\nTilgjengelige kurs:\n`;
           courseList.forEach((c) => {
             context += `- ${c.title} (${c.category || "Generelt"})${c.is_required ? " - Obligatorisk" : ""}\n`;
           });
         }
         break;
+
+      case "schedule":
+        // Get functions/roles
+        const { data: functions } = await supabase
+          .from("functions")
+          .select("name, short_name")
+          .eq("is_active", true)
+          .limit(10);
+
+        const funcList = functions as FunctionData[] | null;
+        if (funcList && funcList.length > 0) {
+          context += `\nRoller/Funksjoner:\n`;
+          funcList.forEach((f) => {
+            context += `- ${f.name}${f.short_name ? ` (${f.short_name})` : ""}\n`;
+          });
+        }
+        break;
+
+      case "deviations":
+        // Get recent open deviations
+        const { data: openDeviations } = await supabase
+          .from("deviations")
+          .select("title, category, severity, status")
+          .in("status", ["open", "in_progress"])
+          .order("created_at", { ascending: false })
+          .limit(5);
+
+        const devList = openDeviations as DeviationData[] | null;
+        if (devList && devList.length > 0) {
+          context += `\nÅpne avvik:\n`;
+          devList.forEach((d) => {
+            context += `- ${d.title} (${d.category}, ${d.severity})\n`;
+          });
+        }
+        break;
     }
   } catch (error) {
-    console.error("Error fetching context:", error);
+    console.error("Error fetching module context:", error);
   }
 
   return context;
@@ -277,7 +437,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, module, contextId, contextType }: ChatRequest = await req.json();
+    const { messages, module, contextId }: ChatRequest = await req.json();
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -290,20 +450,25 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Get module-specific context
-    const moduleContext = await getModuleContext(supabase, module, contextId);
+    // Get contexts
+    const [moduleContext, generalContext] = await Promise.all([
+      getModuleContext(supabase, module, contextId),
+      getGeneralContext(supabase),
+    ]);
 
-    // Build system prompt
-    const basePrompt = modulePrompts[module] || modulePrompts.general;
-    const systemPrompt = `${basePrompt}
+    // Build full context
+    const moduleName = moduleNames[module] || "CrewPlan";
+    const fullContext = `
+BRUKERENS NÅVÆRENDE SIDE: ${moduleName}
 ${moduleContext}
 
-Retningslinjer:
-- Svar alltid på norsk
-- Vær konkret og handlingsrettet
-- Referer til spesifikke dokumenter eller rutiner når relevant
-- For kritiske HMS/sikkerhetsspørsmål, anbefal å kontakte ansvarlig person
-- Hold svarene konsise men informative`;
+GENERELL INFORMASJON:
+${generalContext}`;
+
+    // Build system prompt with context
+    const systemPrompt = `${universalSystemPrompt}
+
+${fullContext}`;
 
     console.log("CrewAI request:", { module, contextId, messageCount: messages.length });
 
