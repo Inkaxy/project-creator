@@ -82,10 +82,10 @@ import {
   Plug,
   CheckCheck,
   CalendarHeart,
+  Bot,
 } from "lucide-react";
 import { useCrewAIChat, type CrewAIMessage } from "@/hooks/useCrewAIChat";
 import { getModuleConfig } from "@/lib/crew-ai-config";
-import { CrewAIIcon } from "./CrewAIIcon";
 import { cn } from "@/lib/utils";
 
 interface CrewAIChatPanelProps {
@@ -182,7 +182,7 @@ function MessageBubble({ message }: { message: CrewAIMessage }) {
     )}>
       {!isUser && (
         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-          <CrewAIIcon size={16} className="text-primary" />
+          <Bot className="h-4 w-4 text-primary" />
         </div>
       )}
       <div className={cn(
@@ -246,7 +246,7 @@ export function CrewAIChatPanel({ module, contextId, onClose }: CrewAIChatPanelP
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-              <CrewAIIcon size={18} className="text-primary" />
+              <Bot className="h-5 w-5 text-primary" />
             </div>
             <div>
               <h3 className="font-semibold text-sm">CrewAI</h3>
@@ -284,7 +284,7 @@ export function CrewAIChatPanel({ module, contextId, onClose }: CrewAIChatPanelP
           {messages.length === 0 && (
             <div className="text-center py-4">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto mb-3">
-                <CrewAIIcon size={28} className="text-primary" />
+                <Bot className="h-7 w-7 text-primary" />
               </div>
               <h4 className="font-medium mb-1">Hei! Jeg er CrewAI 👋</h4>
               <p className="text-sm text-muted-foreground mb-4">
@@ -327,7 +327,7 @@ export function CrewAIChatPanel({ module, contextId, onClose }: CrewAIChatPanelP
           {isLoading && messages[messages.length - 1]?.role === "user" && (
             <div className="flex gap-2 mb-3">
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-                <CrewAIIcon size={16} className="text-primary" />
+                <Bot className="h-4 w-4 text-primary" />
               </div>
               <div className="bg-muted rounded-lg px-3 py-2 flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />

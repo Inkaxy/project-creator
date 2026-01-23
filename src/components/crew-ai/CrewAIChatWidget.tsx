@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { CrewAIChatPanel } from "./CrewAIChatPanel";
-import { CrewAIIcon } from "./CrewAIIcon";
+import { Bot } from "lucide-react";
 import { getModuleFromPath } from "@/lib/crew-ai-config";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
@@ -58,7 +58,7 @@ export function CrewAIChatWidget() {
           size="icon"
           title="CrewAI - Din lederassistent"
         >
-          <CrewAIIcon size={28} />
+          <Bot className="h-7 w-7" />
         </Button>
       )}
 
