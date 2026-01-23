@@ -127,30 +127,45 @@ export type Database = {
         Row: {
           account_id: string
           amount: number
+          approved_at: string | null
+          approved_by: string | null
           created_at: string
           created_by: string | null
           description: string | null
           id: string
+          notes: string | null
+          payout_amount: number | null
+          payout_status: string | null
           reference_id: string | null
           reference_type: string | null
         }
         Insert: {
           account_id: string
           amount: number
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
           id?: string
+          notes?: string | null
+          payout_amount?: number | null
+          payout_status?: string | null
           reference_id?: string | null
           reference_type?: string | null
         }
         Update: {
           account_id?: string
           amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
           id?: string
+          notes?: string | null
+          payout_amount?: number | null
+          payout_status?: string | null
           reference_id?: string | null
           reference_type?: string | null
         }
@@ -160,6 +175,13 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "employee_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_transactions_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {

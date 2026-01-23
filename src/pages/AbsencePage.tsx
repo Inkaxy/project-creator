@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Plus, Calendar } from "lucide-react";
+import { Plus, Calendar, Wallet } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AbsenceRequestModal } from "@/components/absence/AbsenceRequestModal";
 import { AccountBalanceCard } from "@/components/absence/AccountBalanceCard";
 import { TimeBankOverviewCard } from "@/components/timesheet/TimeBankOverviewCard";
+import { TimeBankManagementPanel } from "@/components/timebank/TimeBankManagementPanel";
 import { AbsenceList } from "@/components/absence/AbsenceList";
 import { AbsenceApprovalsPanel } from "@/components/absence/AbsenceApprovalsPanel";
 import { useAuth } from "@/contexts/AuthContext";
@@ -45,6 +46,10 @@ const AbsencePage = () => {
               <>
                 <TabsTrigger value="approvals">Til behandling</TabsTrigger>
                 <TabsTrigger value="all">Alle søknader</TabsTrigger>
+                <TabsTrigger value="timebank" className="flex items-center gap-1">
+                  <Wallet className="h-4 w-4" />
+                  Tidsbank
+                </TabsTrigger>
               </>
             )}
           </TabsList>
@@ -61,6 +66,10 @@ const AbsencePage = () => {
 
               <TabsContent value="all">
                 <AbsenceList showAll />
+              </TabsContent>
+
+              <TabsContent value="timebank">
+                <TimeBankManagementPanel />
               </TabsContent>
             </>
           )}
