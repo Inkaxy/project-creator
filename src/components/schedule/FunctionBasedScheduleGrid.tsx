@@ -374,7 +374,7 @@ function FunctionRow({
             isAdminOrManager={isAdminOrManager}
             onClick={() => onCellClick(day, func.id)}
             onDrop={onShiftDrop}
-            className={cn(isCompact ? "min-h-[60px] p-0.5" : "min-h-[100px] p-1")}
+            className={cn(isCompact ? "min-h-[60px]" : "min-h-[100px]")}
           >
             <div className="space-y-0.5">
               {dayShifts.map((shift) => (

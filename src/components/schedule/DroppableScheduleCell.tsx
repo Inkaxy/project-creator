@@ -113,13 +113,15 @@ export function DroppableScheduleCell({
       onDrop={handleDrop}
       onClick={onClick}
       className={cn(
-        "min-h-[80px] cursor-pointer border-r border-border p-2 transition-all last:border-r-0 hover:bg-muted/50 relative",
+        "min-h-[80px] cursor-pointer border-r border-border transition-all last:border-r-0 hover:bg-muted/50 relative",
         isToday && "bg-primary/5",
         isDragOver && isAdminOrManager && "bg-primary/10 ring-2 ring-primary ring-inset",
         className
       )}
     >
-      {children}
+      <div className="p-1 pt-2">
+        {children}
+      </div>
       
       {/* Drop Preview Indicator */}
       {isDragOver && isAdminOrManager && (
