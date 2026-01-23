@@ -267,28 +267,43 @@ export default function SchedulePage() {
     };
   };
 
-  // Handle drag-and-drop of shifts - now opens modal
+  // Handle drag-and-drop of shifts - move directly, copy keeps employee
   const handleShiftDrop = (shiftId: string, newDate: string, newFunctionId: string, isCopy: boolean) => {
     const shift = shifts.find((s) => s.id === shiftId);
     if (!shift) return;
 
-    // Store pending drop data and open modal
-    setPendingDrop({
-      shiftId,
-      originalDate: shift.date,
-      originalFunctionId: shift.function_id,
-      originalEmployeeId: shift.employee_id,
-      plannedStart: shift.planned_start,
-      plannedEnd: shift.planned_end,
-      employeeName: shift.profiles?.full_name || null,
-      targetDate: newDate,
-      targetFunctionId: newFunctionId,
-      isCopy,
-    });
-    setDropModalOpen(true);
+    if (isCopy) {
+      // Copy: create new shift with same employee
+      createShift.mutate({
+        date: newDate,
+        function_id: newFunctionId,
+        employee_id: shift.employee_id,
+        planned_start: shift.planned_start,
+        planned_end: shift.planned_end,
+        planned_break_minutes: shift.planned_break_minutes ?? undefined,
+        status: "draft",
+        shift_type: shift.shift_type,
+        notes: shift.notes ?? undefined,
+      }, {
+        onSuccess: () => {
+          toast.success("Vakt kopiert");
+        }
+      });
+    } else {
+      // Move: update shift to new date/function, keep employee
+      updateShift.mutate({
+        id: shiftId,
+        date: newDate,
+        function_id: newFunctionId,
+      }, {
+        onSuccess: () => {
+          toast.success("Vakt flyttet");
+        }
+      });
+    }
   };
 
-  // Confirm the drop with selected employee
+  // Confirm the drop with selected employee (kept for multi-drop)
   const handleDropConfirm = (employeeId: string | null) => {
     if (!pendingDrop) return;
 
