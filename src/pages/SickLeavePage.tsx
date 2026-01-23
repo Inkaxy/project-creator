@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Activity, Calendar, AlertTriangle, Users, TrendingUp } from "lucide-react";
+import { Plus, Activity, Calendar, AlertTriangle, Users, TrendingUp, Settings, FileBarChart } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +9,8 @@ import { SickLeaveList } from "@/components/sick-leave/SickLeaveList";
 import { SickLeaveDeadlinesPanel } from "@/components/sick-leave/SickLeaveDeadlinesPanel";
 import { RegisterSickLeaveModal } from "@/components/sick-leave/RegisterSickLeaveModal";
 import { SickLeaveStatisticsPanel } from "@/components/sick-leave/SickLeaveStatisticsPanel";
+import { SelfCertQuotasPanel } from "@/components/sick-leave/SelfCertQuotasPanel";
+import { SickLeaveSettingsPanel } from "@/components/sick-leave/SickLeaveSettingsPanel";
 import { useActiveSickLeaves, useUpcomingDeadlines } from "@/hooks/useSickLeave";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -154,7 +156,7 @@ const SickLeavePage = () => {
 
         {/* Tabs for different views */}
         <Tabs defaultValue="active" className="space-y-4">
-          <TabsList>
+          <TabsList className="flex-wrap">
             <TabsTrigger value="active">
               Aktive sykefravær
               {activeSickLeaves.length > 0 && (
@@ -167,8 +169,18 @@ const SickLeavePage = () => {
                 <Badge variant="destructive" className="ml-2">{overdueCount}</Badge>
               )}
             </TabsTrigger>
+            <TabsTrigger value="quotas">
+              Egenmeldingskvoter
+            </TabsTrigger>
             <TabsTrigger value="history">Historikk</TabsTrigger>
-            <TabsTrigger value="statistics">Statistikk</TabsTrigger>
+            <TabsTrigger value="statistics">
+              <FileBarChart className="h-4 w-4 mr-1" />
+              Statistikk
+            </TabsTrigger>
+            <TabsTrigger value="settings">
+              <Settings className="h-4 w-4 mr-1" />
+              Innstillinger
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="active">
@@ -179,12 +191,20 @@ const SickLeavePage = () => {
             <SickLeaveDeadlinesPanel />
           </TabsContent>
 
+          <TabsContent value="quotas">
+            <SelfCertQuotasPanel />
+          </TabsContent>
+
           <TabsContent value="history">
             <SickLeaveList status="completed" />
           </TabsContent>
 
           <TabsContent value="statistics">
             <SickLeaveStatisticsPanel />
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <SickLeaveSettingsPanel />
           </TabsContent>
         </Tabs>
       </div>
