@@ -80,39 +80,11 @@ export function EmployeePersonnelFileTab({ employeeId }: EmployeePersonnelFileTa
         </Button>
       </div>
 
-      {/* Contracts Section - Special handling */}
-      <Collapsible open={openCategories.has("contracts")} onOpenChange={() => toggleCategory("contracts")}>
-        <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors">
-          <div className="flex items-center gap-3">
-            <FileSignature className="h-5 w-5 text-muted-foreground" />
-            <div className="text-left">
-              <span className="font-medium text-foreground">
-                Kontrakter
-              </span>
-              <p className="text-xs text-muted-foreground">
-                Arbeidsavtaler og tillegg
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {openCategories.has("contracts") ? (
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            ) : (
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            )}
-          </div>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="ml-8 mt-2">
-            <EmployeeContractsSection employeeId={employeeId} />
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-
       <div className="space-y-2">
         {(Object.keys(DOCUMENT_CATEGORIES) as DocumentCategory[]).map((category) => {
           const categoryDocs = documentsByCategory[category] || [];
           const isOpen = openCategories.has(category);
+          const isEmploymentCategory = category === "employment";
 
           return (
             <Collapsible key={category} open={isOpen} onOpenChange={() => toggleCategory(category)}>
@@ -139,7 +111,26 @@ export function EmployeePersonnelFileTab({ employeeId }: EmployeePersonnelFileTa
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <div className="ml-8 mt-2 space-y-2">
-                  {categoryDocs.length === 0 ? (
+                  {/* Show contracts section for employment category */}
+                  {isEmploymentCategory && (
+                    <div className="mb-3">
+                      <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
+                        <FileSignature className="h-3 w-3" />
+                        Arbeidskontrakter
+                      </p>
+                      <EmployeeContractsSection employeeId={employeeId} />
+                    </div>
+                  )}
+
+                  {/* Show documents */}
+                  {isEmploymentCategory && categoryDocs.length > 0 && (
+                    <p className="text-xs font-medium text-muted-foreground mt-4 mb-2 flex items-center gap-1">
+                      <FileText className="h-3 w-3" />
+                      Andre dokumenter
+                    </p>
+                  )}
+                  
+                  {categoryDocs.length === 0 && !isEmploymentCategory ? (
                     <p className="text-sm text-muted-foreground py-2">
                       Ingen dokumenter i denne kategorien.
                     </p>
