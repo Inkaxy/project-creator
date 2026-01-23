@@ -1,8 +1,14 @@
 import { DragEvent, useRef, useState, forwardRef } from "react";
 import { ShiftData } from "@/hooks/useShifts";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
-import { Users, GripVertical, Clock, CheckCircle } from "lucide-react";
+import { Users, GripVertical, Clock, CheckCircle, Thermometer } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SickLeaveType } from "@/hooks/useSickLeave";
+
+interface SickLeaveInfo {
+  leave_type: SickLeaveType;
+  sick_leave_percentage: number;
+}
 
 interface ImprovedShiftCardProps {
   shift: ShiftData;
@@ -12,10 +18,11 @@ interface ImprovedShiftCardProps {
   isSelected?: boolean;
   onSelect?: (shiftId: string, selected: boolean) => void;
   compact?: boolean;
+  sickLeave?: SickLeaveInfo | null;
 }
 
 export const ImprovedShiftCard = forwardRef<HTMLDivElement, ImprovedShiftCardProps>(
-  ({ shift, onShiftClick, isAdminOrManager, showFunction = false, isSelected = false, onSelect, compact = false }, ref) => {
+  ({ shift, onShiftClick, isAdminOrManager, showFunction = false, isSelected = false, onSelect, compact = false, sickLeave }, ref) => {
     const [isDragging, setIsDragging] = useState(false);
     const elementRef = useRef<HTMLDivElement>(null);
 
@@ -74,14 +81,29 @@ export const ImprovedShiftCard = forwardRef<HTMLDivElement, ImprovedShiftCardPro
           compact ? "p-1.5 text-xs" : "p-2 text-sm",
           !shift.employee_id 
             ? "border-2 border-dashed border-primary/50 bg-primary/5" 
-            : shift.is_night_shift 
-              ? "bg-destructive/10 border border-destructive/20" 
-              : "bg-card border border-border",
+            : sickLeave
+              ? "bg-destructive/10 border-2 border-destructive/40"
+              : shift.is_night_shift 
+                ? "bg-destructive/10 border border-destructive/20" 
+                : "bg-card border border-border",
           isSelected && "ring-2 ring-primary ring-offset-1",
           isAdminOrManager && "cursor-grab active:cursor-grabbing",
           isDragging && "opacity-50"
         )}
       >
+        {/* Sick leave indicator badge */}
+        {sickLeave && (
+          <div className="absolute -top-2 -left-1 z-10">
+            <div className="bg-destructive text-destructive-foreground rounded-full px-1.5 py-0.5 flex items-center gap-1 text-[10px] font-medium shadow-sm">
+              <Thermometer className="h-3 w-3" />
+              <span>{sickLeave.leave_type === 'egenmelding' ? 'Egenm.' : 'Syk'}</span>
+              {sickLeave.sick_leave_percentage < 100 && (
+                <span>{sickLeave.sick_leave_percentage}%</span>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Selection checkbox overlay for multi-select */}
         {isSelected && (
           <div className="absolute -top-1 -right-1 z-10">
