@@ -15,6 +15,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { CreateShiftModal } from "@/components/schedule/CreateShiftModal";
 import { EnhancedShiftDetailModal } from "@/components/schedule/EnhancedShiftDetailModal";
 import { FunctionBasedScheduleGrid } from "@/components/schedule/FunctionBasedScheduleGrid";
+import { MonthCalendarGrid } from "@/components/schedule/MonthCalendarGrid";
 import { FunctionsManagementModal } from "@/components/schedule/FunctionsManagementModal";
 import { DepartmentsManagementModal } from "@/components/schedule/DepartmentsManagementModal";
 import { CostSummaryTooltip } from "@/components/schedule/CostSummaryTooltip";
@@ -463,7 +464,23 @@ export default function SchedulePage() {
         {/* Schedule Grid */}
         <Card>
           <CardContent className="p-0">
-            {scheduleViewMode === "employees" ? (
+            {timeRange === "month" ? (
+              /* Month calendar view - compact without function rows */
+              <MonthCalendarGrid
+                currentDate={currentDate}
+                shifts={shifts}
+                isAdminOrManager={isAdminOrManager()}
+                onCellClick={handleCellClick}
+                onShiftClick={handleShiftClick}
+                onShiftDrop={handleShiftDrop}
+                onMultiShiftDrop={handleMultiShiftDrop}
+                approvedAbsences={approvedAbsences}
+                supplements={supplements}
+                selectedShifts={selectedShifts}
+                onSelectedShiftsChange={setSelectedShifts}
+                functions={displayedFunctions}
+              />
+            ) : scheduleViewMode === "employees" ? (
               /* Employee-based view */
               <EmployeeBasedScheduleGrid
                 employees={filteredEmployees}
