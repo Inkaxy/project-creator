@@ -3903,6 +3903,57 @@ export type Database = {
         }
         Relationships: []
       }
+      kiosk_settings: {
+        Row: {
+          allow_clock_without_shift: boolean | null
+          auto_logout_seconds: number | null
+          company_logo_url: string | null
+          company_name: string | null
+          created_at: string
+          id: string
+          primary_color: string | null
+          require_pin_for_all: boolean | null
+          show_active_workers: boolean | null
+          show_all_employees: boolean | null
+          show_clock_seconds: boolean | null
+          show_planned_shifts: boolean | null
+          updated_at: string
+          welcome_message: string | null
+        }
+        Insert: {
+          allow_clock_without_shift?: boolean | null
+          auto_logout_seconds?: number | null
+          company_logo_url?: string | null
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          primary_color?: string | null
+          require_pin_for_all?: boolean | null
+          show_active_workers?: boolean | null
+          show_all_employees?: boolean | null
+          show_clock_seconds?: boolean | null
+          show_planned_shifts?: boolean | null
+          updated_at?: string
+          welcome_message?: string | null
+        }
+        Update: {
+          allow_clock_without_shift?: boolean | null
+          auto_logout_seconds?: number | null
+          company_logo_url?: string | null
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          primary_color?: string | null
+          require_pin_for_all?: boolean | null
+          show_active_workers?: boolean | null
+          show_all_employees?: boolean | null
+          show_clock_seconds?: boolean | null
+          show_planned_shifts?: boolean | null
+          updated_at?: string
+          welcome_message?: string | null
+        }
+        Relationships: []
+      }
       locations: {
         Row: {
           address: string | null

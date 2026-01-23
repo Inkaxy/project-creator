@@ -21,8 +21,10 @@ import {
   Calendar,
   Users,
   Briefcase,
+  AlertCircle,
 } from "lucide-react";
 import crewplanLogo from "@/assets/crewplan-logo-v2.png";
+import { useKioskSettings } from "@/hooks/useKioskSettings";
 
 interface KioskEmployee {
   id: string;
@@ -52,6 +54,8 @@ interface ActiveTimeEntry {
 type KioskMode = "dashboard" | "enter_pin" | "action" | "success";
 
 export default function KioskPage() {
+  const { data: settings } = useKioskSettings();
+  
   const [mode, setMode] = useState<KioskMode>("dashboard");
   const [employees, setEmployees] = useState<KioskEmployee[]>([]);
   const [todayShifts, setTodayShifts] = useState<TodayShift[]>([]);
@@ -62,6 +66,9 @@ export default function KioskPage() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [actionResult, setActionResult] = useState<{ success: boolean; message: string; type: "in" | "out" } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Get auto-logout time from settings
+  const autoLogoutSeconds = settings?.auto_logout_seconds ?? 30;
 
   // Update time every second
   useEffect(() => {
@@ -141,6 +148,13 @@ export default function KioskPage() {
   const handleEmployeeSelect = async (employee: KioskEmployee) => {
     setSelectedEmployee(employee);
     setPin("");
+    
+    // Check if PIN is required (either employee has PIN or require_pin_for_all is enabled)
+    const requirePin = employee.pin_code || settings?.require_pin_for_all;
+    if (requirePin && !employee.pin_code && settings?.require_pin_for_all) {
+      toast.error("Denne ansatte har ikke satt opp PIN-kode");
+      return;
+    }
     
     if (employee.pin_code) {
       setMode("enter_pin");
@@ -248,7 +262,7 @@ export default function KioskPage() {
 
   useEffect(() => {
     if (mode === "success") {
-      const timer = setTimeout(resetKiosk, 3000);
+      const timer = setTimeout(resetKiosk, autoLogoutSeconds * 1000);
       return () => clearTimeout(timer);
     }
   }, [mode]);
@@ -289,13 +303,17 @@ export default function KioskPage() {
       {/* Header */}
       <header className="flex-shrink-0 px-6 py-4 border-b bg-card flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <img src={crewplanLogo} alt="Crewplan" className="h-8 w-8" />
+          <img 
+            src={settings?.company_logo_url || crewplanLogo} 
+            alt={settings?.company_name || "Crewplan"} 
+            className="h-10 w-10 object-contain" 
+          />
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider">
               {format(currentTime, "EEEE d. MMMM yyyy", { locale: nb })}
             </p>
             <p className="text-4xl font-bold font-mono tracking-tight">
-              {format(currentTime, "HH:mm")}
+              {format(currentTime, settings?.show_clock_seconds ? "HH:mm:ss" : "HH:mm")}
             </p>
           </div>
         </div>
@@ -315,7 +333,7 @@ export default function KioskPage() {
         </div>
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="font-semibold text-foreground">Crewplan</span>
+          <span className="font-semibold text-foreground">{settings?.company_name || "Crewplan"}</span>
           <span>Kiosk</span>
         </div>
       </header>
@@ -323,6 +341,7 @@ export default function KioskPage() {
       {/* Main Grid */}
       <div className="flex-1 grid grid-cols-3 gap-0 overflow-hidden">
         {/* Column 1: Planned */}
+        {(settings?.show_planned_shifts ?? true) && (
         <div className="border-r flex flex-col overflow-hidden bg-card/50">
           <div className="flex-shrink-0 px-4 py-3 border-b bg-card">
             <div className="flex items-center gap-2">
@@ -369,8 +388,10 @@ export default function KioskPage() {
             </div>
           </ScrollArea>
         </div>
+        )}
 
         {/* Column 2: At Work */}
+        {(settings?.show_active_workers ?? true) && (
         <div className="border-r flex flex-col overflow-hidden bg-primary/5">
           <div className="flex-shrink-0 px-4 py-3 border-b bg-primary/10">
             <div className="flex items-center gap-2">
