@@ -61,6 +61,7 @@ const App = () => (
             <Route path="/min-side" element={<ProtectedRoute><MyPage /></ProtectedRoute>} />
             <Route path="/lonnssatser" element={<ProtectedRoute><WageSupplementsPage /></ProtectedRoute>} />
             <Route path="/fravaer" element={<ProtectedRoute><AbsencePage /></ProtectedRoute>} />
+            <Route path="/sykefravaer" element={<ProtectedRoute><SickLeavePage /></ProtectedRoute>} />
             <Route path="/ik-mat" element={<ProtectedRoute><IKMatPage /></ProtectedRoute>} />
             <Route path="/meld-avvik" element={<ProtectedRoute><ReportDeviationPage /></ProtectedRoute>} />
             <Route path="/avvik" element={<ProtectedRoute><DeviationsPage /></ProtectedRoute>} />
