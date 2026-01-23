@@ -16,9 +16,11 @@ import {
   Check,
   Download,
   Trash2,
+  FileSignature,
 } from "lucide-react";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
+import { EmployeeContractsSection } from "./EmployeeContractsSection";
 
 interface EmployeePersonnelFileTabProps {
   employeeId: string;
@@ -77,6 +79,35 @@ export function EmployeePersonnelFileTab({ employeeId }: EmployeePersonnelFileTa
           Last opp
         </Button>
       </div>
+
+      {/* Contracts Section - Special handling */}
+      <Collapsible open={openCategories.has("contracts")} onOpenChange={() => toggleCategory("contracts")}>
+        <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors">
+          <div className="flex items-center gap-3">
+            <FileSignature className="h-5 w-5 text-muted-foreground" />
+            <div className="text-left">
+              <span className="font-medium text-foreground">
+                Kontrakter
+              </span>
+              <p className="text-xs text-muted-foreground">
+                Arbeidsavtaler og tillegg
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {openCategories.has("contracts") ? (
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            ) : (
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            )}
+          </div>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="ml-8 mt-2">
+            <EmployeeContractsSection employeeId={employeeId} />
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
 
       <div className="space-y-2">
         {(Object.keys(DOCUMENT_CATEGORIES) as DocumentCategory[]).map((category) => {
