@@ -339,9 +339,9 @@ function FunctionRow({
 
   return (
     <div className={cn("grid min-w-[900px] border-b border-border last:border-b-0 hover:bg-muted/10 transition-colors", getGridCols())}>
-      {/* Function label */}
+      {/* Function label - aligned to top */}
       <div 
-        className="flex items-center gap-2 border-r border-border p-2"
+        className="flex items-start gap-2 border-r border-border p-2 pt-3"
         style={{ 
           borderLeft: `4px solid ${func.color || "#3B82F6"}`,
           backgroundColor: `${func.color || "#3B82F6"}10`
