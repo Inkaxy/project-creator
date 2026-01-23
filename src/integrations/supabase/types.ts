@@ -3190,6 +3190,230 @@ export type Database = {
           },
         ]
       }
+      ik_control_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_critical: boolean | null
+          item_type: string | null
+          max_value: number | null
+          min_value: number | null
+          sort_order: number | null
+          template_id: string
+          title: string
+          unit: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_critical?: boolean | null
+          item_type?: string | null
+          max_value?: number | null
+          min_value?: number | null
+          sort_order?: number | null
+          template_id: string
+          title: string
+          unit?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_critical?: boolean | null
+          item_type?: string | null
+          max_value?: number | null
+          min_value?: number | null
+          sort_order?: number | null
+          template_id?: string
+          title?: string
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ik_control_items_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "ik_control_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ik_control_logs: {
+        Row: {
+          created_at: string
+          has_deviations: boolean | null
+          id: string
+          logged_at: string
+          logged_by: string
+          notes: string | null
+          scheduled_date: string
+          status: string | null
+          template_id: string
+        }
+        Insert: {
+          created_at?: string
+          has_deviations?: boolean | null
+          id?: string
+          logged_at?: string
+          logged_by: string
+          notes?: string | null
+          scheduled_date?: string
+          status?: string | null
+          template_id: string
+        }
+        Update: {
+          created_at?: string
+          has_deviations?: boolean | null
+          id?: string
+          logged_at?: string
+          logged_by?: string
+          notes?: string | null
+          scheduled_date?: string
+          status?: string | null
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ik_control_logs_logged_by_fkey"
+            columns: ["logged_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ik_control_logs_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "ik_control_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ik_control_responses: {
+        Row: {
+          checked: boolean | null
+          created_at: string
+          deviation_action: string | null
+          id: string
+          is_deviation: boolean | null
+          item_id: string
+          log_id: string
+          notes: string | null
+          numeric_value: number | null
+          photo_url: string | null
+          value: string | null
+        }
+        Insert: {
+          checked?: boolean | null
+          created_at?: string
+          deviation_action?: string | null
+          id?: string
+          is_deviation?: boolean | null
+          item_id: string
+          log_id: string
+          notes?: string | null
+          numeric_value?: number | null
+          photo_url?: string | null
+          value?: string | null
+        }
+        Update: {
+          checked?: boolean | null
+          created_at?: string
+          deviation_action?: string | null
+          id?: string
+          is_deviation?: boolean | null
+          item_id?: string
+          log_id?: string
+          notes?: string | null
+          numeric_value?: number | null
+          photo_url?: string | null
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ik_control_responses_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "ik_control_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ik_control_responses_log_id_fkey"
+            columns: ["log_id"]
+            isOneToOne: false
+            referencedRelation: "ik_control_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ik_control_templates: {
+        Row: {
+          category: string | null
+          created_at: string
+          created_by: string | null
+          department_id: string | null
+          description: string | null
+          frequency: string | null
+          id: string
+          is_active: boolean | null
+          is_critical: boolean | null
+          name: string
+          sort_order: number | null
+          time_of_day: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_id?: string | null
+          description?: string | null
+          frequency?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_critical?: boolean | null
+          name: string
+          sort_order?: number | null
+          time_of_day?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_id?: string | null
+          description?: string | null
+          frequency?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_critical?: boolean | null
+          name?: string
+          sort_order?: number | null
+          time_of_day?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ik_control_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ik_control_templates_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ik_document_folders: {
         Row: {
           code: string
