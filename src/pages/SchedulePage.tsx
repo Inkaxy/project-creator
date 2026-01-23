@@ -13,7 +13,8 @@ import { useWorkTimeViolations } from "@/hooks/useWorkTimeRules";
 import { useApprovedAbsences, getAbsencesForDate } from "@/hooks/useApprovedAbsences";
 import { useAuth } from "@/contexts/AuthContext";
 import { CreateShiftModal } from "@/components/schedule/CreateShiftModal";
-import { ShiftDetailModal } from "@/components/schedule/ShiftDetailModal";
+import { EnhancedShiftDetailModal } from "@/components/schedule/EnhancedShiftDetailModal";
+import { FunctionBasedScheduleGrid } from "@/components/schedule/FunctionBasedScheduleGrid";
 import { FunctionsManagementModal } from "@/components/schedule/FunctionsManagementModal";
 import { DepartmentsManagementModal } from "@/components/schedule/DepartmentsManagementModal";
 import { CostSummaryTooltip } from "@/components/schedule/CostSummaryTooltip";
@@ -400,153 +401,19 @@ export default function SchedulePage() {
                 onShiftDrop={handleShiftDrop}
               />
             ) : (
-              /* Function-based view */
-              <div className="overflow-x-auto">
-                {/* Headers */}
-                <div className="grid min-w-[800px] grid-cols-[200px_repeat(7,1fr)] border-b border-border">
-                  <div className="border-r border-border bg-muted/50 p-3">
-                    <span className="text-sm font-medium text-muted-foreground">Funksjon</span>
-                  </div>
-                  {weekDays.map((day, i) => {
-                    const isToday = formatDate(day) === "2026-01-19";
-                    const dayAbsences = getAbsencesForDate(approvedAbsences, formatDate(day));
-                    const weather = showWeather ? getWeatherForDate(day) : null;
-                    const WeatherIcon = weather ? weatherIcons[weather.condition] : null;
-                    
-                    return (
-                      <div key={i} className={cn("border-r border-border p-3 last:border-r-0", isToday && "bg-primary/5")}>
-                        <div className="text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <p className="text-sm text-muted-foreground">{dayNames[i]}</p>
-                            {/* Weather inline in header */}
-                            {weather && WeatherIcon && (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <div className="flex items-center gap-0.5">
-                                    <WeatherIcon className={cn("h-3.5 w-3.5", weatherColors[weather.condition])} />
-                                    <span className="text-xs text-muted-foreground">{weather.temp}°</span>
-                                  </div>
-                                </TooltipTrigger>
-                                <TooltipContent side="top" className="text-xs">
-                                  <p className="font-medium">{weatherLabels[weather.condition]}</p>
-                                  <p>Min: {weather.tempMin}° / Max: {weather.tempMax}°</p>
-                                  <p>Vind: {weather.wind} m/s</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                          </div>
-                          <p className={cn("text-lg font-semibold", isToday ? "text-primary" : "text-foreground")}>{day.getDate()}</p>
-                          {dayAbsences.length > 0 && (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div className="mt-1 flex items-center justify-center gap-1">
-                                  <Palmtree className="h-3 w-3 text-success" />
-                                  <span className="text-xs text-success font-medium">{dayAbsences.length}</span>
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-xs">
-                                <p className="font-medium mb-1">Fravær denne dagen:</p>
-                                <ul className="text-xs space-y-1">
-                                  {dayAbsences.map((absence) => (
-                                    <li key={absence.id} className="flex items-center gap-2">
-                                      <span 
-                                        className="w-2 h-2 rounded-full" 
-                                        style={{ backgroundColor: absence.absence_types?.color || '#6B7280' }}
-                                      />
-                                      <span>{absence.profiles?.full_name}</span>
-                                      <span className="text-muted-foreground">({absence.absence_types?.name})</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Function Rows */}
-                {displayedFunctions.length === 0 ? (
-                  <div className="p-8 text-center text-muted-foreground">
-                    {functions.length === 0
-                      ? "Ingen funksjoner opprettet ennå. Klikk \"Funksjoner\" for å legge til."
-                      : "Ingen funksjoner matcher valgt filter."}
-                  </div>
-                ) : (
-                  displayedFunctions.map((func) => (
-                    <div key={func.id} className="grid min-w-[800px] grid-cols-[200px_repeat(7,1fr)] border-b border-border last:border-b-0">
-                      <div className="flex items-center gap-2 border-r border-border bg-muted/30 p-3">
-                        <div className="h-3 w-3 rounded" style={{ backgroundColor: func.color || "#3B82F6" }} />
-                        {func.icon && <span>{func.icon}</span>}
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium text-foreground">{func.name}</span>
-                          {func.departments?.name && (
-                            <span className="text-xs text-muted-foreground">{func.departments.name}</span>
-                          )}
-                        </div>
-                      </div>
-                      {weekDays.map((day, i) => {
-                        const dayShifts = getShiftsForDayAndFunction(day, func.id);
-                        const isToday = formatDate(day) === "2026-01-19";
-                        return (
-                          <DroppableScheduleCell
-                            key={i}
-                            date={day}
-                            functionId={func.id}
-                            isToday={isToday}
-                            isAdminOrManager={isAdminOrManager()}
-                            onClick={() => handleCellClick(day, func.id)}
-                            onDrop={handleShiftDrop}
-                          >
-                            {dayShifts.map((shift) => (
-                              <DraggableShiftCard
-                                key={shift.id}
-                                shift={shift}
-                                onShiftClick={handleShiftClick}
-                                isAdminOrManager={isAdminOrManager()}
-                              />
-                            ))}
-                          </DroppableScheduleCell>
-                        );
-                      })}
-                    </div>
-                  ))
-                )}
-
-                {/* Summary Row */}
-                <div className="grid min-w-[800px] grid-cols-[200px_repeat(7,1fr)] bg-muted/50">
-                  <div className="border-r border-border p-3">
-                    <span className="text-xs font-semibold uppercase text-muted-foreground">Dagstotaler</span>
-                  </div>
-                  {weekDays.map((day, i) => {
-                    const stats = calculateDayStats(day);
-                    const isToday = formatDate(day) === "2026-01-19";
-                    const hasSupplements = stats.costs.totalSupplements > 0;
-                    return (
-                      <CostSummaryTooltip key={i} costs={stats.costs}>
-                        <div className={cn("cursor-pointer border-r border-border p-2 text-xs last:border-r-0 transition-colors hover:bg-muted", isToday && "bg-primary/10")}>
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-1 text-muted-foreground">
-                              <Clock className="h-3 w-3" /><span>{stats.hours}t</span>
-                            </div>
-                            <div className="flex items-center gap-1 font-medium text-foreground">
-                              <DollarSign className="h-3 w-3" /><span>{stats.costs.totalCost.toLocaleString("nb-NO")} kr</span>
-                            </div>
-                            {hasSupplements && (
-                              <div className="flex items-center gap-1 text-destructive">
-                                <Moon className="h-3 w-3" />
-                                <span>+{stats.costs.totalSupplements.toLocaleString("nb-NO")} kr</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </CostSummaryTooltip>
-                    );
-                  })}
-                </div>
-              </div>
+              /* Function-based view with improved layout */
+              <FunctionBasedScheduleGrid
+                functions={displayedFunctions}
+                shifts={shifts}
+                weekDays={weekDays}
+                isAdminOrManager={isAdminOrManager()}
+                onCellClick={handleCellClick}
+                onShiftClick={handleShiftClick}
+                onShiftDrop={handleShiftDrop}
+                approvedAbsences={approvedAbsences}
+                supplements={supplements}
+                showWeather={showWeather}
+              />
             )}
           </CardContent>
         </Card>
@@ -562,7 +429,7 @@ export default function SchedulePage() {
 
       {/* Modals */}
       <CreateShiftModal open={createModalOpen} onOpenChange={setCreateModalOpen} date={selectedDate} selectedFunction={selectedFunction} functions={functions} />
-      <ShiftDetailModal open={detailModalOpen} onOpenChange={setDetailModalOpen} shift={selectedShift} />
+      <EnhancedShiftDetailModal open={detailModalOpen} onOpenChange={setDetailModalOpen} shift={selectedShift} />
       <FunctionsManagementModal open={functionsModalOpen} onOpenChange={setFunctionsModalOpen} />
       <SaveTemplateModal 
         open={saveTemplateModalOpen} 
