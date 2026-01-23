@@ -172,6 +172,84 @@ const iconMap: Record<string, React.ElementType> = {
   "list-checks": CheckSquare, // Using CheckSquare as fallback
 };
 
+// Simple markdown renderer for tables and basic formatting
+function renderMarkdown(content: string): React.ReactNode {
+  const lines = content.split('\n');
+  const elements: React.ReactNode[] = [];
+  let i = 0;
+  
+  while (i < lines.length) {
+    const line = lines[i];
+    
+    // Check if this is the start of a table
+    if (line.includes('|') && lines[i + 1]?.includes('|') && lines[i + 1]?.includes('-')) {
+      // Parse table
+      const tableLines: string[] = [];
+      while (i < lines.length && lines[i].includes('|')) {
+        tableLines.push(lines[i]);
+        i++;
+      }
+      
+      if (tableLines.length >= 2) {
+        const headerCells = tableLines[0].split('|').filter(cell => cell.trim());
+        const rows = tableLines.slice(2).map(row => 
+          row.split('|').filter(cell => cell.trim())
+        );
+        
+        elements.push(
+          <div key={i} className="overflow-x-auto my-2">
+            <table className="min-w-full text-xs border-collapse">
+              <thead>
+                <tr className="bg-muted/50">
+                  {headerCells.map((cell, j) => (
+                    <th key={j} className="px-2 py-1 text-left font-medium border-b border-border">
+                      {cell.trim()}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, k) => (
+                  <tr key={k} className={k % 2 === 0 ? '' : 'bg-muted/30'}>
+                    {row.map((cell, l) => (
+                      <td key={l} className="px-2 py-1 border-b border-border/50">
+                        {cell.trim()}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+      continue;
+    }
+    
+    // Regular line - handle basic formatting
+    if (line.trim()) {
+      // Check for emoji headers (📊, 🤒, etc.)
+      const isHeader = /^[📊🏖️🤒📅⏱️⚠️📋📨🎓🔥🛡️📖🔧✅❌]/.test(line);
+      
+      elements.push(
+        <p key={i} className={cn(
+          "mb-1",
+          isHeader && "font-medium mt-2"
+        )}>
+          {line}
+        </p>
+      );
+    } else if (elements.length > 0) {
+      // Add spacing for empty lines
+      elements.push(<div key={i} className="h-1" />);
+    }
+    
+    i++;
+  }
+  
+  return <>{elements}</>;
+}
+
 function MessageBubble({ message }: { message: CrewAIMessage }) {
   const isUser = message.role === "user";
   
@@ -186,12 +264,16 @@ function MessageBubble({ message }: { message: CrewAIMessage }) {
         </div>
       )}
       <div className={cn(
-        "max-w-[80%] rounded-lg px-3 py-2 text-sm",
+        "max-w-[85%] rounded-lg px-3 py-2 text-sm",
         isUser 
           ? "bg-primary text-primary-foreground" 
           : "bg-muted text-foreground"
       )}>
-        <p className="whitespace-pre-wrap">{message.content || "..."}</p>
+        {isUser ? (
+          <p className="whitespace-pre-wrap">{message.content || "..."}</p>
+        ) : (
+          renderMarkdown(message.content || "...")
+        )}
       </div>
     </div>
   );
