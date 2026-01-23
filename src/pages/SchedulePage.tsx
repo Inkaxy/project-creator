@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useFunctions } from "@/hooks/useFunctions";
 import { useDepartments, useEmployees } from "@/hooks/useEmployees";
-import { useShifts, ShiftData, useUpdateShift, useCreateShift } from "@/hooks/useShifts";
+import { useShifts, ShiftData, useUpdateShift, useCreateShift, useDeleteShift } from "@/hooks/useShifts";
 import { useWageSupplements, calculateDayCost } from "@/hooks/useWageSupplements";
 import { useShiftTemplates, ShiftTemplate } from "@/hooks/useShiftTemplates";
 import { useWorkTimeViolations } from "@/hooks/useWorkTimeRules";
@@ -32,9 +32,13 @@ import { ShiftDropModal } from "@/components/schedule/ShiftDropModal";
 import { DepartmentFilter } from "@/components/schedule/DepartmentFilter";
 import { FunctionFilterButtons } from "@/components/schedule/FunctionFilterButtons";
 import { ScheduleViewToggle, ViewMode } from "@/components/schedule/ScheduleViewToggle";
+import { TimeRangeSelector, TimeRange } from "@/components/schedule/TimeRangeSelector";
+import { MultiSelectToolbar } from "@/components/schedule/MultiSelectToolbar";
+import { MultiSelectDropModal } from "@/components/schedule/MultiSelectDropModal";
 import { EmployeeBasedScheduleGrid } from "@/components/schedule/EmployeeBasedScheduleGrid";
 import { getWeatherForDate, weatherIcons, weatherColors, weatherLabels } from "@/lib/weather-utils";
 import { useWeatherSettings } from "@/hooks/useWeatherSettings";
+import { addDays, startOfMonth, endOfMonth, differenceInDays, parseISO, startOfWeek, endOfWeek } from "date-fns";
 import {
   ChevronLeft,
   ChevronRight,
@@ -58,7 +62,7 @@ export default function SchedulePage() {
   const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
   const [activeFunctionIds, setActiveFunctionIds] = useState<string[]>([]);
   const [showOnlyDepartmentEmployees, setShowOnlyDepartmentEmployees] = useState(false);
-  const [viewType, setViewType] = useState<"day" | "week" | "month">("week");
+  const [timeRange, setTimeRange] = useState<TimeRange>("week");
   const [scheduleViewMode, setScheduleViewMode] = useState<ViewMode>("functions");
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
@@ -73,6 +77,15 @@ export default function SchedulePage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedFunctionId, setSelectedFunctionId] = useState<string | null>(null);
   const [selectedShift, setSelectedShift] = useState<ShiftData | null>(null);
+  
+  // Multi-select state
+  const [selectedShifts, setSelectedShifts] = useState<Set<string>>(new Set());
+  const [multiDropModalOpen, setMultiDropModalOpen] = useState(false);
+  const [pendingMultiDrop, setPendingMultiDrop] = useState<{
+    shiftIds: string[];
+    targetDate: string;
+    isCopy: boolean;
+  } | null>(null);
   
   // Drag-and-drop modal state
   const [dropModalOpen, setDropModalOpen] = useState(false);
@@ -128,21 +141,27 @@ export default function SchedulePage() {
   
   const updateShift = useUpdateShift();
   const createShift = useCreateShift();
+  const deleteShift = useDeleteShift();
 
-  // Calculate week range
-  const getWeekDays = (date: Date) => {
-    const start = new Date(date);
-    start.setDate(start.getDate() - start.getDay() + 1);
-    return Array.from({ length: 7 }, (_, i) => {
-      const day = new Date(start);
-      day.setDate(start.getDate() + i);
-      return day;
-    });
+  // Calculate date range based on time range selection
+  const getDateRange = (date: Date, range: TimeRange) => {
+    if (range === "week") {
+      const start = startOfWeek(date, { weekStartsOn: 1 });
+      return Array.from({ length: 7 }, (_, i) => addDays(start, i));
+    } else if (range === "2weeks") {
+      const start = startOfWeek(date, { weekStartsOn: 1 });
+      return Array.from({ length: 14 }, (_, i) => addDays(start, i));
+    } else {
+      const start = startOfMonth(date);
+      const end = endOfMonth(date);
+      const days = differenceInDays(end, start) + 1;
+      return Array.from({ length: days }, (_, i) => addDays(start, i));
+    }
   };
 
-  const weekDays = getWeekDays(currentDate);
+  const weekDays = getDateRange(currentDate, timeRange);
   const startDate = weekDays[0].toISOString().split("T")[0];
-  const endDate = weekDays[6].toISOString().split("T")[0];
+  const endDate = weekDays[weekDays.length - 1].toISOString().split("T")[0];
 
   const { data: shifts = [], isLoading: loadingShifts } = useShifts(startDate, endDate);
   const { violations, criticalCount, warningCount } = useWorkTimeViolations(shifts);
@@ -159,13 +178,69 @@ export default function SchedulePage() {
     );
   };
 
-  const navigateWeek = (direction: number) => {
+  const navigatePeriod = (direction: number) => {
     const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() + direction * 7);
+    if (timeRange === "week") {
+      newDate.setDate(newDate.getDate() + direction * 7);
+    } else if (timeRange === "2weeks") {
+      newDate.setDate(newDate.getDate() + direction * 14);
+    } else {
+      newDate.setMonth(newDate.getMonth() + direction);
+    }
     setCurrentDate(newDate);
   };
 
   const goToToday = () => setCurrentDate(new Date(2026, 0, 19));
+
+  // Multi-select drop handler
+  const handleMultiShiftDrop = (shiftIds: string[], targetDate: string, isCopy: boolean) => {
+    setPendingMultiDrop({ shiftIds, targetDate, isCopy });
+    setMultiDropModalOpen(true);
+  };
+
+  const confirmMultiDrop = () => {
+    if (!pendingMultiDrop) return;
+    
+    const firstShift = shifts.find(s => s.id === pendingMultiDrop.shiftIds[0]);
+    if (!firstShift) return;
+    
+    const dayOffset = differenceInDays(
+      parseISO(pendingMultiDrop.targetDate),
+      parseISO(firstShift.date)
+    );
+
+    pendingMultiDrop.shiftIds.forEach(shiftId => {
+      const shift = shifts.find(s => s.id === shiftId);
+      if (!shift) return;
+      
+      const newDate = addDays(parseISO(shift.date), dayOffset);
+      const newDateStr = newDate.toISOString().split("T")[0];
+
+      if (pendingMultiDrop.isCopy) {
+        createShift.mutate({
+          date: newDateStr,
+          function_id: shift.function_id || "",
+          employee_id: shift.employee_id,
+          planned_start: shift.planned_start,
+          planned_end: shift.planned_end,
+          planned_break_minutes: shift.planned_break_minutes ?? undefined,
+          status: "draft",
+        });
+      } else {
+        updateShift.mutate({ id: shiftId, date: newDateStr });
+      }
+    });
+
+    toast.success(`${pendingMultiDrop.shiftIds.length} vakter ${pendingMultiDrop.isCopy ? 'kopiert' : 'flyttet'}`);
+    setSelectedShifts(new Set());
+    setPendingMultiDrop(null);
+  };
+
+  const handleDeleteSelected = () => {
+    selectedShifts.forEach(id => deleteShift.mutate(id));
+    toast.success(`${selectedShifts.size} vakter slettet`);
+    setSelectedShifts(new Set());
+  };
 
   const handleCellClick = (date: Date, functionId: string) => {
     setSelectedDate(date);
@@ -316,18 +391,21 @@ export default function SchedulePage() {
               departments={departments}
             />
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="icon" onClick={() => navigateWeek(-1)}>
+              <Button variant="outline" size="icon" onClick={() => navigatePeriod(-1)}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <Button variant="outline" onClick={goToToday}>I dag</Button>
-              <Button variant="outline" size="icon" onClick={() => navigateWeek(1)}>
+              <Button variant="outline" size="icon" onClick={() => navigatePeriod(1)}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
               <span className="ml-2 text-lg font-semibold text-foreground">
-                Uke {Math.ceil((currentDate.getDate() + new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay()) / 7)},{" "}
-                {currentDate.toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}
+                {timeRange === "month" 
+                  ? currentDate.toLocaleDateString("nb-NO", { month: "long", year: "numeric" })
+                  : `Uke ${Math.ceil((currentDate.getDate() + new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay()) / 7)}, ${currentDate.toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}`
+                }
               </span>
             </div>
+            <TimeRangeSelector timeRange={timeRange} onTimeRangeChange={setTimeRange} />
           </div>
           <ScheduleViewToggle
             viewMode={scheduleViewMode}
@@ -410,9 +488,12 @@ export default function SchedulePage() {
                 onCellClick={handleCellClick}
                 onShiftClick={handleShiftClick}
                 onShiftDrop={handleShiftDrop}
+                onMultiShiftDrop={handleMultiShiftDrop}
                 approvedAbsences={approvedAbsences}
                 supplements={supplements}
                 showWeather={showWeather}
+                selectedShifts={selectedShifts}
+                onSelectedShiftsChange={setSelectedShifts}
               />
             )}
           </CardContent>
@@ -472,6 +553,24 @@ export default function SchedulePage() {
         targetFunctionName={functions.find(f => f.id === pendingDrop?.targetFunctionId)?.name || ""}
         isCopy={pendingDrop?.isCopy || false}
         onConfirm={handleDropConfirm}
+      />
+      <MultiSelectDropModal
+        open={multiDropModalOpen}
+        onOpenChange={(open) => {
+          setMultiDropModalOpen(open);
+          if (!open) setPendingMultiDrop(null);
+        }}
+        shifts={pendingMultiDrop ? shifts.filter(s => pendingMultiDrop.shiftIds.includes(s.id)) : []}
+        targetDate={pendingMultiDrop?.targetDate || ""}
+        isCopy={pendingMultiDrop?.isCopy || false}
+        onConfirm={confirmMultiDrop}
+      />
+      <MultiSelectToolbar
+        selectedCount={selectedShifts.size}
+        onClearSelection={() => setSelectedShifts(new Set())}
+        onMoveSelected={() => toast.info("Dra vakter til ny celle for å flytte")}
+        onCopySelected={() => toast.info("Hold Ctrl og dra vakter for å kopiere")}
+        onDeleteSelected={handleDeleteSelected}
       />
     </MainLayout>
   );
