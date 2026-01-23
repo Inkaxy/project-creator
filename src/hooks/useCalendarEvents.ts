@@ -4,14 +4,16 @@ import { useApprovedAbsences, ApprovedAbsence } from "./useApprovedAbsences";
 import { useFireDrills, FireDrill } from "./useFireSafety";
 import { useSafetyRounds, SafetyRound } from "./useSafetyRounds";
 import { useInspectionVisits, InspectionVisit } from "./useInspections";
-import { format, parseISO, eachDayOfInterval, isWithinInterval } from "date-fns";
+import { useEmployeeBirthdays, EmployeeBirthday, getBirthdaysForDate, calculateAge } from "./useEmployeeBirthdays";
+import { format, parseISO, eachDayOfInterval, isWithinInterval, getMonth, getDate } from "date-fns";
 
 export type CalendarEventType = 
   | 'shift' 
   | 'absence' 
   | 'fire_drill' 
   | 'safety_round' 
-  | 'inspection';
+  | 'inspection'
+  | 'birthday';
 
 export interface CalendarEvent {
   id: string;
@@ -63,6 +65,12 @@ export const EVENT_TYPE_CONFIG: Record<CalendarEventType, {
     bgColor: 'hsl(262 83% 58% / 0.15)',
     icon: 'ClipboardCheck'
   },
+  birthday: { 
+    label: 'Bursdager', 
+    color: 'hsl(330 80% 60%)', 
+    bgColor: 'hsl(330 80% 60% / 0.15)',
+    icon: 'Cake'
+  },
 };
 
 interface UseCalendarEventsOptions {
@@ -78,8 +86,9 @@ export function useCalendarEvents({ startDate, endDate, filters }: UseCalendarEv
   const { data: fireDrills = [], isLoading: drillsLoading } = useFireDrills();
   const { data: safetyRounds = [], isLoading: roundsLoading } = useSafetyRounds();
   const { data: inspections = [], isLoading: inspectionsLoading } = useInspectionVisits();
+  const { data: birthdays = [], isLoading: birthdaysLoading } = useEmployeeBirthdays();
 
-  const isLoading = shiftsLoading || absencesLoading || drillsLoading || roundsLoading || inspectionsLoading;
+  const isLoading = shiftsLoading || absencesLoading || drillsLoading || roundsLoading || inspectionsLoading || birthdaysLoading;
 
   const events = useMemo(() => {
     const allEvents: CalendarEvent[] = [];
@@ -205,8 +214,38 @@ export function useCalendarEvents({ startDate, endDate, filters }: UseCalendarEv
       });
     }
 
+    // Process birthdays
+    if (activeFilters.includes('birthday')) {
+      // Get all dates in the range
+      try {
+        const start = parseISO(startDate);
+        const end = parseISO(endDate);
+        const datesInRange = eachDayOfInterval({ start, end });
+        
+        datesInRange.forEach((date) => {
+          const dayBirthdays = getBirthdaysForDate(birthdays, date);
+          dayBirthdays.forEach((employee) => {
+            const age = calculateAge(employee.date_of_birth, date);
+            const dateStr = format(date, 'yyyy-MM-dd');
+            allEvents.push({
+              id: `birthday-${employee.id}-${dateStr}`,
+              type: 'birthday',
+              title: employee.full_name,
+              subtitle: `Fyller ${age} år`,
+              date: dateStr,
+              color: EVENT_TYPE_CONFIG.birthday.color,
+              bgColor: EVENT_TYPE_CONFIG.birthday.bgColor,
+              raw: employee,
+            });
+          });
+        });
+      } catch {
+        // Skip if date parsing fails
+      }
+    }
+
     return allEvents;
-  }, [shifts, absences, fireDrills, safetyRounds, inspections, startDate, endDate, filters]);
+  }, [shifts, absences, fireDrills, safetyRounds, inspections, birthdays, startDate, endDate, filters]);
 
   // Group events by date
   const eventsByDate = useMemo(() => {
@@ -219,6 +258,23 @@ export function useCalendarEvents({ startDate, endDate, filters }: UseCalendarEv
     });
     return grouped;
   }, [events]);
+
+  // Count birthdays in range
+  const birthdayCount = useMemo(() => {
+    if (!birthdays.length) return 0;
+    try {
+      const start = parseISO(startDate);
+      const end = parseISO(endDate);
+      const datesInRange = eachDayOfInterval({ start, end });
+      let count = 0;
+      datesInRange.forEach((date) => {
+        count += getBirthdaysForDate(birthdays, date).length;
+      });
+      return count;
+    } catch {
+      return 0;
+    }
+  }, [birthdays, startDate, endDate]);
 
   return {
     events,
@@ -239,6 +295,7 @@ export function useCalendarEvents({ startDate, endDate, filters }: UseCalendarEv
         const date = i.visit_date;
         return date >= startDate && date <= endDate;
       }).length,
+      birthdays: birthdayCount,
     },
   };
 }
