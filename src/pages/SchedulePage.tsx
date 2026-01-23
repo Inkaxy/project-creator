@@ -37,6 +37,7 @@ import { TimeRangeSelector, TimeRange } from "@/components/schedule/TimeRangeSel
 import { MultiSelectToolbar } from "@/components/schedule/MultiSelectToolbar";
 import { MultiSelectDropModal } from "@/components/schedule/MultiSelectDropModal";
 import { EmployeeBasedScheduleGrid } from "@/components/schedule/EmployeeBasedScheduleGrid";
+import { PrintScheduleModal } from "@/components/schedule/PrintScheduleModal";
 import { getWeatherForDate, weatherIcons, weatherColors, weatherLabels } from "@/lib/weather-utils";
 import { useWeatherSettings } from "@/hooks/useWeatherSettings";
 import { addDays, startOfMonth, endOfMonth, differenceInDays, parseISO, startOfWeek, endOfWeek } from "date-fns";
@@ -53,6 +54,7 @@ import {
   Palmtree,
   Building2,
   Copy,
+  Printer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -73,6 +75,7 @@ export default function SchedulePage() {
   const [rolloutModalOpen, setRolloutModalOpen] = useState(false);
   const [manageTemplatesModalOpen, setManageTemplatesModalOpen] = useState(false);
   const [copyWeekModalOpen, setCopyWeekModalOpen] = useState(false);
+  const [printModalOpen, setPrintModalOpen] = useState(false);
   const [selectedTemplateForRollout, setSelectedTemplateForRollout] = useState<ShiftTemplate | undefined>();
   const [showAlerts, setShowAlerts] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -366,6 +369,10 @@ export default function SchedulePage() {
                   <Copy className="mr-2 h-4 w-4" />
                   Kopier uke
                 </Button>
+                <Button variant="outline" onClick={() => setPrintModalOpen(true)}>
+                  <Printer className="mr-2 h-4 w-4" />
+                  Skriv ut
+                </Button>
               <Button variant="outline" onClick={() => setDepartmentsModalOpen(true)}>
                   <Building2 className="mr-2 h-4 w-4" />
                   Avdelinger
@@ -581,6 +588,13 @@ export default function SchedulePage() {
         targetDate={pendingMultiDrop?.targetDate || ""}
         isCopy={pendingMultiDrop?.isCopy || false}
         onConfirm={confirmMultiDrop}
+      />
+      <PrintScheduleModal
+        open={printModalOpen}
+        onOpenChange={setPrintModalOpen}
+        currentDate={currentDate}
+        functions={displayedFunctions}
+        shifts={shifts}
       />
       <MultiSelectToolbar
         selectedCount={selectedShifts.size}
