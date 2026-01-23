@@ -5,12 +5,16 @@ import { toast } from "sonner";
 export interface CreateDepartmentInput {
   name: string;
   color?: string;
+  icon?: string;
+  location_id?: string | null;
 }
 
 export interface UpdateDepartmentInput {
   id: string;
   name?: string;
   color?: string;
+  icon?: string;
+  location_id?: string | null;
 }
 
 export function useCreateDepartment() {
