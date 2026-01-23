@@ -21,6 +21,22 @@ import { useCreateEquipment, useUpdateEquipment, type Equipment } from "@/hooks/
 import { useEquipmentCategories } from "@/hooks/useEquipmentCategories";
 import { useSuppliers } from "@/hooks/useSuppliers";
 import { useEmployees } from "@/hooks/useEmployees";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+function useDepartments() {
+  return useQuery({
+    queryKey: ["departments"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("departments")
+        .select("id, name, color")
+        .order("name");
+      if (error) throw error;
+      return data;
+    },
+  });
+}
 
 interface EquipmentFormModalProps {
   open: boolean;
@@ -39,11 +55,13 @@ export function EquipmentFormModal({
   const { data: categories } = useEquipmentCategories();
   const { data: suppliers } = useSuppliers();
   const { data: employees } = useEmployees();
+  const { data: departments } = useDepartments();
 
   const [formData, setFormData] = useState({
     name: equipment?.name || "",
     description: equipment?.description || "",
     category_id: equipment?.category_id || "",
+    department_id: equipment?.department_id || "",
     supplier_id: equipment?.supplier_id || "",
     responsible_employee_id: equipment?.responsible_employee_id || "",
     brand: equipment?.brand || "",
@@ -74,6 +92,7 @@ export function EquipmentFormModal({
           id: equipment.id,
           ...formData,
           category_id: formData.category_id || null,
+          department_id: formData.department_id || null,
           supplier_id: formData.supplier_id || null,
           responsible_employee_id: formData.responsible_employee_id || null,
         });
@@ -85,6 +104,7 @@ export function EquipmentFormModal({
         await createEquipment.mutateAsync({
           ...formData,
           category_id: formData.category_id || null,
+          department_id: formData.department_id || null,
           supplier_id: formData.supplier_id || null,
           responsible_employee_id: formData.responsible_employee_id || null,
         });
@@ -138,6 +158,25 @@ export function EquipmentFormModal({
                   {categories?.map((cat) => (
                     <SelectItem key={cat.id} value={cat.id}>
                       {cat.icon} {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+            </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="department">Avdeling</Label>
+              <Select
+                value={formData.department_id}
+                onValueChange={(value) => setFormData({ ...formData, department_id: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Velg avdeling" />
+                </SelectTrigger>
+                <SelectContent>
+                  {departments?.map((dept) => (
+                    <SelectItem key={dept.id} value={dept.id}>
+                      {dept.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
