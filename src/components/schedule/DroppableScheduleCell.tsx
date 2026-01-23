@@ -43,7 +43,7 @@ export function DroppableScheduleCell({
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     if (!isAdminOrManager) return;
     e.preventDefault();
-    const copyMode = e.ctrlKey || e.metaKey;
+    const copyMode = e.altKey;
     e.dataTransfer.dropEffect = copyMode ? "copy" : "move";
     setIsCopyMode(copyMode);
     setIsDragOver(true);
@@ -88,7 +88,7 @@ export function DroppableScheduleCell({
 
     try {
       const data: DragData = JSON.parse(e.dataTransfer.getData("application/json"));
-      const isCopy = e.ctrlKey || e.metaKey;
+      const isCopy = e.altKey;
       const newDate = formatDate(date);
 
       if (isCopy || data.originalDate !== newDate || data.originalFunctionId !== functionId) {
@@ -101,7 +101,7 @@ export function DroppableScheduleCell({
 
   const handleKeyChange = (e: KeyboardEvent) => {
     if (isDragOver) {
-      setIsCopyMode(e.ctrlKey || e.metaKey);
+      setIsCopyMode(e.altKey);
     }
   };
 
@@ -149,7 +149,7 @@ export function DroppableScheduleCell({
             </div>
           )}
           <div className="text-[9px] text-primary/60 mt-1">
-            {isCopyMode ? "Slipp for å kopiere" : "Hold Ctrl for å kopiere"}
+            {isCopyMode ? "Slipp for å kopiere" : "Hold Alt for å kopiere"}
           </div>
         </div>
       )}
