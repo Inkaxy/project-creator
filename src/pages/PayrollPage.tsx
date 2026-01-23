@@ -23,8 +23,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useAllTimeEntries } from "@/hooks/useTimeEntries";
 import { useEmployees } from "@/hooks/useEmployees";
+import { useSickLeavesForPayroll } from "@/hooks/useSickLeavePayroll";
 import { format, startOfMonth, endOfMonth, subMonths, differenceInMinutes } from "date-fns";
 import { nb } from "date-fns/locale";
 import {
@@ -38,6 +45,7 @@ import {
   AlertTriangle,
   TrendingUp,
   Loader2,
+  Thermometer,
 } from "lucide-react";
 
 export default function PayrollPage() {
@@ -52,8 +60,24 @@ export default function PayrollPage() {
   // Fetch data
   const { data: timeEntries = [], isLoading: entriesLoading } = useAllTimeEntries(startDate, endDate);
   const { data: employees = [], isLoading: employeesLoading } = useEmployees();
+  const { data: sickLeaveSummaries = [], isLoading: sickLeaveLoading } = useSickLeavesForPayroll(startDate, endDate);
 
-  const isLoading = entriesLoading || employeesLoading;
+  const isLoading = entriesLoading || employeesLoading || sickLeaveLoading;
+
+  // Create sick leave lookup map
+  const sickLeaveMap = useMemo(() => {
+    const map = new Map<string, { totalDays: number; employerDays: number; sickHours: number }>();
+    sickLeaveSummaries.forEach(sl => {
+      // Calculate hours based on 7.5 hours per work day
+      const sickHours = sl.employerPeriodDays * 7.5 * (sl.sickLeavePercentage / 100);
+      map.set(sl.employeeId, {
+        totalDays: sl.totalSickDays,
+        employerDays: sl.employerPeriodDays,
+        sickHours,
+      });
+    });
+    return map;
+  }, [sickLeaveSummaries]);
 
   // Filter approved entries only
   const approvedEntries = timeEntries.filter(entry => entry.status === "approved");
@@ -69,11 +93,14 @@ export default function PayrollPage() {
       weekendHours: number;
       entries: number;
       pendingEntries: number;
+      sickDays: number;
+      sickHours: number;
     }> = {};
 
     timeEntries.forEach(entry => {
       const empId = entry.employee_id;
       if (!summary[empId]) {
+        const sickData = sickLeaveMap.get(empId);
         summary[empId] = {
           employeeId: empId,
           name: entry.profiles?.full_name || "Ukjent",
@@ -83,6 +110,8 @@ export default function PayrollPage() {
           weekendHours: 0,
           entries: 0,
           pendingEntries: 0,
+          sickDays: sickData?.totalDays || 0,
+          sickHours: sickData?.sickHours || 0,
         };
       }
 
@@ -118,8 +147,26 @@ export default function PayrollPage() {
       }
     });
 
+    // Add employees with sick leave but no time entries
+    sickLeaveSummaries.forEach(sl => {
+      if (!summary[sl.employeeId]) {
+        summary[sl.employeeId] = {
+          employeeId: sl.employeeId,
+          name: sl.employeeName,
+          totalHours: 0,
+          overtimeHours: 0,
+          nightHours: 0,
+          weekendHours: 0,
+          entries: 0,
+          pendingEntries: 0,
+          sickDays: sl.totalSickDays,
+          sickHours: sl.employerPeriodDays * 7.5 * (sl.sickLeavePercentage / 100),
+        };
+      }
+    });
+
     return Object.values(summary).sort((a, b) => a.name.localeCompare(b.name));
-  }, [timeEntries]);
+  }, [timeEntries, sickLeaveMap, sickLeaveSummaries]);
 
   // Stats
   const stats = useMemo(() => {
@@ -128,8 +175,10 @@ export default function PayrollPage() {
     const totalNight = employeeSummary.reduce((sum, e) => sum + e.nightHours, 0);
     const totalWeekend = employeeSummary.reduce((sum, e) => sum + e.weekendHours, 0);
     const pendingCount = employeeSummary.reduce((sum, e) => sum + e.pendingEntries, 0);
+    const totalSickHours = employeeSummary.reduce((sum, e) => sum + e.sickHours, 0);
+    const totalSickDays = employeeSummary.reduce((sum, e) => sum + e.sickDays, 0);
 
-    return { totalHours, totalOvertime, totalNight, totalWeekend, pendingCount };
+    return { totalHours, totalOvertime, totalNight, totalWeekend, pendingCount, totalSickHours, totalSickDays };
   }, [employeeSummary]);
 
   const toggleEmployee = (employeeId: string) => {
@@ -150,7 +199,7 @@ export default function PayrollPage() {
 
   const handleExport = () => {
     // Create CSV content
-    const headers = ["Ansatt", "Timer totalt", "Overtid", "Natt-timer", "Helg-timer", "Antall vakter"];
+    const headers = ["Ansatt", "Timer totalt", "Overtid", "Natt-timer", "Helg-timer", "Sykedager", "Syketimer", "Antall vakter"];
     const rows = employeeSummary
       .filter(e => selectedEmployees.length === 0 || selectedEmployees.includes(e.employeeId))
       .map(e => [
@@ -159,6 +208,8 @@ export default function PayrollPage() {
         e.overtimeHours.toFixed(2),
         e.nightHours.toFixed(2),
         e.weekendHours.toFixed(2),
+        e.sickDays.toString(),
+        e.sickHours.toFixed(2),
         e.entries.toString(),
       ]);
 
@@ -333,6 +384,12 @@ export default function PayrollPage() {
                       <TableHead className="text-right">Overtid</TableHead>
                       <TableHead className="text-right">Natt-timer</TableHead>
                       <TableHead className="text-right">Helg-timer</TableHead>
+                      <TableHead className="text-right">
+                        <span className="flex items-center justify-end gap-1">
+                          <Thermometer className="h-3 w-3" />
+                          Sykefravær
+                        </span>
+                      </TableHead>
                       <TableHead className="text-right">Vakter</TableHead>
                       <TableHead className="text-right">Status</TableHead>
                     </TableRow>
@@ -359,6 +416,24 @@ export default function PayrollPage() {
                         </TableCell>
                         <TableCell className="text-right">{emp.nightHours.toFixed(2)}</TableCell>
                         <TableCell className="text-right">{emp.weekendHours.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">
+                          {emp.sickDays > 0 ? (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Badge variant="outline" className="border-destructive/50 text-destructive">
+                                    {emp.sickDays}d / {emp.sickHours.toFixed(1)}t
+                                  </Badge>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{emp.sickDays} sykedager = {emp.sickHours.toFixed(1)} timer</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          ) : (
+                            "-"
+                          )}
+                        </TableCell>
                         <TableCell className="text-right">{emp.entries}</TableCell>
                         <TableCell className="text-right">
                           {emp.pendingEntries > 0 ? (
