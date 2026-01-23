@@ -1,13 +1,14 @@
 import { useMemo } from "react";
 import { ShiftData } from "@/hooks/useShifts";
 import { EmployeeProfile } from "@/hooks/useEmployees";
+import { useActiveSickLeavesForPeriod, SickLeaveType } from "@/hooks/useSickLeave";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { DraggableShiftCard } from "./DraggableShiftCard";
 import { DroppableScheduleCell } from "./DroppableScheduleCell";
-import { Plus } from "lucide-react";
+import { Plus, Thermometer, HeartPulse } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EmployeeBasedScheduleGridProps {
@@ -70,10 +71,36 @@ export function EmployeeBasedScheduleGrid({
   onShiftClick,
   onShiftDrop,
 }: EmployeeBasedScheduleGridProps) {
+  // Fetch sick leaves for the week
+  const startDate = weekDays[0] ? formatDate(weekDays[0]) : "";
+  const endDate = weekDays[6] ? formatDate(weekDays[6]) : "";
+  const { data: sickLeaves = [] } = useActiveSickLeavesForPeriod(startDate, endDate);
+
   const getShiftsForEmployeeOnDate = (employeeId: string, date: Date) => {
     return shifts.filter(
       (s) => s.employee_id === employeeId && s.date === formatDate(date)
     );
+  };
+
+  // Check if an employee is on sick leave on a given date
+  const getSickLeaveForEmployeeOnDate = (employeeId: string, date: Date) => {
+    const dateStr = formatDate(date);
+    return sickLeaves.find((sl) => {
+      if (sl.employee_id !== employeeId) return false;
+      const startOk = sl.start_date <= dateStr;
+      const endOk = !sl.end_date || sl.end_date >= dateStr;
+      return startOk && endOk;
+    });
+  };
+
+  const getSickLeaveLabel = (leaveType: SickLeaveType): string => {
+    switch (leaveType) {
+      case 'egenmelding': return 'Egenmelding';
+      case 'sykemelding': return 'Sykemeldt';
+      case 'gradert_sykemelding': return 'Gradert syk';
+      case 'arbeidsrelatert_sykdom': return 'Arb.rel. syk';
+      default: return 'Syk';
+    }
   };
 
   const employeeWeeklyHours = useMemo(() => {
@@ -176,6 +203,7 @@ export function EmployeeBasedScheduleGrid({
             {/* Day cells */}
             {weekDays.map((day, i) => {
               const cellShifts = getShiftsForEmployeeOnDate(employee.id, day);
+              const sickLeave = getSickLeaveForEmployeeOnDate(employee.id, day);
               const isToday = formatDate(day) === "2026-01-19";
 
               return (
@@ -187,8 +215,41 @@ export function EmployeeBasedScheduleGrid({
                   isAdminOrManager={isAdminOrManager}
                   onClick={() => onCellClick(day, employee.id)}
                   onDrop={onShiftDrop}
-                  className="min-h-[80px]"
+                  className={cn(
+                    "min-h-[80px]",
+                    sickLeave && "bg-destructive/5 border-l-2 border-l-destructive"
+                  )}
                 >
+                  {/* Sick leave indicator */}
+                  {sickLeave && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center justify-center gap-1.5 rounded-md bg-destructive/10 px-2 py-1.5 mb-1 border border-destructive/20">
+                          <Thermometer className="h-3.5 w-3.5 text-destructive" />
+                          <span className="text-xs font-medium text-destructive">
+                            {getSickLeaveLabel(sickLeave.leave_type)}
+                          </span>
+                          {sickLeave.sick_leave_percentage < 100 && (
+                            <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 text-destructive border-destructive/30">
+                              {sickLeave.sick_leave_percentage}%
+                            </Badge>
+                          )}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="font-medium">{getSickLeaveLabel(sickLeave.leave_type)}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Fra {sickLeave.start_date}
+                          {sickLeave.end_date && ` til ${sickLeave.end_date}`}
+                        </p>
+                        {sickLeave.sick_leave_percentage < 100 && (
+                          <p className="text-xs">Gradert: {sickLeave.sick_leave_percentage}%</p>
+                        )}
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+
+                  {/* Regular shifts or FRI */}
                   {cellShifts.length > 0 ? (
                     cellShifts.map((shift) => (
                       <DraggableShiftCard
@@ -199,11 +260,11 @@ export function EmployeeBasedScheduleGrid({
                         showFunction
                       />
                     ))
-                  ) : (
+                  ) : !sickLeave ? (
                     <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
                       FRI
                     </div>
-                  )}
+                  ) : null}
                 </DroppableScheduleCell>
               );
             })}
