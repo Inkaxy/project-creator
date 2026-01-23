@@ -1,11 +1,14 @@
 import { EmployeeProfile } from "@/hooks/useEmployees";
 import { EmployeeDetails } from "@/hooks/useEmployeeDetails";
-import { useWageLadder } from "@/hooks/useWageLadders";
+import { useWageLadder, calculateCurrentLevel } from "@/hooks/useWageLadders";
+import { useWageSupplements } from "@/hooks/useWageSupplements";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   DollarSign,
   Clock,
+  TrendingUp,
+  Moon,
 } from "lucide-react";
 import { SeniorityGamificationCard } from "@/components/seniority/SeniorityGamificationCard";
 
@@ -16,6 +19,7 @@ interface EmployeeSalaryTabProps {
 
 export function EmployeeSalaryTab({ employee, employeeDetails }: EmployeeSalaryTabProps) {
   const { data: wageLadder } = useWageLadder(employeeDetails?.wage_ladder_id || undefined);
+  const { data: supplements = [] } = useWageSupplements();
 
   const getCompetenceLabel = (level: string | null) => {
     const labels: Record<string, string> = {
@@ -30,14 +34,24 @@ export function EmployeeSalaryTab({ employee, employeeDetails }: EmployeeSalaryT
     return type === "fixed" ? "Fastlønn" : "Timelønn";
   };
 
-  // Calculate effective hourly rate for fixed salary
+  // Get current level from wage ladder
+  const currentLevel = wageLadder ? calculateCurrentLevel(wageLadder, employeeDetails?.accumulated_hours || 0) : null;
+  
+  // Get night supplement based on competence level
+  const nightSupplement = supplements.find(s => 
+    s.applies_to === "night" && 
+    s.name.toLowerCase().includes(employeeDetails?.competence_level === "faglaert" ? "faglært" : "ufaglært")
+  ) || supplements.find(s => s.applies_to === "night");
+
+  // Calculate effective hourly rate for fixed salary (based on actual ladder rate)
   const calculateEffectiveHourlyRate = () => {
     if (!employeeDetails?.fixed_monthly_salary || !employeeDetails?.contracted_hours_per_month) {
       return null;
     }
-    const nightValue = (employeeDetails.included_night_hours || 0) * 90; // Assuming 90 kr night supplement
+    const nightRate = nightSupplement?.amount || 90;
+    const nightValue = (employeeDetails.included_night_hours || 0) * nightRate;
     const restForRegular = employeeDetails.fixed_monthly_salary - nightValue;
-    return restForRegular / employeeDetails.contracted_hours_per_month;
+    return restForRegular / (employeeDetails.contracted_hours_per_month - (employeeDetails.included_night_hours || 0));
   };
 
   const effectiveHourlyRate = calculateEffectiveHourlyRate();
@@ -85,6 +99,33 @@ export function EmployeeSalaryTab({ employee, employeeDetails }: EmployeeSalaryT
       ) : (
         // FIXED SALARY VIEW
         <div className="space-y-4">
+          {/* Wage Ladder Connection - Shows the base rate being used */}
+          {wageLadder && currentLevel && (
+            <Card className="bg-primary/5 border-primary/20">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <TrendingUp className="h-4 w-4 text-primary" />
+                  <span className="font-medium text-foreground">Koblet lønnsstige</span>
+                  <Badge variant="outline" className="ml-auto">{wageLadder.name}</Badge>
+                </div>
+                <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Grunnlag timelønn</p>
+                    <p className="font-bold text-primary text-lg">{currentLevel.hourlyRate.toFixed(2)} kr</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Ansiennitetsnivå</p>
+                    <p className="font-medium text-foreground">Nivå {currentLevel.level}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Akkumulerte timer</p>
+                    <p className="font-medium text-foreground">{(employeeDetails?.accumulated_hours || 0).toLocaleString("nb-NO")} t</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <p className="text-muted-foreground">Månedslønn</p>
@@ -105,23 +146,42 @@ export function EmployeeSalaryTab({ employee, employeeDetails }: EmployeeSalaryT
             <Card className="bg-muted/50">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <Moon className="h-4 w-4 text-muted-foreground" />
                   <span className="font-medium text-foreground">Innbakt nattillegg</span>
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-3 gap-4 text-sm">
                   <div>
                     <p className="text-muted-foreground">Innbakte natt-timer</p>
                     <p className="font-medium text-foreground">
-                      {employeeDetails.included_night_hours} t × 90 kr = {(employeeDetails.included_night_hours * 90).toLocaleString("nb-NO")} kr
+                      {employeeDetails.included_night_hours.toFixed(1)} t/mnd
                     </p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">Effektiv timelønn</p>
+                    <p className="text-muted-foreground">Natt-tillegg ({getCompetenceLabel(employeeDetails.competence_level || null)})</p>
                     <p className="font-medium text-foreground">
-                      {effectiveHourlyRate?.toFixed(2) || "-"} kr/t
+                      {nightSupplement?.amount.toFixed(2) || "90"} kr/t
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Natt-verdi i lønn</p>
+                    <p className="font-medium text-foreground">
+                      {((employeeDetails.included_night_hours || 0) * (nightSupplement?.amount || 90)).toLocaleString("nb-NO", { maximumFractionDigits: 0 })} kr
                     </p>
                   </div>
                 </div>
+                {effectiveHourlyRate && currentLevel && (
+                  <div className="mt-3 pt-3 border-t border-border">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Effektiv timelønn (beregnet):</span>
+                      <span className={`font-bold ${Math.abs(effectiveHourlyRate - currentLevel.hourlyRate) < 1 ? 'text-primary' : 'text-destructive'}`}>
+                        {effectiveHourlyRate.toFixed(2)} kr/t
+                        {Math.abs(effectiveHourlyRate - currentLevel.hourlyRate) < 1 && (
+                          <span className="text-primary ml-2">✓ Matcher lønnsstige</span>
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}
@@ -136,25 +196,31 @@ export function EmployeeSalaryTab({ employee, employeeDetails }: EmployeeSalaryT
         </div>
       )}
 
-      {/* Applicable Supplements */}
+      {/* Applicable Supplements (from database) */}
       <div className="pt-4 border-t border-border">
         <h4 className="text-sm font-semibold text-foreground mb-3">Tillegg som gjelder</h4>
         <div className="space-y-2 text-sm">
-          <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
-            <span>✓ {employeeDetails?.competence_level === "faglaert" ? "Nattillegg faglært" : "Nattillegg ufaglært"}</span>
-            <span className="font-medium">{employeeDetails?.competence_level === "faglaert" ? "90" : "50"} kr/t</span>
-            <span className="text-muted-foreground">21:00-06:00</span>
-          </div>
-          <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
-            <span>✓ Helgetillegg</span>
-            <span className="font-medium">50 kr/t</span>
-            <span className="text-muted-foreground">Lør-Søn</span>
-          </div>
-          <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
-            <span>✓ Helligdagstillegg</span>
-            <span className="font-medium">100%</span>
-            <span className="text-muted-foreground">Røde dager</span>
-          </div>
+          {nightSupplement && (
+            <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
+              <span>✓ {nightSupplement.name}</span>
+              <span className="font-medium">{nightSupplement.amount.toFixed(0)} kr/t</span>
+              <span className="text-muted-foreground">{nightSupplement.time_start || "21:00"}-{nightSupplement.time_end || "06:00"}</span>
+            </div>
+          )}
+          {supplements.filter(s => s.applies_to === "weekend").slice(0, 2).map(supp => (
+            <div key={supp.id} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
+              <span>✓ {supp.name}</span>
+              <span className="font-medium">{supp.amount.toFixed(0)} kr/t</span>
+              <span className="text-muted-foreground">Helg</span>
+            </div>
+          ))}
+          {supplements.find(s => s.applies_to === "holiday") && (
+            <div className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
+              <span>✓ Helligdagstillegg</span>
+              <span className="font-medium">{supplements.find(s => s.applies_to === "holiday")?.supplement_type === "percentage" ? `${supplements.find(s => s.applies_to === "holiday")?.amount}%` : `${supplements.find(s => s.applies_to === "holiday")?.amount} kr/t`}</span>
+              <span className="text-muted-foreground">Røde dager</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

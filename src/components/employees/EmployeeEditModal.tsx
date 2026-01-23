@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +23,8 @@ import { EmployeeDetails, useUpsertEmployeeDetails } from "@/hooks/useEmployeeDe
 import { useUpdateProfile } from "@/hooks/useProfileMutations";
 import { useWageLadders } from "@/hooks/useWageLadders";
 import { useFunctions } from "@/hooks/useFunctions";
+import { FixedSalaryCalculator } from "./FixedSalaryCalculator";
+import { Calculator } from "lucide-react";
 
 interface EmployeeEditModalProps {
   open: boolean;
@@ -85,6 +87,9 @@ export function EmployeeEditModal({
   const [fixedMonthlySalary, setFixedMonthlySalary] = useState(String(employeeDetails?.fixed_monthly_salary || ""));
   const [includedNightHours, setIncludedNightHours] = useState(String(employeeDetails?.included_night_hours || ""));
   const [contractedHoursPerMonth, setContractedHoursPerMonth] = useState(String(employeeDetails?.contracted_hours_per_month || ""));
+  
+  // Calculator visibility
+  const [showCalculator, setShowCalculator] = useState(false);
 
   // HMS form state
   const [isSafetyRep, setIsSafetyRep] = useState(employeeDetails?.is_safety_representative || false);
@@ -140,7 +145,7 @@ export function EmployeeEditModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
+      <DialogContent className={showCalculator ? "sm:max-w-[95vw] max-h-[95vh] overflow-y-auto" : "sm:max-w-[600px] max-h-[85vh] overflow-y-auto"}>
         <DialogHeader>
           <DialogTitle>Rediger {employee.full_name}</DialogTitle>
         </DialogHeader>
@@ -331,31 +336,80 @@ export function EmployeeEditModal({
             {salaryType === "fixed" && (
               <>
                 <div className="space-y-2">
-                  <Label>Månedslønn (kr)</Label>
-                  <Input 
-                    type="number" 
-                    value={fixedMonthlySalary} 
-                    onChange={(e) => setFixedMonthlySalary(e.target.value)} 
-                  />
+                  <Label>Lønnsstige (for beregning)</Label>
+                  <Select value={wageLadderId} onValueChange={setWageLadderId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Velg lønnsstige" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {wageLadders.map((ladder) => (
+                        <SelectItem key={ladder.id} value={ladder.id}>{ladder.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Avtalt timer per måned</Label>
-                    <Input 
-                      type="number" 
-                      value={contractedHoursPerMonth} 
-                      onChange={(e) => setContractedHoursPerMonth(e.target.value)} 
+
+                {/* Calculator Toggle Button */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full gap-2"
+                  onClick={() => setShowCalculator(!showCalculator)}
+                >
+                  <Calculator className="h-4 w-4" />
+                  {showCalculator ? "Skjul kalkulator" : "Åpne fastlønn-kalkulator"}
+                </Button>
+
+                {/* Calculator */}
+                {showCalculator && (
+                  <div className="mt-4 border-t pt-4">
+                    <FixedSalaryCalculator
+                      employeeId={employee.id}
+                      employeeName={employee.full_name}
+                      competenceLevel={competenceLevel as "ufaglaert" | "faglaert" | "laerling"}
+                      accumulatedHours={employeeDetails?.accumulated_hours || 0}
+                      currentWageLadderId={wageLadderId}
+                      onApply={(result) => {
+                        setFixedMonthlySalary(String(Math.round(result.fixedMonthlySalary)));
+                        setIncludedNightHours(String(result.totalNightHours / 4 * 4.33));
+                        setContractedHoursPerMonth(String(Math.round((result.totalOrdinaryHours + result.totalNightHours) / 4 * 4.33)));
+                        setShowCalculator(false);
+                      }}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label>Innbakte natt-timer</Label>
-                    <Input 
-                      type="number" 
-                      value={includedNightHours} 
-                      onChange={(e) => setIncludedNightHours(e.target.value)} 
-                    />
-                  </div>
-                </div>
+                )}
+
+                {/* Manual Input Fields */}
+                {!showCalculator && (
+                  <>
+                    <div className="space-y-2">
+                      <Label>Månedslønn (kr)</Label>
+                      <Input 
+                        type="number" 
+                        value={fixedMonthlySalary} 
+                        onChange={(e) => setFixedMonthlySalary(e.target.value)} 
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Avtalt timer per måned</Label>
+                        <Input 
+                          type="number" 
+                          value={contractedHoursPerMonth} 
+                          onChange={(e) => setContractedHoursPerMonth(e.target.value)} 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Innbakte natt-timer (per mnd)</Label>
+                        <Input 
+                          type="number" 
+                          value={includedNightHours} 
+                          onChange={(e) => setIncludedNightHours(e.target.value)} 
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </TabsContent>
