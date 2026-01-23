@@ -3190,6 +3190,36 @@ export type Database = {
           },
         ]
       }
+      holidays: {
+        Row: {
+          created_at: string | null
+          date: string
+          holiday_type: string
+          id: string
+          name: string
+          restricted_opening: boolean | null
+          supplement_percentage: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          holiday_type: string
+          id?: string
+          name: string
+          restricted_opening?: boolean | null
+          supplement_percentage?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          holiday_type?: string
+          id?: string
+          name?: string
+          restricted_opening?: boolean | null
+          supplement_percentage?: number | null
+        }
+        Relationships: []
+      }
       ik_control_items: {
         Row: {
           created_at: string
@@ -3983,6 +4013,177 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      payroll_calculations: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          calculated_at: string | null
+          created_at: string | null
+          export_reference: string | null
+          exported_at: string | null
+          exported_by: string | null
+          id: string
+          period_end: string
+          period_start: string
+          status: string | null
+          total_base_pay: number | null
+          total_gross: number | null
+          total_hours: number | null
+          total_overtime: number | null
+          total_supplements: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          calculated_at?: string | null
+          created_at?: string | null
+          export_reference?: string | null
+          exported_at?: string | null
+          exported_by?: string | null
+          id?: string
+          period_end: string
+          period_start: string
+          status?: string | null
+          total_base_pay?: number | null
+          total_gross?: number | null
+          total_hours?: number | null
+          total_overtime?: number | null
+          total_supplements?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          calculated_at?: string | null
+          created_at?: string | null
+          export_reference?: string | null
+          exported_at?: string | null
+          exported_by?: string | null
+          id?: string
+          period_end?: string
+          period_start?: string
+          status?: string | null
+          total_base_pay?: number | null
+          total_gross?: number | null
+          total_hours?: number | null
+          total_overtime?: number | null
+          total_supplements?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_calculations_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_calculations_exported_by_fkey"
+            columns: ["exported_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_entries: {
+        Row: {
+          adjustments: Json | null
+          base_pay: number | null
+          created_at: string | null
+          employee_id: string
+          evening_hours: number | null
+          gross_pay: number | null
+          holiday_hours: number | null
+          hourly_rate: number | null
+          id: string
+          line_items: Json | null
+          night_hours: number | null
+          notes: string | null
+          overtime_100_hours: number | null
+          overtime_50_hours: number | null
+          overtime_pay: number | null
+          payroll_id: string | null
+          regular_hours: number | null
+          saturday_hours: number | null
+          sick_leave_hours: number | null
+          sick_leave_pay: number | null
+          sunday_hours: number | null
+          supplement_pay: number | null
+          vacation_hours: number | null
+          vacation_pay: number | null
+        }
+        Insert: {
+          adjustments?: Json | null
+          base_pay?: number | null
+          created_at?: string | null
+          employee_id: string
+          evening_hours?: number | null
+          gross_pay?: number | null
+          holiday_hours?: number | null
+          hourly_rate?: number | null
+          id?: string
+          line_items?: Json | null
+          night_hours?: number | null
+          notes?: string | null
+          overtime_100_hours?: number | null
+          overtime_50_hours?: number | null
+          overtime_pay?: number | null
+          payroll_id?: string | null
+          regular_hours?: number | null
+          saturday_hours?: number | null
+          sick_leave_hours?: number | null
+          sick_leave_pay?: number | null
+          sunday_hours?: number | null
+          supplement_pay?: number | null
+          vacation_hours?: number | null
+          vacation_pay?: number | null
+        }
+        Update: {
+          adjustments?: Json | null
+          base_pay?: number | null
+          created_at?: string | null
+          employee_id?: string
+          evening_hours?: number | null
+          gross_pay?: number | null
+          holiday_hours?: number | null
+          hourly_rate?: number | null
+          id?: string
+          line_items?: Json | null
+          night_hours?: number | null
+          notes?: string | null
+          overtime_100_hours?: number | null
+          overtime_50_hours?: number | null
+          overtime_pay?: number | null
+          payroll_id?: string | null
+          regular_hours?: number | null
+          saturday_hours?: number | null
+          sick_leave_hours?: number | null
+          sick_leave_pay?: number | null
+          sunday_hours?: number | null
+          supplement_pay?: number | null
+          vacation_hours?: number | null
+          vacation_pay?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_entries_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_entries_payroll_id_fkey"
+            columns: ["payroll_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_calculations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pool_compliance_snapshots: {
         Row: {
@@ -6095,6 +6296,7 @@ export type Database = {
           supplement_type: string
           time_end: string | null
           time_start: string | null
+          tripletex_code: string | null
           updated_at: string
         }
         Insert: {
@@ -6109,6 +6311,7 @@ export type Database = {
           supplement_type: string
           time_end?: string | null
           time_start?: string | null
+          tripletex_code?: string | null
           updated_at?: string
         }
         Update: {
@@ -6123,6 +6326,7 @@ export type Database = {
           supplement_type?: string
           time_end?: string | null
           time_start?: string | null
+          tripletex_code?: string | null
           updated_at?: string
         }
         Relationships: []
