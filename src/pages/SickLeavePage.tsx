@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Activity, Calendar, AlertTriangle, Users, TrendingUp, Settings, FileBarChart } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { SelfCertQuotasPanel } from "@/components/sick-leave/SelfCertQuotasPanel
 import { SickLeaveSettingsPanel } from "@/components/sick-leave/SickLeaveSettingsPanel";
 import { useActiveSickLeaves, useUpcomingDeadlines } from "@/hooks/useSickLeave";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const SickLeavePage = () => {
   const { isAdminOrManager } = useAuth();
@@ -26,6 +27,27 @@ const SickLeavePage = () => {
   
   // Beregn statistikk
   const employerPeriodActive = activeSickLeaves.filter(sl => !sl.employer_period_completed).length;
+
+  // Check for deadline notifications when the page loads (for managers only)
+  useEffect(() => {
+    if (!isAdminOrManager()) return;
+    
+    const checkDeadlineNotifications = async () => {
+      try {
+        console.log("Checking sick leave deadline notifications...");
+        const { error } = await supabase.functions.invoke("send-sick-leave-deadline-notifications");
+        if (error) {
+          console.error("Error checking deadline notifications:", error);
+        }
+      } catch (err) {
+        console.error("Failed to check deadline notifications:", err);
+      }
+    };
+
+    // Run after a short delay to not block page load
+    const timer = setTimeout(checkDeadlineNotifications, 1000);
+    return () => clearTimeout(timer);
+  }, [isAdminOrManager]);
 
   if (!isAdminOrManager()) {
     return (

@@ -17,6 +17,8 @@ import {
   FileText,
   Check,
   CheckCheck,
+  Thermometer,
+  AlertTriangle,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -40,6 +42,9 @@ const typeConfig: Record<NotificationType, { icon: typeof Bell; className: strin
   shift_assigned: { icon: Calendar, className: "text-primary" },
   shift_changed: { icon: Clock, className: "text-warning" },
   approval_request: { icon: FileText, className: "text-primary" },
+  sick_leave_deadline_warning: { icon: Thermometer, className: "text-warning" },
+  sick_leave_deadline_overdue: { icon: AlertTriangle, className: "text-destructive" },
+  sick_leave_registered: { icon: Thermometer, className: "text-primary" },
   general: { icon: Bell, className: "text-muted-foreground" },
 };
 

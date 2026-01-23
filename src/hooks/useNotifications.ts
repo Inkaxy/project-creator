@@ -10,6 +10,9 @@ export type NotificationType =
   | "shift_assigned" 
   | "shift_changed" 
   | "approval_request" 
+  | "sick_leave_deadline_warning"
+  | "sick_leave_deadline_overdue"
+  | "sick_leave_registered"
   | "general";
 
 export interface NotificationData {
