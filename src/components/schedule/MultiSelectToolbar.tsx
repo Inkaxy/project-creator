@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { X, Copy, Trash2, Move, Calendar } from "lucide-react";
+import { X, Copy, Trash2, Move, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MultiSelectToolbarProps {
@@ -9,6 +9,7 @@ interface MultiSelectToolbarProps {
   onMoveSelected: () => void;
   onCopySelected: () => void;
   onDeleteSelected: () => void;
+  onSwapEmployees?: () => void;
   isDragging?: boolean;
 }
 
@@ -18,6 +19,7 @@ export function MultiSelectToolbar({
   onMoveSelected,
   onCopySelected,
   onDeleteSelected,
+  onSwapEmployees,
   isDragging = false,
 }: MultiSelectToolbarProps) {
   if (selectedCount === 0) return null;
@@ -52,6 +54,18 @@ export function MultiSelectToolbar({
         <Copy className="h-3 w-3" />
         Kopier
       </Button>
+
+      {onSwapEmployees && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onSwapEmployees}
+          className="gap-1"
+        >
+          <ArrowRightLeft className="h-3 w-3" />
+          Bytt ansatt
+        </Button>
+      )}
       
       <Button
         variant="outline"
