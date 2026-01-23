@@ -87,6 +87,8 @@ export function EmployeeEditModal({
   const [fixedMonthlySalary, setFixedMonthlySalary] = useState(String(employeeDetails?.fixed_monthly_salary || ""));
   const [includedNightHours, setIncludedNightHours] = useState(String(employeeDetails?.included_night_hours || ""));
   const [contractedHoursPerMonth, setContractedHoursPerMonth] = useState(String(employeeDetails?.contracted_hours_per_month || ""));
+  const [currentSeniorityLevel, setCurrentSeniorityLevel] = useState<number | undefined>(employeeDetails?.current_seniority_level || undefined);
+  const [accumulatedHours, setAccumulatedHours] = useState(employeeDetails?.accumulated_hours || 0);
   
   // Calculator visibility
   const [showCalculator, setShowCalculator] = useState(false);
@@ -131,6 +133,8 @@ export function EmployeeEditModal({
         fixed_monthly_salary: fixedMonthlySalary ? parseFloat(fixedMonthlySalary) : null,
         included_night_hours: includedNightHours ? parseFloat(includedNightHours) : null,
         contracted_hours_per_month: contractedHoursPerMonth ? parseFloat(contractedHoursPerMonth) : null,
+        current_seniority_level: currentSeniorityLevel || null,
+        accumulated_hours: accumulatedHours,
         is_safety_representative: isSafetyRep,
         is_fire_safety_leader: isFireSafety,
         is_food_safety_responsible: isFoodSafety,
@@ -367,12 +371,15 @@ export function EmployeeEditModal({
                       employeeId={employee.id}
                       employeeName={employee.full_name}
                       competenceLevel={competenceLevel as "ufaglaert" | "faglaert" | "laerling"}
-                      accumulatedHours={employeeDetails?.accumulated_hours || 0}
+                      accumulatedHours={accumulatedHours}
                       currentWageLadderId={wageLadderId}
+                      currentSeniorityLevel={currentSeniorityLevel}
                       onApply={(result) => {
                         setFixedMonthlySalary(String(Math.round(result.fixedMonthlySalary)));
-                        setIncludedNightHours(String(result.totalNightHours / 4 * 4.33));
+                        setIncludedNightHours(String((result.totalNightHours / 4 * 4.33).toFixed(1)));
                         setContractedHoursPerMonth(String(Math.round((result.totalOrdinaryHours + result.totalNightHours) / 4 * 4.33)));
+                        setCurrentSeniorityLevel(result.selectedLevel);
+                        setAccumulatedHours(result.adjustedAccumulatedHours);
                         setShowCalculator(false);
                       }}
                     />

@@ -55,6 +55,8 @@ interface CalculatorResult {
   fixedMonthlySalaryWithHoliday: number;
   employmentPercentage: number;
   effectiveHourlyRate: number;
+  selectedLevel: number;
+  adjustedAccumulatedHours: number;
 }
 
 interface FixedSalaryCalculatorProps {
@@ -63,6 +65,7 @@ interface FixedSalaryCalculatorProps {
   competenceLevel: "ufaglaert" | "faglaert" | "laerling";
   accumulatedHours?: number;
   currentWageLadderId?: string;
+  currentSeniorityLevel?: number;
   fullTimeHoursPerWeek?: number;
   nightStart?: string;
   nightEnd?: string;
@@ -128,6 +131,7 @@ export function FixedSalaryCalculator({
   competenceLevel,
   accumulatedHours = 0,
   currentWageLadderId,
+  currentSeniorityLevel,
   fullTimeHoursPerWeek = DEFAULT_FULL_TIME_HOURS,
   nightStart = "21:00",
   nightEnd = "06:00",
@@ -139,6 +143,9 @@ export function FixedSalaryCalculator({
   // Selected wage ladder
   const [selectedLadderId, setSelectedLadderId] = useState(currentWageLadderId || "");
   
+  // Manual level and hours override
+  const [manualLevel, setManualLevel] = useState<number | null>(currentSeniorityLevel || null);
+  const [adjustedHours, setAdjustedHours] = useState<string>(String(accumulatedHours));
   // Work schedule (4 weeks)
   const [schedule, setSchedule] = useState<WorkScheduleEntry[]>(() => {
     const entries: WorkScheduleEntry[] = [];
@@ -165,13 +172,62 @@ export function FixedSalaryCalculator({
     return wageLadders.find(l => l.id === selectedLadderId);
   }, [wageLadders, selectedLadderId]);
 
-  // Get current level based on accumulated hours
-  const currentLevel = useMemo(() => {
-    if (!selectedLadder) return null;
-    return calculateCurrentLevel(selectedLadder, accumulatedHours);
-  }, [selectedLadder, accumulatedHours]);
+  // Get the effective level - either manual selection or calculated from hours
+  const effectiveLevel = useMemo(() => {
+    if (!selectedLadder?.levels || selectedLadder.levels.length === 0) return null;
+    
+    const sortedLevels = [...selectedLadder.levels].sort((a, b) => a.level - b.level);
+    
+    // If manual level is set, use that
+    if (manualLevel !== null) {
+      const level = sortedLevels.find(l => l.level === manualLevel);
+      if (level) {
+        return {
+          level: level.level,
+          hourlyRate: level.hourly_rate,
+          minHours: level.min_hours,
+          maxHours: level.max_hours,
+        };
+      }
+    }
+    
+    // Otherwise calculate from adjusted hours
+    const hours = parseFloat(adjustedHours) || 0;
+    for (let i = sortedLevels.length - 1; i >= 0; i--) {
+      if (hours >= sortedLevels[i].min_hours) {
+        const level = sortedLevels[i];
+        const nextLevel = sortedLevels[i + 1];
+        return {
+          level: level.level,
+          hourlyRate: level.hourly_rate,
+          minHours: level.min_hours,
+          maxHours: level.max_hours,
+          nextLevel: nextLevel?.level || null,
+          hoursToNextLevel: nextLevel ? nextLevel.min_hours - hours : null,
+        };
+      }
+    }
+    
+    // Default to first level
+    const firstLevel = sortedLevels[0];
+    return {
+      level: firstLevel.level,
+      hourlyRate: firstLevel.hourly_rate,
+      minHours: firstLevel.min_hours,
+      maxHours: firstLevel.max_hours,
+    };
+  }, [selectedLadder, manualLevel, adjustedHours]);
 
-  // Get night supplement from wage_supplements
+  // When level changes manually, update hours to minimum for that level
+  const handleLevelChange = (newLevel: string) => {
+    const levelNum = parseInt(newLevel);
+    setManualLevel(levelNum);
+    
+    const level = selectedLadder?.levels?.find(l => l.level === levelNum);
+    if (level) {
+      setAdjustedHours(String(level.min_hours));
+    }
+  };
   const nightSupplement = useMemo(() => {
     // Find night supplement matching competence level
     const competenceMatch = supplements.find(s => 
@@ -184,9 +240,9 @@ export function FixedSalaryCalculator({
 
   // Calculate results
   const result = useMemo((): CalculatorResult | null => {
-    if (!currentLevel) return null;
+    if (!effectiveLevel) return null;
 
-    const hourlyRate = currentLevel.hourlyRate;
+    const hourlyRate = effectiveLevel.hourlyRate;
     const nightSupplementRate = nightSupplement?.amount || 0;
     const nightTimeRate = hourlyRate + nightSupplementRate;
 
@@ -245,8 +301,10 @@ export function FixedSalaryCalculator({
       fixedMonthlySalaryWithHoliday,
       employmentPercentage,
       effectiveHourlyRate,
+      selectedLevel: effectiveLevel.level,
+      adjustedAccumulatedHours: parseFloat(adjustedHours) || 0,
     };
-  }, [currentLevel, schedule, nightSupplement, nightStartCustom, nightEndCustom, fullTimeHoursPerWeek]);
+  }, [effectiveLevel, schedule, nightSupplement, nightStartCustom, nightEndCustom, fullTimeHoursPerWeek, adjustedHours]);
 
   // Update schedule entry
   const updateScheduleEntry = (week: number, day: string, field: keyof WorkScheduleEntry, value: string | number) => {
@@ -344,21 +402,64 @@ export function FixedSalaryCalculator({
                 </Select>
               </div>
 
-              {selectedLadder && currentLevel && (
+              {/* Level Selection */}
+              {selectedLadder && selectedLadder.levels && selectedLadder.levels.length > 0 && (
+                <div className="space-y-2">
+                  <Label>Velg nivå</Label>
+                  <Select 
+                    value={effectiveLevel?.level?.toString() || ""} 
+                    onValueChange={handleLevelChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Velg nivå" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[...selectedLadder.levels]
+                        .sort((a, b) => a.level - b.level)
+                        .map((level) => (
+                          <SelectItem key={level.id} value={level.level.toString()}>
+                            Nivå {level.level} - {level.hourly_rate.toFixed(2)} kr/t ({level.min_hours.toLocaleString("nb-NO")}+ timer)
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Accumulated Hours */}
+              {selectedLadder && (
+                <div className="space-y-2">
+                  <Label>Akkumulerte timer på nivå</Label>
+                  <Input 
+                    type="number"
+                    value={adjustedHours}
+                    onChange={(e) => {
+                      setAdjustedHours(e.target.value);
+                      setManualLevel(null); // Reset manual level so it recalculates
+                    }}
+                    min={0}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Timer opparbeidet på dette nivået
+                  </p>
+                </div>
+              )}
+
+              {selectedLadder && effectiveLevel && (
                 <div className="p-3 bg-muted rounded-lg space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Akkumulerte timer:</span>
-                    <span className="font-medium">{accumulatedHours.toLocaleString("nb-NO")} t</span>
+                    <span className="text-muted-foreground">Valgt nivå:</span>
+                    <Badge variant="outline">Nivå {effectiveLevel.level}</Badge>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Nåværende nivå:</span>
-                    <Badge variant="outline">Nivå {currentLevel.level}</Badge>
+                    <span className="text-muted-foreground">Timer på nivå:</span>
+                    <span className="font-medium">{parseFloat(adjustedHours).toLocaleString("nb-NO")} t</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Timelønn:</span>
                     <span className="font-bold text-lg text-primary">
-                      {currentLevel.hourlyRate.toFixed(2)} kr
+                      {effectiveLevel.hourlyRate.toFixed(2)} kr
                     </span>
                   </div>
                 </div>
