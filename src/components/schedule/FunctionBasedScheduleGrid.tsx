@@ -337,11 +337,13 @@ function FunctionRow({
 
   const isCompact = weekDays.length > 7;
 
+  const cellHeight = isCompact ? "h-[60px]" : "h-[100px]";
+
   return (
     <div className={cn("grid min-w-[900px] border-b border-border last:border-b-0 hover:bg-muted/10 transition-colors", getGridCols())}>
-      {/* Function label - aligned to top */}
+      {/* Function label - fixed height to match day cells */}
       <div 
-        className="flex items-start gap-2 border-r border-border p-2 pt-3"
+        className={cn("flex items-start gap-2 border-r border-border p-2", cellHeight)}
         style={{ 
           borderLeft: `4px solid ${func.color || "#3B82F6"}`,
           backgroundColor: `${func.color || "#3B82F6"}10`
@@ -360,7 +362,7 @@ function FunctionRow({
         </div>
       </div>
 
-      {/* Day cells */}
+      {/* Day cells - fixed height with overflow scroll */}
       {weekDays.map((day, i) => {
         const dayShifts = getShiftsForDayAndFunction(day, func.id);
         const isToday = formatDate(day) === "2026-01-19";
@@ -374,7 +376,7 @@ function FunctionRow({
             isAdminOrManager={isAdminOrManager}
             onClick={() => onCellClick(day, func.id)}
             onDrop={onShiftDrop}
-            className={cn(isCompact ? "min-h-[60px]" : "min-h-[100px]")}
+            className={cn(cellHeight, "overflow-y-auto")}
           >
             <div className="space-y-0.5">
               {dayShifts.map((shift) => (
