@@ -11,9 +11,13 @@ import { ManageTemplatesModal } from "@/components/schedule/ManageTemplatesModal
 import { RolloutTemplateModal } from "@/components/schedule/RolloutTemplateModal";
 import { CreateRotationGroupModal } from "@/components/schedule/CreateRotationGroupModal";
 import { RotationTemplatesPanel } from "@/components/schedule/RotationTemplatesPanel";
+import { ShiftSetupOverview } from "@/components/schedule/ShiftSetupOverview";
+import { CompetenceMatrixModal } from "@/components/schedule/CompetenceMatrixModal";
+import { CourseEditorModal } from "@/components/training/CourseEditorModal";
 import { useAllFunctions } from "@/hooks/useFunctions";
 import { useDepartments } from "@/hooks/useEmployees";
-import { useShiftTemplates, ShiftTemplate } from "@/hooks/useShiftTemplates";
+import { useShiftTemplates, useShiftTemplate, ShiftTemplate } from "@/hooks/useShiftTemplates";
+import { useCourseModules, Course } from "@/hooks/useCourses";
 import {
   Settings,
   Building2,
@@ -24,6 +28,8 @@ import {
   Plus,
   Pencil,
   RefreshCw,
+  LayoutGrid,
+  Play,
 } from "lucide-react";
 
 interface RotationGroup {
@@ -32,7 +38,7 @@ interface RotationGroup {
 }
 
 export default function ShiftSetupPage() {
-  const [activeTab, setActiveTab] = useState("functions");
+  const [activeTab, setActiveTab] = useState("overview");
   
   // Modal states
   const [functionsModalOpen, setFunctionsModalOpen] = useState(false);
@@ -40,6 +46,9 @@ export default function ShiftSetupPage() {
   const [templatesModalOpen, setTemplatesModalOpen] = useState(false);
   const [rolloutModalOpen, setRolloutModalOpen] = useState(false);
   const [rotationModalOpen, setRotationModalOpen] = useState(false);
+  const [competenceMatrixOpen, setCompetenceMatrixOpen] = useState(false);
+  const [courseEditorOpen, setCourseEditorOpen] = useState(false);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<ShiftTemplate | null>(null);
   const [editingRotation, setEditingRotation] = useState<RotationGroup | null>(null);
 
@@ -47,6 +56,7 @@ export default function ShiftSetupPage() {
   const { data: functions, isLoading: functionsLoading } = useAllFunctions();
   const { data: departments, isLoading: departmentsLoading } = useDepartments();
   const { data: templates, isLoading: templatesLoading } = useShiftTemplates();
+  const { data: editingCourseModules = [] } = useCourseModules(editingCourse?.id || null);
 
   const handleRollout = (template: ShiftTemplate) => {
     setSelectedTemplate(template);
@@ -59,8 +69,19 @@ export default function ShiftSetupPage() {
   };
 
   const handleRolloutRotation = (group: RotationGroup) => {
-    // Could open a specific rotation rollout modal
     console.log("Rollout rotation:", group);
+  };
+
+  const handleOpenCourseEditor = (course?: Course) => {
+    setEditingCourse(course || null);
+    setCourseEditorOpen(true);
+  };
+
+  // Helper to calculate shifts per day for a template
+  const getShiftsPerDay = (template: ShiftTemplate): number[] => {
+    // This would need the template_shifts data
+    // For now, return placeholder
+    return [0, 0, 0, 0, 0, 0, 0];
   };
 
   return (
@@ -81,7 +102,11 @@ export default function ShiftSetupPage() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <LayoutGrid className="h-4 w-4" />
+              <span className="hidden sm:inline">Oversikt</span>
+            </TabsTrigger>
             <TabsTrigger value="functions" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Funksjoner</span>
@@ -99,6 +124,15 @@ export default function ShiftSetupPage() {
               <span className="hidden sm:inline">Rotasjoner</span>
             </TabsTrigger>
           </TabsList>
+
+          {/* Overview Tab - NEW 3-column layout */}
+          <TabsContent value="overview">
+            <ShiftSetupOverview
+              onOpenFunctionsModal={() => setFunctionsModalOpen(true)}
+              onOpenCompetenceMatrix={() => setCompetenceMatrixOpen(true)}
+              onOpenCourseEditor={handleOpenCourseEditor}
+            />
+          </TabsContent>
 
           {/* Functions Tab */}
           <TabsContent value="functions">
@@ -266,7 +300,7 @@ export default function ShiftSetupPage() {
             </Card>
           </TabsContent>
 
-          {/* Templates Tab */}
+          {/* Templates Tab - Enhanced with weekly preview */}
           <TabsContent value="templates">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
@@ -276,55 +310,36 @@ export default function ShiftSetupPage() {
                     Vaktmaler
                   </CardTitle>
                   <CardDescription>
-                    Lagrede ukemaler for rask planlegging
+                    Opprett og administrer maler for sesonger og spesielle perioder
                   </CardDescription>
                 </div>
-                <Button onClick={() => setTemplatesModalOpen(true)}>
-                  <Pencil className="h-4 w-4 mr-2" />
-                  Administrer maler
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" onClick={() => setTemplatesModalOpen(true)}>
+                    <Play className="h-4 w-4 mr-2" />
+                    Bruk mal
+                  </Button>
+                  <Button onClick={() => setTemplatesModalOpen(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Ny mal
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 {templatesLoading ? (
                   <div className="space-y-3">
                     {[1, 2, 3].map((i) => (
-                      <Skeleton key={i} className="h-20 w-full" />
+                      <Skeleton key={i} className="h-32 w-full" />
                     ))}
                   </div>
                 ) : templates && templates.length > 0 ? (
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="space-y-4">
                     {templates.map((template) => (
-                      <div
-                        key={template.id}
-                        className="rounded-lg border border-border p-4 transition-shadow hover:shadow-md"
-                      >
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <p className="font-medium text-foreground">{template.name}</p>
-                            {template.description && (
-                              <p className="text-sm text-muted-foreground line-clamp-2">
-                                {template.description}
-                              </p>
-                            )}
-                          </div>
-                          {template.is_default && (
-                            <Badge variant="default" className="bg-primary">Standard</Badge>
-                          )}
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="secondary">
-                            <Calendar className="h-3 w-3 mr-1" />
-                            {template.category || "Generell"}
-                          </Badge>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleRollout(template)}
-                          >
-                            Rull ut
-                          </Button>
-                        </div>
-                      </div>
+                      <TemplateCard 
+                        key={template.id} 
+                        template={template} 
+                        onRollout={handleRollout}
+                        onEdit={() => setTemplatesModalOpen(true)}
+                      />
                     ))}
                   </div>
                 ) : (
@@ -400,6 +415,91 @@ export default function ShiftSetupPage() {
         open={rotationModalOpen}
         onOpenChange={setRotationModalOpen}
       />
+      <CompetenceMatrixModal
+        open={competenceMatrixOpen}
+        onOpenChange={setCompetenceMatrixOpen}
+      />
+      <CourseEditorModal
+        open={courseEditorOpen}
+        onOpenChange={setCourseEditorOpen}
+        course={editingCourse}
+        modules={editingCourseModules}
+      />
     </MainLayout>
+  );
+}
+
+// Enhanced Template Card Component with weekly preview
+function TemplateCard({ 
+  template, 
+  onRollout,
+  onEdit
+}: { 
+  template: ShiftTemplate; 
+  onRollout: (template: ShiftTemplate) => void;
+  onEdit: () => void;
+}) {
+  const { data: templateData } = useShiftTemplate(template.id);
+  
+  const dayNames = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"];
+  const orderedDays = [1, 2, 3, 4, 5, 6, 0];
+
+  // Calculate shifts per day
+  const shiftsPerDay = orderedDays.map(dayOfWeek => {
+    if (!templateData?.template_shifts) return 0;
+    return templateData.template_shifts.filter(s => s.day_of_week === dayOfWeek).length;
+  });
+
+  const totalShifts = shiftsPerDay.reduce((a, b) => a + b, 0);
+
+  return (
+    <Card className="overflow-hidden">
+      <CardContent className="p-4">
+        <div className="flex items-start gap-4">
+          {/* Icon */}
+          <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Calendar className="h-6 w-6 text-primary" />
+          </div>
+          
+          <div className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h3 className="font-semibold text-foreground">{template.name}</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="outline" className="text-xs">
+                    {template.category || "Egendefinert"}
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {totalShifts} vakter per uke
+                  </Badge>
+                  {template.is_default && (
+                    <Badge className="text-xs bg-primary">Aktiv</Badge>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon" onClick={onEdit}>
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Weekly preview grid */}
+            <div className="grid grid-cols-7 gap-2 mt-4">
+              {orderedDays.map((dayOfWeek, index) => (
+                <div
+                  key={dayOfWeek}
+                  className="text-center rounded-lg border bg-muted/30 p-2"
+                >
+                  <p className="text-xs text-muted-foreground mb-1">{dayNames[index]}</p>
+                  <p className="text-lg font-semibold">{shiftsPerDay[index]}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
