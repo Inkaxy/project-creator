@@ -1,6 +1,6 @@
 import { CalendarEvent, CalendarEventType, EVENT_TYPE_CONFIG } from "@/hooks/useCalendarEvents";
 import { cn } from "@/lib/utils";
-import { Clock, UserX, Flame, Shield, ClipboardCheck } from "lucide-react";
+import { Clock, UserX, Flame, Shield, ClipboardCheck, Cake } from "lucide-react";
 
 interface CalendarEventBadgeProps {
   event: CalendarEvent;
@@ -8,12 +8,13 @@ interface CalendarEventBadgeProps {
   onClick?: () => void;
 }
 
-const iconMap = {
+const iconMap: Record<CalendarEventType, typeof Clock> = {
   shift: Clock,
   absence: UserX,
   fire_drill: Flame,
   safety_round: Shield,
   inspection: ClipboardCheck,
+  birthday: Cake,
 };
 
 export function CalendarEventBadge({ event, compact = false, onClick }: CalendarEventBadgeProps) {

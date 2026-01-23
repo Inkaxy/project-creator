@@ -39,7 +39,7 @@ export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [activeFilters, setActiveFilters] = useState<CalendarEventType[]>([
-    'shift', 'absence', 'fire_drill', 'safety_round', 'inspection'
+    'shift', 'absence', 'fire_drill', 'safety_round', 'inspection', 'birthday'
   ]);
 
   // Calculate date range for current month view

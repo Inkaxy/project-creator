@@ -11,12 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Clock, Settings, CheckCircle, Zap, Cloud } from "lucide-react";
+import { Loader2, Clock, Settings, CheckCircle, Zap, Cloud, Cake } from "lucide-react";
 import { useTimesheetSettings, useUpdateTimesheetSettings, deviationHandlingLabels } from "@/hooks/useTimesheetApproval";
+import { useBirthdayVisibility, useUpdateSetting, BirthdayVisibility } from "@/hooks/useSettings";
 
 export function TimesheetSettingsPanel() {
   const { data: settings, isLoading } = useTimesheetSettings();
   const updateSettings = useUpdateTimesheetSettings();
+  const { data: birthdayVisibility, isLoading: birthdayLoading } = useBirthdayVisibility();
+  const updateSetting = useUpdateSetting();
 
   const [formData, setFormData] = useState({
     auto_approve_within_margin: true,
@@ -227,6 +230,44 @@ export function TimesheetSettingsPanel() {
                 setFormData((prev) => ({ ...prev, show_weather_forecast: checked }))
               }
             />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Birthday settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Cake className="h-5 w-5" />
+            Bursdager i kalender
+          </CardTitle>
+          <CardDescription>
+            Konfigurer hvem som kan se ansattes bursdager i kalenderen
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Hvem kan se bursdager?</Label>
+              <p className="text-sm text-muted-foreground">
+                Velg om alle ansatte eller kun ledere kan se bursdager i kalenderen
+              </p>
+              <Select
+                value={birthdayVisibility || "managers_only"}
+                onValueChange={(value: BirthdayVisibility) =>
+                  updateSetting.mutate({ key: "calendar_birthdays_visibility", value })
+                }
+                disabled={birthdayLoading}
+              >
+                <SelectTrigger className="w-64">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-popover">
+                  <SelectItem value="all">Alle ansatte</SelectItem>
+                  <SelectItem value="managers_only">Kun ledere</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
