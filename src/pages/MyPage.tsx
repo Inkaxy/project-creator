@@ -9,6 +9,7 @@ import { ClockInOutCard } from "@/components/timesheet/ClockInOutCard";
 import { ClockHistoryCard } from "@/components/timesheet/ClockHistoryCard";
 import { ChecklistsPanel } from "@/components/checklist/ChecklistsPanel";
 import { MyDeviationsPanel } from "@/components/deviation/MyDeviationsPanel";
+import { MySickLeaveCard } from "@/components/sick-leave/MySickLeaveCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useShifts } from "@/hooks/useShifts";
 import { useEmployeeAccounts } from "@/hooks/useEmployeeAccounts";
@@ -179,6 +180,9 @@ export default function MyPage() {
 
         {/* My Assigned Deviations */}
         <MyDeviationsPanel />
+
+        {/* Sick Leave Card */}
+        <MySickLeaveCard />
 
         {/* Main Content Grid */}
         <div className="grid gap-6 lg:grid-cols-3">

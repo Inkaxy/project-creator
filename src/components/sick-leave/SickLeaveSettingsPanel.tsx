@@ -49,6 +49,7 @@ export function SickLeaveSettingsPanel() {
     notify_days_before_deadline: 3,
     require_return_conversation: true,
     auto_create_follow_up_plan: true,
+    allow_employee_quota_view: true,
   });
 
   useEffect(() => {
@@ -70,6 +71,7 @@ export function SickLeaveSettingsPanel() {
         notify_days_before_deadline: settings.notify_days_before_deadline,
         require_return_conversation: settings.require_return_conversation,
         auto_create_follow_up_plan: settings.auto_create_follow_up_plan,
+        allow_employee_quota_view: settings.allow_employee_quota_view ?? true,
       });
     }
   }, [settings]);
@@ -93,6 +95,7 @@ export function SickLeaveSettingsPanel() {
         notify_days_before_deadline: data.notify_days_before_deadline,
         require_return_conversation: data.require_return_conversation,
         auto_create_follow_up_plan: data.auto_create_follow_up_plan,
+        allow_employee_quota_view: data.allow_employee_quota_view,
       };
 
       if (settings?.id) {
@@ -410,6 +413,21 @@ export function SickLeaveSettingsPanel() {
             <Switch
               checked={formData.auto_create_follow_up_plan}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, auto_create_follow_up_plan: checked }))}
+            />
+          </div>
+
+          <Separator />
+
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label>Vis egenmeldingskvote for ansatte</Label>
+              <p className="text-sm text-muted-foreground">
+                La ansatte se sin egen egenmeldingskvote på Min Side
+              </p>
+            </div>
+            <Switch
+              checked={formData.allow_employee_quota_view}
+              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, allow_employee_quota_view: checked }))}
             />
           </div>
         </CardContent>

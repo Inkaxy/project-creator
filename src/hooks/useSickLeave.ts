@@ -99,6 +99,7 @@ export interface SickLeaveSettings {
   auto_create_follow_up_plan: boolean;
   use_actual_hourly_rate: boolean;
   default_hourly_rate: number;
+  allow_employee_quota_view: boolean;
 }
 
 export interface UpcomingDeadline {

@@ -5668,6 +5668,7 @@ export type Database = {
       }
       sick_leave_settings: {
         Row: {
+          allow_employee_quota_view: boolean | null
           auto_create_follow_up_plan: boolean | null
           created_at: string | null
           default_hourly_rate: number | null
@@ -5687,6 +5688,7 @@ export type Database = {
           use_actual_hourly_rate: boolean | null
         }
         Insert: {
+          allow_employee_quota_view?: boolean | null
           auto_create_follow_up_plan?: boolean | null
           created_at?: string | null
           default_hourly_rate?: number | null
@@ -5706,6 +5708,7 @@ export type Database = {
           use_actual_hourly_rate?: boolean | null
         }
         Update: {
+          allow_employee_quota_view?: boolean | null
           auto_create_follow_up_plan?: boolean | null
           created_at?: string | null
           default_hourly_rate?: number | null
