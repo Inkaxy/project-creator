@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Clock, Calendar, MapPin, Building2, FileText, Boxes, Monitor } from "lucide-react";
+import { Settings, Clock, Calendar, MapPin, Building2, FileText, Boxes, Monitor, FileSignature } from "lucide-react";
 import { WorkTimeRulesPanel } from "@/components/settings/WorkTimeRulesPanel";
 import { AbsenceTypesPanel } from "@/components/settings/AbsenceTypesPanel";
 import { LocationsPanel } from "@/components/settings/LocationsPanel";
@@ -9,6 +9,7 @@ import { DepartmentsSettingsPanel } from "@/components/settings/DepartmentsSetti
 import { TimesheetSettingsPanel } from "@/components/settings/TimesheetSettingsPanel";
 import { EquipmentCategoriesPanel } from "@/components/settings/EquipmentCategoriesPanel";
 import { KioskSettingsPanel } from "@/components/settings/KioskSettingsPanel";
+import { ContractTemplatesPanel } from "@/components/contracts/ContractTemplatesPanel";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("work-time");
@@ -31,7 +32,7 @@ export default function SettingsPage() {
 
         {/* Settings Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
             <TabsTrigger value="work-time" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
               <span className="hidden sm:inline">Arbeidstid</span>
@@ -51,6 +52,10 @@ export default function SettingsPage() {
             <TabsTrigger value="departments" className="flex items-center gap-2">
               <Building2 className="h-4 w-4" />
               <span className="hidden sm:inline">Avdelinger</span>
+            </TabsTrigger>
+            <TabsTrigger value="contracts" className="flex items-center gap-2">
+              <FileSignature className="h-4 w-4" />
+              <span className="hidden sm:inline">Kontrakter</span>
             </TabsTrigger>
             <TabsTrigger value="equipment" className="flex items-center gap-2">
               <Boxes className="h-4 w-4" />
@@ -80,6 +85,10 @@ export default function SettingsPage() {
 
           <TabsContent value="departments">
             <DepartmentsSettingsPanel />
+          </TabsContent>
+
+          <TabsContent value="contracts">
+            <ContractTemplatesPanel />
           </TabsContent>
 
           <TabsContent value="equipment">
