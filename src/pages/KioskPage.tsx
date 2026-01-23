@@ -444,8 +444,10 @@ export default function KioskPage() {
             </div>
           </ScrollArea>
         </div>
+        )}
 
         {/* Column 3: All Employees */}
+        {(settings?.show_all_employees ?? true) && (
         <div className="flex flex-col overflow-hidden bg-card/50">
           <div className="flex-shrink-0 px-4 py-3 border-b bg-card">
             <div className="flex items-center gap-2">
@@ -502,6 +504,7 @@ export default function KioskPage() {
             </div>
           </ScrollArea>
         </div>
+        )}
       </div>
     </div>
   );
