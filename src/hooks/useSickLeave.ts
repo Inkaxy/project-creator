@@ -174,6 +174,25 @@ export function useSickLeaves(filters?: { status?: string; employeeId?: string }
   });
 }
 
+// Hent aktive sykefravær for datoperiode (for vaktplan)
+export function useActiveSickLeavesForPeriod(startDate: string, endDate: string) {
+  return useQuery({
+    queryKey: ['sick_leaves', 'period', startDate, endDate],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('sick_leaves')
+        .select('id, employee_id, start_date, end_date, leave_type, sick_leave_percentage, status')
+        .eq('status', 'active')
+        .or(`end_date.is.null,end_date.gte.${startDate}`)
+        .lte('start_date', endDate);
+      
+      if (error) throw error;
+      return data as Pick<SickLeave, 'id' | 'employee_id' | 'start_date' | 'end_date' | 'leave_type' | 'sick_leave_percentage' | 'status'>[];
+    },
+    enabled: !!startDate && !!endDate,
+  });
+}
+
 // Hent sykefravær for én ansatt
 export function useEmployeeSickLeaves(employeeId: string | undefined) {
   return useQuery({
