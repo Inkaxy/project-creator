@@ -49,7 +49,7 @@ const navigation: NavSection[] = [
   {
     title: "DAGLIG BRUK",
     items: [
-      { title: "Dashboard", href: "/", icon: Home },
+      { title: "Dashboard", href: "/dashboard", icon: Home },
       { title: "Kalender", href: "/kalender", icon: Calendar },
       { title: "Vaktplan", href: "/vaktplan", icon: CalendarClock },
       { title: "Min side", href: "/min-side", icon: Users },
