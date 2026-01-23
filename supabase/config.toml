@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.send-sick-leave-deadline-notifications]
 verify_jwt = false
+
+[functions.invite-employee]
+verify_jwt = false

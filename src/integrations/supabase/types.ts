@@ -593,6 +593,50 @@ export type Database = {
           },
         ]
       }
+      contract_templates: {
+        Row: {
+          content: string
+          created_at: string | null
+          created_by: string | null
+          employee_type: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          employee_type?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          employee_type?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_enrollments: {
         Row: {
           certificate_expires_at: string | null
@@ -1823,6 +1867,151 @@ export type Database = {
             columns: ["function_id"]
             isOneToOne: false
             referencedRelation: "functions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_onboardings: {
+        Row: {
+          account_created_at: string | null
+          address: string | null
+          bank_account_number: string | null
+          city: string | null
+          contract_document_id: string | null
+          contract_generated_at: string | null
+          contract_signed_at: string | null
+          contract_template_id: string | null
+          created_at: string | null
+          created_by: string | null
+          date_of_birth: string | null
+          department_id: string | null
+          email: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          emergency_contact_relation: string | null
+          employee_type: string | null
+          full_name: string
+          function_id: string | null
+          id: string
+          info_completed_at: string | null
+          invitation_sent_at: string | null
+          invitation_token: string | null
+          notes: string | null
+          personal_number: string | null
+          phone: string | null
+          postal_code: string | null
+          profile_id: string | null
+          start_date: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_created_at?: string | null
+          address?: string | null
+          bank_account_number?: string | null
+          city?: string | null
+          contract_document_id?: string | null
+          contract_generated_at?: string | null
+          contract_signed_at?: string | null
+          contract_template_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          date_of_birth?: string | null
+          department_id?: string | null
+          email: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          emergency_contact_relation?: string | null
+          employee_type?: string | null
+          full_name: string
+          function_id?: string | null
+          id?: string
+          info_completed_at?: string | null
+          invitation_sent_at?: string | null
+          invitation_token?: string | null
+          notes?: string | null
+          personal_number?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          profile_id?: string | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_created_at?: string | null
+          address?: string | null
+          bank_account_number?: string | null
+          city?: string | null
+          contract_document_id?: string | null
+          contract_generated_at?: string | null
+          contract_signed_at?: string | null
+          contract_template_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          date_of_birth?: string | null
+          department_id?: string | null
+          email?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          emergency_contact_relation?: string | null
+          employee_type?: string | null
+          full_name?: string
+          function_id?: string | null
+          id?: string
+          info_completed_at?: string | null
+          invitation_sent_at?: string | null
+          invitation_token?: string | null
+          notes?: string | null
+          personal_number?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          profile_id?: string | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_onboardings_contract_document_id_fkey"
+            columns: ["contract_document_id"]
+            isOneToOne: false
+            referencedRelation: "employee_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_onboardings_contract_template_id_fkey"
+            columns: ["contract_template_id"]
+            isOneToOne: false
+            referencedRelation: "contract_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_onboardings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_onboardings_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_onboardings_function_id_fkey"
+            columns: ["function_id"]
+            isOneToOne: false
+            referencedRelation: "functions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_onboardings_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
