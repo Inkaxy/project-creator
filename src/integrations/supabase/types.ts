@@ -603,6 +603,8 @@ export type Database = {
           is_active: boolean | null
           is_default: boolean | null
           name: string
+          salary_section_fixed: string | null
+          salary_section_hourly: string | null
           updated_at: string | null
         }
         Insert: {
@@ -614,6 +616,8 @@ export type Database = {
           is_active?: boolean | null
           is_default?: boolean | null
           name: string
+          salary_section_fixed?: string | null
+          salary_section_hourly?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -625,6 +629,8 @@ export type Database = {
           is_active?: boolean | null
           is_default?: boolean | null
           name?: string
+          salary_section_fixed?: string | null
+          salary_section_hourly?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -3055,6 +3061,121 @@ export type Database = {
             columns: ["department_id"]
             isOneToOne: false
             referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      generated_contracts: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          employee_id: string
+          employee_read_confirmed_at: string | null
+          employee_signature_ip: string | null
+          employee_signed_at: string | null
+          employer_signed_at: string | null
+          employer_signed_by: string | null
+          expires_at: string | null
+          id: string
+          merged_data: Json | null
+          onboarding_id: string | null
+          pdf_url: string | null
+          sent_at: string | null
+          status: string
+          supersedes_id: string | null
+          template_id: string | null
+          title: string
+          updated_at: string
+          version: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          employee_id: string
+          employee_read_confirmed_at?: string | null
+          employee_signature_ip?: string | null
+          employee_signed_at?: string | null
+          employer_signed_at?: string | null
+          employer_signed_by?: string | null
+          expires_at?: string | null
+          id?: string
+          merged_data?: Json | null
+          onboarding_id?: string | null
+          pdf_url?: string | null
+          sent_at?: string | null
+          status?: string
+          supersedes_id?: string | null
+          template_id?: string | null
+          title?: string
+          updated_at?: string
+          version?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          employee_id?: string
+          employee_read_confirmed_at?: string | null
+          employee_signature_ip?: string | null
+          employee_signed_at?: string | null
+          employer_signed_at?: string | null
+          employer_signed_by?: string | null
+          expires_at?: string | null
+          id?: string
+          merged_data?: Json | null
+          onboarding_id?: string | null
+          pdf_url?: string | null
+          sent_at?: string | null
+          status?: string
+          supersedes_id?: string | null
+          template_id?: string | null
+          title?: string
+          updated_at?: string
+          version?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_contracts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_contracts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_contracts_employer_signed_by_fkey"
+            columns: ["employer_signed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_contracts_onboarding_id_fkey"
+            columns: ["onboarding_id"]
+            isOneToOne: false
+            referencedRelation: "employee_onboardings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_contracts_supersedes_id_fkey"
+            columns: ["supersedes_id"]
+            isOneToOne: false
+            referencedRelation: "generated_contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_contracts_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "contract_templates"
             referencedColumns: ["id"]
           },
         ]
