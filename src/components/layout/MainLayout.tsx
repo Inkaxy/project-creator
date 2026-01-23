@@ -1,4 +1,5 @@
 import { AppSidebar } from "./AppSidebar";
+import { CrewAIChatWidget } from "@/components/crew-ai/CrewAIChatWidget";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           {children}
         </div>
       </main>
+      <CrewAIChatWidget />
     </div>
   );
 }

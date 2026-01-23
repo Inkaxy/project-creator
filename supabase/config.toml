@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.send-daily-timesheet-summary]
 verify_jwt = false
+
+[functions.crew-ai-chat]
+verify_jwt = false
