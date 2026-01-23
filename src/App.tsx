@@ -35,6 +35,7 @@ import EquipmentDetailPage from "./pages/EquipmentDetailPage";
 import EquipmentScanPage from "./pages/EquipmentScanPage";
 import SuppliersPage from "./pages/SuppliersPage";
 import KioskPage from "./pages/KioskPage";
+import RoutinesPage from "./pages/RoutinesPage";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +76,7 @@ const App = () => (
             <Route path="/utstyr/:id" element={<ProtectedRoute><EquipmentDetailPage /></ProtectedRoute>} />
             <Route path="/utstyr/skann" element={<ProtectedRoute><EquipmentScanPage /></ProtectedRoute>} />
             <Route path="/utstyr/leverandorer" element={<ProtectedRoute><SuppliersPage /></ProtectedRoute>} />
+            <Route path="/rutiner" element={<ProtectedRoute><RoutinesPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

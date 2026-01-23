@@ -4263,6 +4263,191 @@ export type Database = {
           },
         ]
       }
+      routine_completions: {
+        Row: {
+          completed_at: string
+          completed_by: string
+          completion_date: string
+          id: string
+          notes: string | null
+          routine_id: string
+          shift_id: string | null
+        }
+        Insert: {
+          completed_at?: string
+          completed_by: string
+          completion_date?: string
+          id?: string
+          notes?: string | null
+          routine_id: string
+          shift_id?: string | null
+        }
+        Update: {
+          completed_at?: string
+          completed_by?: string
+          completion_date?: string
+          id?: string
+          notes?: string | null
+          routine_id?: string
+          shift_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routine_completions_routine_id_fkey"
+            columns: ["routine_id"]
+            isOneToOne: false
+            referencedRelation: "routines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routine_completions_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      routine_item_responses: {
+        Row: {
+          checked: boolean | null
+          completed_at: string | null
+          completion_id: string
+          id: string
+          item_id: string
+          notes: string | null
+        }
+        Insert: {
+          checked?: boolean | null
+          completed_at?: string | null
+          completion_id: string
+          id?: string
+          item_id: string
+          notes?: string | null
+        }
+        Update: {
+          checked?: boolean | null
+          completed_at?: string | null
+          completion_id?: string
+          id?: string
+          item_id?: string
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routine_item_responses_completion_id_fkey"
+            columns: ["completion_id"]
+            isOneToOne: false
+            referencedRelation: "routine_completions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routine_item_responses_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "routine_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      routine_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_critical: boolean | null
+          routine_id: string
+          sort_order: number | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_critical?: boolean | null
+          routine_id: string
+          sort_order?: number | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_critical?: boolean | null
+          routine_id?: string
+          sort_order?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routine_items_routine_id_fkey"
+            columns: ["routine_id"]
+            isOneToOne: false
+            referencedRelation: "routines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      routines: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department_id: string | null
+          description: string | null
+          frequency: string
+          function_id: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department_id?: string | null
+          description?: string | null
+          frequency?: string
+          function_id?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department_id?: string | null
+          description?: string | null
+          frequency?: string
+          function_id?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routines_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routines_function_id_fkey"
+            columns: ["function_id"]
+            isOneToOne: false
+            referencedRelation: "functions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       safety_round_items: {
         Row: {
           category: string
