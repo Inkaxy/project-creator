@@ -341,22 +341,25 @@ function FunctionRow({
 
   return (
     <div className={cn("grid min-w-[900px] border-b border-border last:border-b-0 hover:bg-muted/10 transition-colors", getGridCols())}>
-      {/* Function label - fixed height to match day cells */}
+      {/* Function label - fixed width, only expands vertically */}
       <div 
-        className={cn("flex items-start gap-2 border-r border-border p-2", cellHeight)}
+        className={cn(
+          "flex items-start gap-2 border-r border-border p-2 min-h-[60px]",
+          isCompact ? "w-[180px] max-w-[180px]" : "w-[220px] max-w-[220px]"
+        )}
         style={{ 
           borderLeft: `4px solid ${func.color || "#3B82F6"}`,
           backgroundColor: `${func.color || "#3B82F6"}10`
         }}
       >
-        <div className="flex flex-col min-w-0">
+        <div className="flex flex-col min-w-0 w-full overflow-hidden">
           <span className={cn("font-medium text-foreground truncate", isCompact ? "text-xs" : "text-sm")}>
             {func.name}
           </span>
           {!isCompact && (
-            <span className="text-xs text-muted-foreground flex items-center gap-1">
-              <Building2 className="h-3 w-3" />
-              {func.departments?.name || "Bakeri"}
+            <span className="text-xs text-muted-foreground flex items-center gap-1 truncate">
+              <Building2 className="h-3 w-3 flex-shrink-0" />
+              <span className="truncate">{func.departments?.name || "Bakeri"}</span>
             </span>
           )}
         </div>
@@ -376,7 +379,7 @@ function FunctionRow({
             isAdminOrManager={isAdminOrManager}
             onClick={() => onCellClick(day, func.id)}
             onDrop={onShiftDrop}
-            className={cn(cellHeight, "overflow-y-auto")}
+            className="min-h-[60px] overflow-y-auto"
           >
             <div className="space-y-0.5">
               {dayShifts.map((shift) => (
