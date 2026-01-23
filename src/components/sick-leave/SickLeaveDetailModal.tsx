@@ -9,8 +9,10 @@ import {
   Users,
   Activity,
   AlertTriangle,
-  X,
   DollarSign,
+  RefreshCw,
+  MessageSquare,
+  Send,
 } from "lucide-react";
 import {
   Dialog,
@@ -23,14 +25,16 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
+import { ExtendSickLeaveModal } from "./ExtendSickLeaveModal";
+import { ReturnConversationModal } from "./ReturnConversationModal";
 import {
   SickLeave,
   calculateEmployerPeriodStatus,
   useFollowUpEvents,
   useEndSickLeave,
   useCompleteFollowUp,
+  useUpdateSickLeave,
 } from "@/hooks/useSickLeave";
 import { toast } from "sonner";
 
@@ -45,9 +49,14 @@ export function SickLeaveDetailModal({
   open,
   onOpenChange,
 }: SickLeaveDetailModalProps) {
+  const [extendModalOpen, setExtendModalOpen] = useState(false);
+  const [returnConversationOpen, setReturnConversationOpen] = useState(false);
+  const [navReportSending, setNavReportSending] = useState(false);
+  
   const { data: followUpEvents = [] } = useFollowUpEvents(sickLeave?.id);
   const endSickLeave = useEndSickLeave();
   const completeFollowUp = useCompleteFollowUp();
+  const updateSickLeave = useUpdateSickLeave();
 
   if (!sickLeave) return null;
 
@@ -269,17 +278,84 @@ export function SickLeaveDetailModal({
 
             {/* Handlinger */}
             {sickLeave.status === "active" && (
-              <div className="flex gap-2">
+              <div className="grid grid-cols-2 gap-2">
+                <Button 
+                  variant="outline"
+                  onClick={() => setReturnConversationOpen(true)}
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Tilbakekomstsamtale
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => setExtendModalOpen(true)}
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Forleng
+                </Button>
                 <Button 
                   variant="outline" 
-                  className="flex-1"
+                  className="col-span-2"
                   onClick={handleEndSickLeave}
                   disabled={endSickLeave.isPending}
                 >
                   <CheckCircle className="h-4 w-4 mr-2" />
-                  Avslutt sykefravær
+                  Avslutt sykefravær (friskmelding)
                 </Button>
               </div>
+            )}
+
+            {/* NAV inntektsmelding status */}
+            {employerStatus.isComplete && sickLeave.status === "active" && (
+              <Card className="border-blue-500 bg-blue-50 dark:bg-blue-950/20">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                    <Send className="h-4 w-4" />
+                    NAV Inntektsmelding
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm">
+                  {sickLeave.income_report_sent_at ? (
+                    <div className="flex items-center gap-2 text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      <span>
+                        Sendt {format(new Date(sickLeave.income_report_sent_at), "d. MMM yyyy", { locale: nb })}
+                      </span>
+                      {sickLeave.nav_case_number && (
+                        <Badge variant="outline">Sak: {sickLeave.nav_case_number}</Badge>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-muted-foreground">
+                        Arbeidsgiverperioden er fullført. Inntektsmelding må sendes til NAV.
+                      </p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setNavReportSending(true);
+                          updateSickLeave.mutate({
+                            id: sickLeave.id,
+                            internal_notes: `${sickLeave.internal_notes || ''}\n[${format(new Date(), 'dd.MM.yyyy HH:mm')}] Inntektsmelding sendt til NAV via A-ordningen.`
+                          }, {
+                            onSuccess: () => {
+                              setNavReportSending(false);
+                              toast.success("Marker at inntektsmelding er sendt");
+                            },
+                            onError: () => {
+                              setNavReportSending(false);
+                            }
+                          });
+                        }}
+                        disabled={navReportSending}
+                      >
+                        Marker som sendt
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             )}
           </TabsContent>
 
@@ -402,6 +478,18 @@ export function SickLeaveDetailModal({
           </TabsContent>
         </Tabs>
       </DialogContent>
+
+      {/* Modaler */}
+      <ExtendSickLeaveModal
+        sickLeave={sickLeave}
+        open={extendModalOpen}
+        onOpenChange={setExtendModalOpen}
+      />
+      <ReturnConversationModal
+        sickLeave={sickLeave}
+        open={returnConversationOpen}
+        onOpenChange={setReturnConversationOpen}
+      />
     </Dialog>
   );
 }
