@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SickLeavePage from "./pages/SickLeavePage";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
 import EmployeesPage from "./pages/EmployeesPage";
 import SchedulePage from "./pages/SchedulePage";
@@ -48,9 +49,10 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/kiosk" element={<KioskPage />} />
-            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/ansatte" element={<ProtectedRoute><EmployeesPage /></ProtectedRoute>} />
             <Route path="/vaktplan" element={<ProtectedRoute><SchedulePage /></ProtectedRoute>} />
             <Route path="/godkjenninger" element={<ProtectedRoute><ApprovalsPage /></ProtectedRoute>} />
