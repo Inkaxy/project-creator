@@ -5631,6 +5631,41 @@ export type Database = {
           },
         ]
       }
+      sick_leave_deadline_notifications: {
+        Row: {
+          created_at: string | null
+          deadline_date: string
+          deadline_type: string
+          id: string
+          notification_sent_at: string | null
+          sick_leave_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          deadline_date: string
+          deadline_type: string
+          id?: string
+          notification_sent_at?: string | null
+          sick_leave_id: string
+        }
+        Update: {
+          created_at?: string | null
+          deadline_date?: string
+          deadline_type?: string
+          id?: string
+          notification_sent_at?: string | null
+          sick_leave_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sick_leave_deadline_notifications_sick_leave_id_fkey"
+            columns: ["sick_leave_id"]
+            isOneToOne: false
+            referencedRelation: "sick_leaves"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sick_leave_settings: {
         Row: {
           auto_create_follow_up_plan: boolean | null
