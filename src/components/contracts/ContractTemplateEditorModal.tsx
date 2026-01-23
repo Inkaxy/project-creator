@@ -103,7 +103,7 @@ export function ContractTemplateEditorModal({
   
   const [name, setName] = useState("");
   const [content, setContent] = useState("");
-  const [employeeType, setEmployeeType] = useState<string>("");
+  const [employeeType, setEmployeeType] = useState<string>("all");
   const [isDefault, setIsDefault] = useState(false);
   const [activeTab, setActiveTab] = useState("edit");
   const [isSaving, setIsSaving] = useState(false);
@@ -116,12 +116,12 @@ export function ContractTemplateEditorModal({
       if (template) {
         setName(template.name);
         setContent(template.content);
-        setEmployeeType(template.employee_type || "");
+        setEmployeeType(template.employee_type || "all");
         setIsDefault(template.is_default || false);
       } else {
         setName("");
         setContent(getDefaultTemplate());
-        setEmployeeType("");
+        setEmployeeType("all");
         setIsDefault(false);
       }
       setActiveTab("edit");
@@ -147,14 +147,14 @@ export function ContractTemplateEditorModal({
           id: template.id,
           name,
           content,
-          employee_type: employeeType || undefined,
+          employee_type: employeeType === "all" ? undefined : employeeType,
           is_default: isDefault,
         });
       } else {
         await createTemplate.mutateAsync({
           name,
           content,
-          employee_type: employeeType || undefined,
+          employee_type: employeeType === "all" ? undefined : employeeType,
           is_default: isDefault,
         });
       }
@@ -201,7 +201,7 @@ export function ContractTemplateEditorModal({
                 <SelectValue placeholder="Alle typer" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Alle typer</SelectItem>
+                <SelectItem value="all">Alle typer</SelectItem>
                 <SelectItem value="hourly">Timelønn</SelectItem>
                 <SelectItem value="fixed">Fastlønn</SelectItem>
                 <SelectItem value="management">Ledelse</SelectItem>
