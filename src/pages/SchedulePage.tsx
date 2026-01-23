@@ -38,6 +38,7 @@ import { MultiSelectToolbar } from "@/components/schedule/MultiSelectToolbar";
 import { MultiSelectDropModal } from "@/components/schedule/MultiSelectDropModal";
 import { EmployeeBasedScheduleGrid } from "@/components/schedule/EmployeeBasedScheduleGrid";
 import { PrintScheduleModal } from "@/components/schedule/PrintScheduleModal";
+import { SwapEmployeesModal } from "@/components/schedule/SwapEmployeesModal";
 import { getWeatherForDate, weatherIcons, weatherColors, weatherLabels } from "@/lib/weather-utils";
 import { useWeatherSettings } from "@/hooks/useWeatherSettings";
 import { addDays, startOfMonth, endOfMonth, differenceInDays, parseISO, startOfWeek, endOfWeek } from "date-fns";
@@ -76,6 +77,7 @@ export default function SchedulePage() {
   const [manageTemplatesModalOpen, setManageTemplatesModalOpen] = useState(false);
   const [copyWeekModalOpen, setCopyWeekModalOpen] = useState(false);
   const [printModalOpen, setPrintModalOpen] = useState(false);
+  const [swapEmployeesModalOpen, setSwapEmployeesModalOpen] = useState(false);
   const [selectedTemplateForRollout, setSelectedTemplateForRollout] = useState<ShiftTemplate | undefined>();
   const [showAlerts, setShowAlerts] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -243,6 +245,14 @@ export default function SchedulePage() {
   const handleDeleteSelected = () => {
     selectedShifts.forEach(id => deleteShift.mutate(id));
     toast.success(`${selectedShifts.size} vakter slettet`);
+    setSelectedShifts(new Set());
+  };
+
+  const handleSwapEmployees = (newEmployeeId: string | null) => {
+    selectedShifts.forEach(id => {
+      updateShift.mutate({ id, employee_id: newEmployeeId });
+    });
+    toast.success(`Ansatt byttet på ${selectedShifts.size} vakter`);
     setSelectedShifts(new Set());
   };
 
@@ -615,8 +625,16 @@ export default function SchedulePage() {
         selectedCount={selectedShifts.size}
         onClearSelection={() => setSelectedShifts(new Set())}
         onMoveSelected={() => toast.info("Dra vakter til ny celle for å flytte")}
-        onCopySelected={() => toast.info("Hold Ctrl og dra vakter for å kopiere")}
+        onCopySelected={() => toast.info("Hold Alt og dra vakter for å kopiere")}
         onDeleteSelected={handleDeleteSelected}
+        onSwapEmployees={() => setSwapEmployeesModalOpen(true)}
+      />
+      <SwapEmployeesModal
+        open={swapEmployeesModalOpen}
+        onOpenChange={setSwapEmployeesModalOpen}
+        shifts={shifts.filter(s => selectedShifts.has(s.id))}
+        employees={employees}
+        onSwap={handleSwapEmployees}
       />
     </MainLayout>
   );
