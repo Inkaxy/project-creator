@@ -60,6 +60,7 @@ const navigation: NavSection[] = [
     items: [
       { title: "Ansatte", href: "/ansatte", icon: Users },
       { title: "Fravær", href: "/fravaer", icon: Calendar },
+      { title: "Sykefravær", href: "/sykefravaer", icon: Shield },
       { title: "Godkjenninger", href: "/godkjenninger", icon: CheckCircle },
       { title: "Crewshare", href: "/crewshare", icon: Users2 },
       { title: "Personalhåndbok", href: "/personalhandbok", icon: BookOpen },

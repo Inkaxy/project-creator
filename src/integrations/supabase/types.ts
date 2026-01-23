@@ -2712,6 +2712,60 @@ export type Database = {
         }
         Relationships: []
       }
+      follow_up_events: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          document_id: string | null
+          event_date: string
+          event_time: string | null
+          event_type: string
+          id: string
+          participants: Json | null
+          sick_leave_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          document_id?: string | null
+          event_date: string
+          event_time?: string | null
+          event_type: string
+          id?: string
+          participants?: Json | null
+          sick_leave_id: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          document_id?: string | null
+          event_date?: string
+          event_time?: string | null
+          event_type?: string
+          id?: string
+          participants?: Json | null
+          sick_leave_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follow_up_events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "follow_up_events_sick_leave_id_fkey"
+            columns: ["sick_leave_id"]
+            isOneToOne: false
+            referencedRelation: "sick_leaves"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       functions: {
         Row: {
           category: string | null
@@ -4565,6 +4619,62 @@ export type Database = {
           },
         ]
       }
+      self_certification_quotas: {
+        Row: {
+          created_at: string | null
+          days_used: number | null
+          employee_id: string
+          id: string
+          is_active: boolean | null
+          max_days_per_occurrence: number | null
+          max_days_per_period: number | null
+          max_occurrences_per_period: number | null
+          occurrences_used: number | null
+          period_end: string
+          period_start: string
+          quota_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          days_used?: number | null
+          employee_id: string
+          id?: string
+          is_active?: boolean | null
+          max_days_per_occurrence?: number | null
+          max_days_per_period?: number | null
+          max_occurrences_per_period?: number | null
+          occurrences_used?: number | null
+          period_end: string
+          period_start: string
+          quota_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          days_used?: number | null
+          employee_id?: string
+          id?: string
+          is_active?: boolean | null
+          max_days_per_occurrence?: number | null
+          max_days_per_period?: number | null
+          max_occurrences_per_period?: number | null
+          occurrences_used?: number | null
+          period_end?: string
+          period_start?: string
+          quota_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "self_certification_quotas_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       seniority_log: {
         Row: {
           created_at: string | null
@@ -4916,6 +5026,243 @@ export type Database = {
           {
             foreignKeyName: "shifts_published_by_fkey"
             columns: ["published_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sick_leave_days: {
+        Row: {
+          created_at: string | null
+          date: string
+          day_type: string
+          documentation_type: string | null
+          employer_period_day_number: number | null
+          id: string
+          is_employer_period: boolean | null
+          planned_hours: number | null
+          shift_id: string | null
+          sick_leave_id: string
+          work_percentage: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          day_type: string
+          documentation_type?: string | null
+          employer_period_day_number?: number | null
+          id?: string
+          is_employer_period?: boolean | null
+          planned_hours?: number | null
+          shift_id?: string | null
+          sick_leave_id: string
+          work_percentage?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          day_type?: string
+          documentation_type?: string | null
+          employer_period_day_number?: number | null
+          id?: string
+          is_employer_period?: boolean | null
+          planned_hours?: number | null
+          shift_id?: string | null
+          sick_leave_id?: string
+          work_percentage?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sick_leave_days_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sick_leave_days_sick_leave_id_fkey"
+            columns: ["sick_leave_id"]
+            isOneToOne: false
+            referencedRelation: "sick_leaves"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sick_leave_settings: {
+        Row: {
+          auto_create_follow_up_plan: boolean | null
+          created_at: string | null
+          default_hourly_rate: number | null
+          has_ia_agreement: boolean | null
+          ia_agreement_end_date: string | null
+          ia_agreement_start_date: string | null
+          id: string
+          notify_days_before_deadline: number | null
+          notify_hr_on_sick_leave: boolean | null
+          notify_manager_on_sick_leave: boolean | null
+          require_return_conversation: boolean | null
+          self_cert_max_days_per_occurrence: number | null
+          self_cert_max_days_per_year: number | null
+          self_cert_max_occurrences: number | null
+          self_cert_quota_type: string | null
+          updated_at: string | null
+          use_actual_hourly_rate: boolean | null
+        }
+        Insert: {
+          auto_create_follow_up_plan?: boolean | null
+          created_at?: string | null
+          default_hourly_rate?: number | null
+          has_ia_agreement?: boolean | null
+          ia_agreement_end_date?: string | null
+          ia_agreement_start_date?: string | null
+          id?: string
+          notify_days_before_deadline?: number | null
+          notify_hr_on_sick_leave?: boolean | null
+          notify_manager_on_sick_leave?: boolean | null
+          require_return_conversation?: boolean | null
+          self_cert_max_days_per_occurrence?: number | null
+          self_cert_max_days_per_year?: number | null
+          self_cert_max_occurrences?: number | null
+          self_cert_quota_type?: string | null
+          updated_at?: string | null
+          use_actual_hourly_rate?: boolean | null
+        }
+        Update: {
+          auto_create_follow_up_plan?: boolean | null
+          created_at?: string | null
+          default_hourly_rate?: number | null
+          has_ia_agreement?: boolean | null
+          ia_agreement_end_date?: string | null
+          ia_agreement_start_date?: string | null
+          id?: string
+          notify_days_before_deadline?: number | null
+          notify_hr_on_sick_leave?: boolean | null
+          notify_manager_on_sick_leave?: boolean | null
+          require_return_conversation?: boolean | null
+          self_cert_max_days_per_occurrence?: number | null
+          self_cert_max_days_per_year?: number | null
+          self_cert_max_occurrences?: number | null
+          self_cert_quota_type?: string | null
+          updated_at?: string | null
+          use_actual_hourly_rate?: boolean | null
+        }
+        Relationships: []
+      }
+      sick_leaves: {
+        Row: {
+          activity_requirement_due: string | null
+          activity_requirement_met: boolean | null
+          actual_return_date: string | null
+          created_at: string | null
+          created_by: string | null
+          diagnosis_category: string | null
+          diagnosis_code: string | null
+          dialogue_meeting_1_completed_at: string | null
+          dialogue_meeting_1_due: string | null
+          dialogue_meeting_2_completed_at: string | null
+          dialogue_meeting_2_due: string | null
+          employee_id: string
+          employer_period_completed: boolean | null
+          employer_period_days_used: number | null
+          employer_period_end: string | null
+          employer_period_start: string | null
+          end_date: string | null
+          expected_return_date: string | null
+          follow_up_plan_completed_at: string | null
+          follow_up_plan_due: string | null
+          id: string
+          income_report_sent_at: string | null
+          internal_notes: string | null
+          leave_type: string
+          max_date: string | null
+          nav_case_number: string | null
+          nav_takeover_date: string | null
+          notes: string | null
+          sick_leave_percentage: number | null
+          start_date: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          activity_requirement_due?: string | null
+          activity_requirement_met?: boolean | null
+          actual_return_date?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          diagnosis_category?: string | null
+          diagnosis_code?: string | null
+          dialogue_meeting_1_completed_at?: string | null
+          dialogue_meeting_1_due?: string | null
+          dialogue_meeting_2_completed_at?: string | null
+          dialogue_meeting_2_due?: string | null
+          employee_id: string
+          employer_period_completed?: boolean | null
+          employer_period_days_used?: number | null
+          employer_period_end?: string | null
+          employer_period_start?: string | null
+          end_date?: string | null
+          expected_return_date?: string | null
+          follow_up_plan_completed_at?: string | null
+          follow_up_plan_due?: string | null
+          id?: string
+          income_report_sent_at?: string | null
+          internal_notes?: string | null
+          leave_type: string
+          max_date?: string | null
+          nav_case_number?: string | null
+          nav_takeover_date?: string | null
+          notes?: string | null
+          sick_leave_percentage?: number | null
+          start_date: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          activity_requirement_due?: string | null
+          activity_requirement_met?: boolean | null
+          actual_return_date?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          diagnosis_category?: string | null
+          diagnosis_code?: string | null
+          dialogue_meeting_1_completed_at?: string | null
+          dialogue_meeting_1_due?: string | null
+          dialogue_meeting_2_completed_at?: string | null
+          dialogue_meeting_2_due?: string | null
+          employee_id?: string
+          employer_period_completed?: boolean | null
+          employer_period_days_used?: number | null
+          employer_period_end?: string | null
+          employer_period_start?: string | null
+          end_date?: string | null
+          expected_return_date?: string | null
+          follow_up_plan_completed_at?: string | null
+          follow_up_plan_due?: string | null
+          id?: string
+          income_report_sent_at?: string | null
+          internal_notes?: string | null
+          leave_type?: string
+          max_date?: string | null
+          nav_case_number?: string | null
+          nav_takeover_date?: string | null
+          notes?: string | null
+          sick_leave_percentage?: number | null
+          start_date?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sick_leaves_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sick_leaves_employee_id_fkey"
+            columns: ["employee_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
