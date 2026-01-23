@@ -329,23 +329,45 @@ export function FixedSalaryCalculator({
     }));
   };
 
+  // Calculate day breakdown
+  const getDayBreakdown = (entry: WorkScheduleEntry) => {
+    if (!entry.start || !entry.end) {
+      return { nightHours: 0, ordHours: 0, pause: 0, netOrd: 0, totalHours: 0 };
+    }
+    
+    const startH = timeToHours(entry.start);
+    let endH = timeToHours(entry.end);
+    if (endH <= startH) endH += 24;
+    
+    const grossHours = endH - startH;
+    const pauseHours = entry.breakMinutes / 60;
+    const nightHours = calculateNightHours(entry.start, entry.end, nightStartCustom, nightEndCustom);
+    const ordHours = grossHours; // Total hours before deductions
+    const netOrd = Math.max(0, grossHours - pauseHours - nightHours);
+    const totalHours = grossHours - pauseHours;
+    
+    return { nightHours, ordHours, pause: pauseHours, netOrd, totalHours };
+  };
+
   // Get week summary
   const getWeekSummary = (weekNum: number) => {
-    const weekEntries = schedule.filter(e => e.week === weekNum && e.start && e.end);
-    let hours = 0;
+    const weekEntries = schedule.filter(e => e.week === weekNum);
     let nightHours = 0;
+    let ordHours = 0;
+    let pause = 0;
+    let netOrd = 0;
+    let totalHours = 0;
     
     weekEntries.forEach(entry => {
-      const startH = timeToHours(entry.start);
-      let endH = timeToHours(entry.end);
-      if (endH <= startH) endH += 24;
-      const netHours = (endH - startH) - entry.breakMinutes / 60;
-      const night = calculateNightHours(entry.start, entry.end, nightStartCustom, nightEndCustom);
-      hours += netHours;
-      nightHours += night;
+      const breakdown = getDayBreakdown(entry);
+      nightHours += breakdown.nightHours;
+      ordHours += breakdown.ordHours;
+      pause += breakdown.pause;
+      netOrd += breakdown.netOrd;
+      totalHours += breakdown.totalHours;
     });
     
-    return { hours: hours.toFixed(1), nightHours: nightHours.toFixed(1) };
+    return { nightHours, ordHours, pause, netOrd, totalHours };
   };
 
   const getCompetenceLabel = (level: string) => {
@@ -544,7 +566,7 @@ export function FixedSalaryCalculator({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
+                <div className="space-y-6">
                 {[1, 2, 3, 4].map(weekNum => {
                   const summary = getWeekSummary(weekNum);
                   return (
@@ -553,7 +575,7 @@ export function FixedSalaryCalculator({
                         <h4 className="font-medium">Uke {weekNum}</h4>
                         <div className="flex items-center gap-3">
                           <span className="text-sm text-muted-foreground">
-                            {summary.hours}t ({summary.nightHours}t natt)
+                            {summary.totalHours.toFixed(1)}t ({summary.nightHours.toFixed(1)}t natt)
                           </span>
                           {weekNum === 1 && (
                             <Button 
@@ -566,53 +588,100 @@ export function FixedSalaryCalculator({
                           )}
                         </div>
                       </div>
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="w-20">Dag</TableHead>
-                            <TableHead>Start</TableHead>
-                            <TableHead>Slutt</TableHead>
-                            <TableHead className="w-20">Pause</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {DAYS.map(day => {
-                            const entry = schedule.find(e => e.week === weekNum && e.day === day);
-                            if (!entry) return null;
-                            return (
-                              <TableRow key={`${weekNum}-${day}`}>
-                                <TableCell className="font-medium">{day}</TableCell>
-                                <TableCell>
-                                  <Input
-                                    type="time"
-                                    value={entry.start}
-                                    onChange={(e) => updateScheduleEntry(weekNum, day, "start", e.target.value)}
-                                    className="w-24"
-                                  />
-                                </TableCell>
-                                <TableCell>
-                                  <Input
-                                    type="time"
-                                    value={entry.end}
-                                    onChange={(e) => updateScheduleEntry(weekNum, day, "end", e.target.value)}
-                                    className="w-24"
-                                  />
-                                </TableCell>
-                                <TableCell>
-                                  <Input
-                                    type="number"
-                                    value={entry.breakMinutes}
-                                    onChange={(e) => updateScheduleEntry(weekNum, day, "breakMinutes", parseInt(e.target.value) || 0)}
-                                    className="w-16"
-                                    min={0}
-                                    step={5}
-                                  />
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        </TableBody>
-                      </Table>
+                      <div className="overflow-x-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="w-16">Dag</TableHead>
+                              <TableHead className="w-24">Start</TableHead>
+                              <TableHead className="w-24">Slutt</TableHead>
+                              <TableHead className="w-20 text-right">Natt-t</TableHead>
+                              <TableHead className="w-20 text-right">Ord. t</TableHead>
+                              <TableHead className="w-16 text-center">Pause</TableHead>
+                              <TableHead className="w-20 text-right">Nto. ord</TableHead>
+                              <TableHead className="w-20 text-right">Tot. t</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {DAYS.map(day => {
+                              const entry = schedule.find(e => e.week === weekNum && e.day === day);
+                              if (!entry) return null;
+                              const breakdown = getDayBreakdown(entry);
+                              const hasData = entry.start && entry.end;
+                              return (
+                                <TableRow key={`${weekNum}-${day}`}>
+                                  <TableCell className="font-medium text-primary">{day}</TableCell>
+                                  <TableCell>
+                                    <Input
+                                      type="time"
+                                      value={entry.start}
+                                      onChange={(e) => updateScheduleEntry(weekNum, day, "start", e.target.value)}
+                                      className="w-24"
+                                    />
+                                  </TableCell>
+                                  <TableCell>
+                                    <Input
+                                      type="time"
+                                      value={entry.end}
+                                      onChange={(e) => updateScheduleEntry(weekNum, day, "end", e.target.value)}
+                                      className="w-24"
+                                    />
+                                  </TableCell>
+                                  <TableCell className="text-right tabular-nums">
+                                    <span className={hasData && breakdown.nightHours > 0 ? "font-medium text-primary" : "text-muted-foreground"}>
+                                      {hasData ? breakdown.nightHours.toFixed(2) : "0,00"}
+                                    </span>
+                                  </TableCell>
+                                  <TableCell className="text-right tabular-nums">
+                                    <span className={hasData ? "font-medium" : "text-muted-foreground"}>
+                                      {hasData ? breakdown.ordHours.toFixed(2) : "0,00"}
+                                    </span>
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    <Input
+                                      type="number"
+                                      value={entry.breakMinutes / 60}
+                                      onChange={(e) => updateScheduleEntry(weekNum, day, "breakMinutes", (parseFloat(e.target.value) || 0) * 60)}
+                                      className="w-16 text-center"
+                                      min={0}
+                                      step={0.5}
+                                    />
+                                  </TableCell>
+                                  <TableCell className="text-right tabular-nums">
+                                    <span className={hasData ? "font-medium" : "text-muted-foreground"}>
+                                      {hasData ? breakdown.netOrd.toFixed(2) : "0,00"}
+                                    </span>
+                                  </TableCell>
+                                  <TableCell className="text-right tabular-nums">
+                                    <span className={hasData ? "font-bold" : "text-muted-foreground"}>
+                                      {hasData ? breakdown.totalHours.toFixed(2) : "0,00"}
+                                    </span>
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                            {/* SUM row */}
+                            <TableRow className="bg-muted/50 font-semibold">
+                              <TableCell colSpan={3} className="text-right">SUM</TableCell>
+                              <TableCell className="text-right tabular-nums text-primary">
+                                {summary.nightHours.toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-right tabular-nums">
+                                {summary.ordHours.toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-center tabular-nums">
+                                {summary.pause.toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-right tabular-nums">
+                                {summary.netOrd.toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-right tabular-nums text-primary">
+                                {summary.totalHours.toFixed(2)}
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </div>
                     </div>
                   );
                 })}
