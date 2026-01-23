@@ -9,6 +9,8 @@ export interface EquipmentCategory {
   requires_temp_monitoring: boolean | null;
   requires_certification: boolean | null;
   default_service_interval_days: number | null;
+  department_id: string | null;
+  description: string | null;
   created_at: string;
 }
 

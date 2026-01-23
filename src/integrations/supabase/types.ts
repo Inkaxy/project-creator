@@ -2048,6 +2048,8 @@ export type Database = {
           color: string | null
           created_at: string | null
           default_service_interval_days: number | null
+          department_id: string | null
+          description: string | null
           icon: string | null
           id: string
           name: string
@@ -2058,6 +2060,8 @@ export type Database = {
           color?: string | null
           created_at?: string | null
           default_service_interval_days?: number | null
+          department_id?: string | null
+          description?: string | null
           icon?: string | null
           id?: string
           name: string
@@ -2068,13 +2072,23 @@ export type Database = {
           color?: string | null
           created_at?: string | null
           default_service_interval_days?: number | null
+          department_id?: string | null
+          description?: string | null
           icon?: string | null
           id?: string
           name?: string
           requires_certification?: boolean | null
           requires_temp_monitoring?: boolean | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "equipment_categories_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       equipment_checklist_completions: {
         Row: {
