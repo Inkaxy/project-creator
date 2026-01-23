@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { 
   Calculator, 
   Clock, 
@@ -30,10 +35,19 @@ import {
   TrendingUp,
   AlertCircle,
   Check,
+  Copy,
+  GripVertical,
+  X,
 } from "lucide-react";
 import { useWageLadders, WageLadder, calculateCurrentLevel } from "@/hooks/useWageLadders";
 import { useWageSupplements, WageSupplement } from "@/hooks/useWageSupplements";
 import { cn } from "@/lib/utils";
+
+// Unique identifier for a day entry
+interface DayIdentifier {
+  week: number;
+  day: string;
+}
 
 interface WorkScheduleEntry {
   week: number;
@@ -166,6 +180,124 @@ export function FixedSalaryCalculator({
   // Custom night supplement rate (can be overridden)
   const [nightStartCustom, setNightStartCustom] = useState(nightStart);
   const [nightEndCustom, setNightEndCustom] = useState(nightEnd);
+
+  // Copy mode state - innovative click-to-copy system
+  const [copySource, setCopySource] = useState<DayIdentifier | null>(null);
+  const [copyTargets, setCopyTargets] = useState<DayIdentifier[]>([]);
+
+  // Check if a day has time data
+  const hasTimeData = useCallback((week: number, day: string) => {
+    const entry = schedule.find(e => e.week === week && e.day === day);
+    return entry && entry.start && entry.end;
+  }, [schedule]);
+
+  // Get time data for display
+  const getTimeDisplay = useCallback((week: number, day: string) => {
+    const entry = schedule.find(e => e.week === week && e.day === day);
+    if (!entry?.start || !entry?.end) return null;
+    return `${entry.start}-${entry.end}`;
+  }, [schedule]);
+
+  // Handle clicking on a day row for copy mode
+  const handleDayClick = useCallback((week: number, day: string, e: React.MouseEvent) => {
+    // Don't trigger if clicking on inputs
+    if ((e.target as HTMLElement).tagName === 'INPUT') return;
+    
+    const clickedDay: DayIdentifier = { week, day };
+    
+    // If no source selected, and this day has data, set as source
+    if (!copySource) {
+      if (hasTimeData(week, day)) {
+        setCopySource(clickedDay);
+        setCopyTargets([]);
+      }
+      return;
+    }
+    
+    // If clicking on source again, cancel copy mode
+    if (copySource.week === week && copySource.day === day) {
+      setCopySource(null);
+      setCopyTargets([]);
+      return;
+    }
+    
+    // Toggle target selection
+    const isTarget = copyTargets.some(t => t.week === week && t.day === day);
+    if (isTarget) {
+      setCopyTargets(prev => prev.filter(t => !(t.week === week && t.day === day)));
+    } else {
+      setCopyTargets(prev => [...prev, clickedDay]);
+    }
+  }, [copySource, copyTargets, hasTimeData]);
+
+  // Execute copy operation
+  const executeCopy = useCallback(() => {
+    if (!copySource || copyTargets.length === 0) return;
+    
+    const sourceEntry = schedule.find(e => e.week === copySource.week && e.day === copySource.day);
+    if (!sourceEntry) return;
+    
+    setSchedule(prev => prev.map(entry => {
+      const isTarget = copyTargets.some(t => t.week === entry.week && t.day === entry.day);
+      if (isTarget) {
+        return {
+          ...entry,
+          start: sourceEntry.start,
+          end: sourceEntry.end,
+          breakMinutes: sourceEntry.breakMinutes,
+        };
+      }
+      return entry;
+    }));
+    
+    // Reset copy mode
+    setCopySource(null);
+    setCopyTargets([]);
+  }, [copySource, copyTargets, schedule]);
+
+  // Cancel copy mode
+  const cancelCopyMode = useCallback(() => {
+    setCopySource(null);
+    setCopyTargets([]);
+  }, []);
+
+  // Select all same weekdays as target (smart copy)
+  const selectSameWeekdays = useCallback(() => {
+    if (!copySource) return;
+    
+    const targets: DayIdentifier[] = [];
+    for (let week = 1; week <= 4; week++) {
+      if (week !== copySource.week) {
+        targets.push({ week, day: copySource.day });
+      }
+    }
+    setCopyTargets(targets);
+  }, [copySource]);
+
+  // Select entire week as target
+  const selectEntireWeek = useCallback((weekNum: number) => {
+    if (!copySource) return;
+    
+    const targets: DayIdentifier[] = [];
+    DAYS.forEach(day => {
+      if (!(weekNum === copySource.week && day === copySource.day)) {
+        targets.push({ week: weekNum, day });
+      }
+    });
+    setCopyTargets(prev => {
+      // Toggle - if all days in week are selected, deselect them
+      const weekDays = targets.filter(t => t.week === weekNum);
+      const allSelected = weekDays.every(wd => 
+        prev.some(p => p.week === wd.week && p.day === wd.day)
+      );
+      if (allSelected) {
+        return prev.filter(p => p.week !== weekNum);
+      }
+      // Add all week days
+      const filtered = prev.filter(p => p.week !== weekNum);
+      return [...filtered, ...weekDays];
+    });
+  }, [copySource]);
 
   // Get selected wage ladder
   const selectedLadder = useMemo(() => {
@@ -558,26 +690,103 @@ export function FixedSalaryCalculator({
 
         {/* Middle: Work Schedule */}
         <div className="lg:col-span-2 space-y-4">
+          {/* Copy Mode Toolbar */}
+          {copySource && (
+            <Card className="border-primary bg-primary/5 animate-in slide-in-from-top-2">
+              <CardContent className="py-3">
+                <div className="flex items-center justify-between gap-4 flex-wrap">
+                  <div className="flex items-center gap-3">
+                    <Badge variant="default" className="gap-1">
+                      <Copy className="h-3 w-3" />
+                      Kopier-modus
+                    </Badge>
+                    <span className="text-sm">
+                      Kilde: <strong>Uke {copySource.week}, {copySource.day}</strong>
+                      <span className="text-muted-foreground ml-1">
+                        ({getTimeDisplay(copySource.week, copySource.day)})
+                      </span>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={selectSameWeekdays}
+                        >
+                          Samme ukedag
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Velg alle {copySource.day} i andre uker
+                      </TooltipContent>
+                    </Tooltip>
+                    <Button 
+                      variant="default" 
+                      size="sm"
+                      onClick={executeCopy}
+                      disabled={copyTargets.length === 0}
+                      className="gap-1"
+                    >
+                      <Check className="h-3 w-3" />
+                      Kopier til {copyTargets.length} {copyTargets.length === 1 ? 'dag' : 'dager'}
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={cancelCopyMode}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Klikk på dager for å velge mål. Klikk på ukeoverskrift for å velge hele uken.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Arbeidstidsplan (4 uker)
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Arbeidstidsplan (4 uker)
+                </CardTitle>
+                {!copySource && (
+                  <p className="text-xs text-muted-foreground">
+                    Klikk på en rad med tider for å kopiere
+                  </p>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
                 <div className="space-y-6">
                 {[1, 2, 3, 4].map(weekNum => {
                   const summary = getWeekSummary(weekNum);
+                  const isSourceWeek = copySource?.week === weekNum;
                   return (
                     <div key={weekNum} className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-medium">Uke {weekNum}</h4>
+                      <div 
+                        className={cn(
+                          "flex items-center justify-between p-2 -mx-2 rounded-md transition-colors",
+                          copySource && !isSourceWeek && "hover:bg-primary/10 cursor-pointer"
+                        )}
+                        onClick={() => copySource && !isSourceWeek && selectEntireWeek(weekNum)}
+                      >
+                        <h4 className="font-medium flex items-center gap-2">
+                          Uke {weekNum}
+                          {copySource && !isSourceWeek && (
+                            <span className="text-xs text-muted-foreground">(klikk for hele uken)</span>
+                          )}
+                        </h4>
                         <div className="flex items-center gap-3">
                           <span className="text-sm text-muted-foreground">
                             {summary.totalHours.toFixed(1)}t ({summary.nightHours.toFixed(1)}t natt)
                           </span>
-                          {weekNum === 1 && (
+                          {weekNum === 1 && !copySource && (
                             <Button 
                               variant="outline" 
                               size="sm"
@@ -592,6 +801,7 @@ export function FixedSalaryCalculator({
                         <Table>
                           <TableHeader>
                             <TableRow>
+                              <TableHead className="w-8"></TableHead>
                               <TableHead className="w-16">Dag</TableHead>
                               <TableHead className="w-24">Start</TableHead>
                               <TableHead className="w-24">Slutt</TableHead>
@@ -608,8 +818,57 @@ export function FixedSalaryCalculator({
                               if (!entry) return null;
                               const breakdown = getDayBreakdown(entry);
                               const hasData = entry.start && entry.end;
+                              
+                              // Copy mode states
+                              const isSource = copySource?.week === weekNum && copySource?.day === day;
+                              const isTarget = copyTargets.some(t => t.week === weekNum && t.day === day);
+                              const canBeSource = hasData && !copySource;
+                              const canBeTarget = copySource && !isSource;
+                              
                               return (
-                                <TableRow key={`${weekNum}-${day}`}>
+                                <TableRow 
+                                  key={`${weekNum}-${day}`}
+                                  className={cn(
+                                    "transition-colors",
+                                    isSource && "bg-primary/20 border-l-4 border-l-primary",
+                                    isTarget && "bg-accent border-l-4 border-l-accent-foreground",
+                                    canBeSource && "hover:bg-muted cursor-pointer",
+                                    canBeTarget && "hover:bg-accent/50 cursor-pointer"
+                                  )}
+                                  onClick={(e) => handleDayClick(weekNum, day, e)}
+                                >
+                                  <TableCell className="p-1 w-8">
+                                    {isSource && (
+                                      <Tooltip>
+                                        <TooltipTrigger>
+                                          <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
+                                            <Copy className="h-3 w-3 text-primary-foreground" />
+                                          </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent>Kilde</TooltipContent>
+                                      </Tooltip>
+                                    )}
+                                    {isTarget && (
+                                      <Tooltip>
+                                        <TooltipTrigger>
+                                          <div className="w-6 h-6 bg-accent-foreground rounded flex items-center justify-center">
+                                            <Check className="h-3 w-3 text-accent" />
+                                          </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent>Mål</TooltipContent>
+                                      </Tooltip>
+                                    )}
+                                    {canBeSource && !copySource && hasData && (
+                                      <Tooltip>
+                                        <TooltipTrigger>
+                                          <div className="w-6 h-6 hover:bg-muted-foreground/20 rounded flex items-center justify-center opacity-30 hover:opacity-100 transition-opacity">
+                                            <GripVertical className="h-3 w-3" />
+                                          </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent>Klikk for å kopiere</TooltipContent>
+                                      </Tooltip>
+                                    )}
+                                  </TableCell>
                                   <TableCell className="font-medium text-primary">{day}</TableCell>
                                   <TableCell>
                                     <Input
@@ -662,6 +921,7 @@ export function FixedSalaryCalculator({
                             })}
                             {/* SUM row */}
                             <TableRow className="bg-muted/50 font-semibold">
+                              <TableCell></TableCell>
                               <TableCell colSpan={3} className="text-right">SUM</TableCell>
                               <TableCell className="text-right tabular-nums text-primary">
                                 {summary.nightHours.toFixed(2)}
