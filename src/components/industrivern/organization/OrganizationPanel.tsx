@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Plus, 
   User, 
@@ -10,7 +11,9 @@ import {
   Mail,
   MoreHorizontal,
   Trash2,
-  Edit
+  Edit,
+  Network,
+  List
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -25,6 +28,7 @@ import {
 import { INDUSTRIVERN_ROLE_LABELS, IndustrivernRole } from "@/types/industrivern";
 import { AddPersonnelModal } from "./AddPersonnelModal";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
+import { OrganizationChartView } from "./OrganizationChartView";
 
 const ROLE_ORDER: IndustrivernRole[] = [
   "industrivernleder",
@@ -67,104 +71,133 @@ export function OrganizationPanel() {
         </Button>
       </div>
 
-      {isLoading ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Skeleton key={i} className="h-48" />
-          ))}
-        </div>
-      ) : sortedRoles.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {sortedRoles.map((role) => (
-            <Card key={role}>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">
-                  {INDUSTRIVERN_ROLE_LABELS[role]}
-                </CardTitle>
-                <CardDescription>
-                  {groupedPersonnel[role].length} {groupedPersonnel[role].length === 1 ? "person" : "personer"}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {groupedPersonnel[role].map((person) => (
-                    <div 
-                      key={person.id} 
-                      className="flex items-center justify-between p-2 rounded-lg border bg-card"
-                    >
-                      <div className="flex items-center gap-3">
-                        <AvatarWithInitials
-                          name={person.profiles?.full_name || ""}
-                          avatarUrl={person.profiles?.avatar_url}
-                          className="h-10 w-10"
-                        />
-                        <div>
-                          <div className="font-medium text-sm flex items-center gap-2">
-                            {person.profiles?.full_name}
-                            {person.is_deputy && (
-                              <Badge variant="secondary" className="text-xs">
-                                Stedfortreder
-                              </Badge>
-                            )}
+      <Tabs defaultValue="chart" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="chart" className="gap-2">
+            <Network className="h-4 w-4" />
+            Organisasjonskart
+          </TabsTrigger>
+          <TabsTrigger value="list" className="gap-2">
+            <List className="h-4 w-4" />
+            Listevisning
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="chart">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Organisasjonskart</CardTitle>
+              <CardDescription>
+                Visuell oversikt over industrivernorganisasjonen
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <OrganizationChartView />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="list">
+          {isLoading ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <Skeleton key={i} className="h-48" />
+              ))}
+            </div>
+          ) : sortedRoles.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {sortedRoles.map((role) => (
+                <Card key={role}>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">
+                      {INDUSTRIVERN_ROLE_LABELS[role]}
+                    </CardTitle>
+                    <CardDescription>
+                      {groupedPersonnel[role].length} {groupedPersonnel[role].length === 1 ? "person" : "personer"}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {groupedPersonnel[role].map((person) => (
+                        <div 
+                          key={person.id} 
+                          className="flex items-center justify-between p-2 rounded-lg border bg-card"
+                        >
+                          <div className="flex items-center gap-3">
+                            <AvatarWithInitials
+                              name={person.profiles?.full_name || ""}
+                              avatarUrl={person.profiles?.avatar_url}
+                              className="h-10 w-10"
+                            />
+                            <div>
+                              <div className="font-medium text-sm flex items-center gap-2">
+                                {person.profiles?.full_name}
+                                {person.is_deputy && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    Stedfortreder
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="text-xs text-muted-foreground flex items-center gap-2">
+                                {person.emergency_phone && (
+                                  <span className="flex items-center gap-1">
+                                    <Phone className="h-3 w-3" />
+                                    {person.emergency_phone}
+                                  </span>
+                                )}
+                                {!person.emergency_phone && person.profiles?.phone && (
+                                  <span className="flex items-center gap-1">
+                                    <Phone className="h-3 w-3" />
+                                    {person.profiles.phone}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-xs text-muted-foreground flex items-center gap-2">
-                            {person.emergency_phone && (
-                              <span className="flex items-center gap-1">
-                                <Phone className="h-3 w-3" />
-                                {person.emergency_phone}
-                              </span>
-                            )}
-                            {!person.emergency_phone && person.profiles?.phone && (
-                              <span className="flex items-center gap-1">
-                                <Phone className="h-3 w-3" />
-                                {person.profiles.phone}
-                              </span>
-                            )}
-                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem>
+                                <Edit className="h-4 w-4 mr-2" />
+                                Rediger
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                className="text-destructive"
+                                onClick={() => removeMutation.mutate(person.id)}
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Fjern fra industrivern
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Rediger
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            className="text-destructive"
-                            onClick={() => removeMutation.mutate(person.id)}
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Fjern fra industrivern
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <User className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                <h3 className="text-lg font-medium mb-2">Ingen personell registrert</h3>
+                <p className="text-muted-foreground mb-4">
+                  Legg til personell for å bygge opp industrivernorganisasjonen
+                </p>
+                <Button onClick={() => setShowAddModal(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Legg til personell
+                </Button>
               </CardContent>
             </Card>
-          ))}
-        </div>
-      ) : (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <User className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-            <h3 className="text-lg font-medium mb-2">Ingen personell registrert</h3>
-            <p className="text-muted-foreground mb-4">
-              Legg til personell for å bygge opp industrivernorganisasjonen
-            </p>
-            <Button onClick={() => setShowAddModal(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Legg til personell
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+          )}
+        </TabsContent>
+      </Tabs>
 
       <AddPersonnelModal 
         open={showAddModal} 
