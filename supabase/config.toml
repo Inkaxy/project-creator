@@ -15,5 +15,5 @@ verify_jwt = false
 [functions.invite-employee]
 verify_jwt = false
 
-[functions.amu-meeting-notes-ai]
+[functions.amu-transcribe-meeting]
 verify_jwt = false
