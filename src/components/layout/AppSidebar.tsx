@@ -25,6 +25,7 @@ import {
   LogOut,
   Wrench,
   QrCode,
+  HardHat,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -75,6 +76,7 @@ const navigation: NavSection[] = [
       { title: "IK-Mat", href: "/ik-mat", icon: ClipboardList },
       { title: "HMS", href: "/hms", icon: Shield },
       { title: "Brann", href: "/brann", icon: Flame },
+      { title: "Industrivern", href: "/industrivern", icon: HardHat },
       { title: "Meld avvik", href: "/meld-avvik", icon: AlertTriangle },
     ],
   },

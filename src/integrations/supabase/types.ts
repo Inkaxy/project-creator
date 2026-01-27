@@ -193,6 +193,106 @@ export type Database = {
           },
         ]
       }
+      action_cards: {
+        Row: {
+          created_at: string
+          emergency_plan_id: string | null
+          equipment_needed: string[] | null
+          extended_actions: string[] | null
+          id: string
+          immediate_actions: string[]
+          incident_type: string
+          is_active: boolean | null
+          qr_code_url: string | null
+          safety_considerations: string[] | null
+          sort_order: number | null
+          target_role: Database["public"]["Enums"]["industrivern_role"] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          emergency_plan_id?: string | null
+          equipment_needed?: string[] | null
+          extended_actions?: string[] | null
+          id?: string
+          immediate_actions: string[]
+          incident_type: string
+          is_active?: boolean | null
+          qr_code_url?: string | null
+          safety_considerations?: string[] | null
+          sort_order?: number | null
+          target_role?: Database["public"]["Enums"]["industrivern_role"] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          emergency_plan_id?: string | null
+          equipment_needed?: string[] | null
+          extended_actions?: string[] | null
+          id?: string
+          immediate_actions?: string[]
+          incident_type?: string
+          is_active?: boolean | null
+          qr_code_url?: string | null
+          safety_considerations?: string[] | null
+          sort_order?: number | null
+          target_role?: Database["public"]["Enums"]["industrivern_role"] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_cards_emergency_plan_id_fkey"
+            columns: ["emergency_plan_id"]
+            isOneToOne: false
+            referencedRelation: "emergency_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alert_plans: {
+        Row: {
+          alert_sequence: Json
+          created_at: string
+          emergency_plan_id: string | null
+          id: string
+          incident_type: string
+          neighbor_instructions: string | null
+          notify_neighbors: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          alert_sequence: Json
+          created_at?: string
+          emergency_plan_id?: string | null
+          id?: string
+          incident_type: string
+          neighbor_instructions?: string | null
+          notify_neighbors?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          alert_sequence?: Json
+          created_at?: string
+          emergency_plan_id?: string | null
+          id?: string
+          incident_type?: string
+          neighbor_instructions?: string | null
+          notify_neighbors?: boolean | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_plans_emergency_plan_id_fkey"
+            columns: ["emergency_plan_id"]
+            isOneToOne: false
+            referencedRelation: "emergency_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       approval_requests: {
         Row: {
           created_at: string
@@ -1606,6 +1706,103 @@ export type Database = {
           },
         ]
       }
+      emergency_plans: {
+        Row: {
+          approved_by: string | null
+          approved_date: string | null
+          created_at: string
+          id: string
+          organization_chart: Json | null
+          status: string
+          updated_at: string
+          version: number
+          version_date: string
+        }
+        Insert: {
+          approved_by?: string | null
+          approved_date?: string | null
+          created_at?: string
+          id?: string
+          organization_chart?: Json | null
+          status?: string
+          updated_at?: string
+          version?: number
+          version_date?: string
+        }
+        Update: {
+          approved_by?: string | null
+          approved_date?: string | null
+          created_at?: string
+          id?: string
+          organization_chart?: Json | null
+          status?: string
+          updated_at?: string
+          version?: number
+          version_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_plans_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      emergency_resources: {
+        Row: {
+          availability: string | null
+          contact_info: Json | null
+          created_at: string
+          description: string | null
+          emergency_plan_id: string | null
+          id: string
+          is_active: boolean | null
+          location: string | null
+          name: string
+          resource_type: string
+          response_time_minutes: number | null
+          updated_at: string
+        }
+        Insert: {
+          availability?: string | null
+          contact_info?: Json | null
+          created_at?: string
+          description?: string | null
+          emergency_plan_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          name: string
+          resource_type: string
+          response_time_minutes?: number | null
+          updated_at?: string
+        }
+        Update: {
+          availability?: string | null
+          contact_info?: Json | null
+          created_at?: string
+          description?: string | null
+          emergency_plan_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          name?: string
+          resource_type?: string
+          response_time_minutes?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_resources_emergency_plan_id_fkey"
+            columns: ["emergency_plan_id"]
+            isOneToOne: false
+            referencedRelation: "emergency_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_accounts: {
         Row: {
           account_type: string
@@ -2829,6 +3026,177 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      exercise_evaluations: {
+        Row: {
+          created_at: string
+          evaluated_by: string | null
+          evaluation_date: string | null
+          exercise_id: string
+          id: string
+          improvement_actions: Json | null
+          objectives_met: boolean | null
+          observations: string | null
+          strengths: string[] | null
+          updated_at: string
+          weaknesses: string[] | null
+        }
+        Insert: {
+          created_at?: string
+          evaluated_by?: string | null
+          evaluation_date?: string | null
+          exercise_id: string
+          id?: string
+          improvement_actions?: Json | null
+          objectives_met?: boolean | null
+          observations?: string | null
+          strengths?: string[] | null
+          updated_at?: string
+          weaknesses?: string[] | null
+        }
+        Update: {
+          created_at?: string
+          evaluated_by?: string | null
+          evaluation_date?: string | null
+          exercise_id?: string
+          id?: string
+          improvement_actions?: Json | null
+          objectives_met?: boolean | null
+          observations?: string | null
+          strengths?: string[] | null
+          updated_at?: string
+          weaknesses?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_evaluations_evaluated_by_fkey"
+            columns: ["evaluated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_evaluations_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "industrivern_exercises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercise_participants: {
+        Row: {
+          attendance_notes: string | null
+          attended: boolean | null
+          created_at: string
+          exercise_id: string
+          id: string
+          industrivern_role:
+            | Database["public"]["Enums"]["industrivern_role"]
+            | null
+          profile_id: string
+        }
+        Insert: {
+          attendance_notes?: string | null
+          attended?: boolean | null
+          created_at?: string
+          exercise_id: string
+          id?: string
+          industrivern_role?:
+            | Database["public"]["Enums"]["industrivern_role"]
+            | null
+          profile_id: string
+        }
+        Update: {
+          attendance_notes?: string | null
+          attended?: boolean | null
+          created_at?: string
+          exercise_id?: string
+          id?: string
+          industrivern_role?:
+            | Database["public"]["Enums"]["industrivern_role"]
+            | null
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_participants_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "industrivern_exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercise_schedule: {
+        Row: {
+          compliance_status: string | null
+          created_at: string
+          h1_exercises_completed: number | null
+          h1_exercises_planned: number | null
+          h2_exercises_completed: number | null
+          h2_exercises_planned: number | null
+          id: string
+          is_reinforced: boolean | null
+          q1_exercises_completed: number | null
+          q1_exercises_planned: number | null
+          q2_exercises_completed: number | null
+          q2_exercises_planned: number | null
+          q3_exercises_completed: number | null
+          q3_exercises_planned: number | null
+          q4_exercises_completed: number | null
+          q4_exercises_planned: number | null
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          compliance_status?: string | null
+          created_at?: string
+          h1_exercises_completed?: number | null
+          h1_exercises_planned?: number | null
+          h2_exercises_completed?: number | null
+          h2_exercises_planned?: number | null
+          id?: string
+          is_reinforced?: boolean | null
+          q1_exercises_completed?: number | null
+          q1_exercises_planned?: number | null
+          q2_exercises_completed?: number | null
+          q2_exercises_planned?: number | null
+          q3_exercises_completed?: number | null
+          q3_exercises_planned?: number | null
+          q4_exercises_completed?: number | null
+          q4_exercises_planned?: number | null
+          updated_at?: string
+          year?: number
+        }
+        Update: {
+          compliance_status?: string | null
+          created_at?: string
+          h1_exercises_completed?: number | null
+          h1_exercises_planned?: number | null
+          h2_exercises_completed?: number | null
+          h2_exercises_planned?: number | null
+          id?: string
+          is_reinforced?: boolean | null
+          q1_exercises_completed?: number | null
+          q1_exercises_planned?: number | null
+          q2_exercises_completed?: number | null
+          q2_exercises_planned?: number | null
+          q3_exercises_completed?: number | null
+          q3_exercises_planned?: number | null
+          q4_exercises_completed?: number | null
+          q4_exercises_planned?: number | null
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
       }
       fire_drills: {
         Row: {
@@ -4101,6 +4469,498 @@ export type Database = {
           },
         ]
       }
+      industrivern_coordination: {
+        Row: {
+          agreement_date: string | null
+          agreement_document_url: string | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          coordination_areas: string[] | null
+          created_at: string
+          emergency_contact_protocol: string | null
+          id: string
+          is_active: boolean | null
+          last_review_date: string | null
+          mutual_risks: string[] | null
+          next_review_date: string | null
+          partner_address: string | null
+          partner_name: string
+          partner_org_number: string | null
+          shared_radio_channel: string | null
+          updated_at: string
+        }
+        Insert: {
+          agreement_date?: string | null
+          agreement_document_url?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          coordination_areas?: string[] | null
+          created_at?: string
+          emergency_contact_protocol?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_review_date?: string | null
+          mutual_risks?: string[] | null
+          next_review_date?: string | null
+          partner_address?: string | null
+          partner_name: string
+          partner_org_number?: string | null
+          shared_radio_channel?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agreement_date?: string | null
+          agreement_document_url?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          coordination_areas?: string[] | null
+          created_at?: string
+          emergency_contact_protocol?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_review_date?: string | null
+          mutual_risks?: string[] | null
+          next_review_date?: string | null
+          partner_address?: string | null
+          partner_name?: string
+          partner_org_number?: string | null
+          shared_radio_channel?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      industrivern_equipment: {
+        Row: {
+          assigned_to: string | null
+          category: Database["public"]["Enums"]["iv_equipment_category"]
+          certificate_url: string | null
+          cost: number | null
+          created_at: string
+          equipment_type: string
+          gps_lat: number | null
+          gps_lng: number | null
+          id: string
+          inspection_interval_months: number | null
+          inventory_number: string | null
+          last_inspection_date: string | null
+          last_service_date: string | null
+          location: string
+          location_details: string | null
+          manual_url: string | null
+          name: string
+          next_inspection_date: string | null
+          next_service_date: string | null
+          photos: Json | null
+          purchase_date: string | null
+          qr_code_url: string | null
+          serial_number: string | null
+          status: string
+          supplier: string | null
+          updated_at: string
+          warranty_expires: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          category: Database["public"]["Enums"]["iv_equipment_category"]
+          certificate_url?: string | null
+          cost?: number | null
+          created_at?: string
+          equipment_type: string
+          gps_lat?: number | null
+          gps_lng?: number | null
+          id?: string
+          inspection_interval_months?: number | null
+          inventory_number?: string | null
+          last_inspection_date?: string | null
+          last_service_date?: string | null
+          location: string
+          location_details?: string | null
+          manual_url?: string | null
+          name: string
+          next_inspection_date?: string | null
+          next_service_date?: string | null
+          photos?: Json | null
+          purchase_date?: string | null
+          qr_code_url?: string | null
+          serial_number?: string | null
+          status?: string
+          supplier?: string | null
+          updated_at?: string
+          warranty_expires?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: Database["public"]["Enums"]["iv_equipment_category"]
+          certificate_url?: string | null
+          cost?: number | null
+          created_at?: string
+          equipment_type?: string
+          gps_lat?: number | null
+          gps_lng?: number | null
+          id?: string
+          inspection_interval_months?: number | null
+          inventory_number?: string | null
+          last_inspection_date?: string | null
+          last_service_date?: string | null
+          location?: string
+          location_details?: string | null
+          manual_url?: string | null
+          name?: string
+          next_inspection_date?: string | null
+          next_service_date?: string | null
+          photos?: Json | null
+          purchase_date?: string | null
+          qr_code_url?: string | null
+          serial_number?: string | null
+          status?: string
+          supplier?: string | null
+          updated_at?: string
+          warranty_expires?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "industrivern_equipment_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      industrivern_exercises: {
+        Row: {
+          actual_date: string | null
+          actual_end: string | null
+          actual_start: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          exercise_type: Database["public"]["Enums"]["exercise_type"]
+          external_participants: string[] | null
+          id: string
+          incident_scenario: string | null
+          learning_objectives: string[] | null
+          location: string | null
+          planned_date: string
+          planned_end: string | null
+          planned_start: string | null
+          risk_assessment_id: string | null
+          status: string
+          target_roles:
+            | Database["public"]["Enums"]["industrivern_role"][]
+            | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          actual_date?: string | null
+          actual_end?: string | null
+          actual_start?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          exercise_type: Database["public"]["Enums"]["exercise_type"]
+          external_participants?: string[] | null
+          id?: string
+          incident_scenario?: string | null
+          learning_objectives?: string[] | null
+          location?: string | null
+          planned_date: string
+          planned_end?: string | null
+          planned_start?: string | null
+          risk_assessment_id?: string | null
+          status?: string
+          target_roles?:
+            | Database["public"]["Enums"]["industrivern_role"][]
+            | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          actual_date?: string | null
+          actual_end?: string | null
+          actual_start?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          exercise_type?: Database["public"]["Enums"]["exercise_type"]
+          external_participants?: string[] | null
+          id?: string
+          incident_scenario?: string | null
+          learning_objectives?: string[] | null
+          location?: string | null
+          planned_date?: string
+          planned_end?: string | null
+          planned_start?: string | null
+          risk_assessment_id?: string | null
+          status?: string
+          target_roles?:
+            | Database["public"]["Enums"]["industrivern_role"][]
+            | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "industrivern_exercises_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      industrivern_incidents: {
+        Row: {
+          actions_taken: string[] | null
+          created_at: string
+          description: string
+          documents: Json | null
+          external_impact: boolean | null
+          fatalities: number | null
+          follow_up_actions: Json | null
+          id: string
+          incident_date: string
+          incident_type: string
+          industrivern_activated: boolean | null
+          injured_count: number | null
+          lessons_learned: string | null
+          location: string | null
+          nødetater_called: boolean | null
+          nso_report_date: string | null
+          photos: Json | null
+          reported_by: string | null
+          reported_to_nso: boolean | null
+          response_time_minutes: number | null
+          severity: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          actions_taken?: string[] | null
+          created_at?: string
+          description: string
+          documents?: Json | null
+          external_impact?: boolean | null
+          fatalities?: number | null
+          follow_up_actions?: Json | null
+          id?: string
+          incident_date: string
+          incident_type: string
+          industrivern_activated?: boolean | null
+          injured_count?: number | null
+          lessons_learned?: string | null
+          location?: string | null
+          nødetater_called?: boolean | null
+          nso_report_date?: string | null
+          photos?: Json | null
+          reported_by?: string | null
+          reported_to_nso?: boolean | null
+          response_time_minutes?: number | null
+          severity: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          actions_taken?: string[] | null
+          created_at?: string
+          description?: string
+          documents?: Json | null
+          external_impact?: boolean | null
+          fatalities?: number | null
+          follow_up_actions?: Json | null
+          id?: string
+          incident_date?: string
+          incident_type?: string
+          industrivern_activated?: boolean | null
+          injured_count?: number | null
+          lessons_learned?: string | null
+          location?: string | null
+          nødetater_called?: boolean | null
+          nso_report_date?: string | null
+          photos?: Json | null
+          reported_by?: string | null
+          reported_to_nso?: boolean | null
+          response_time_minutes?: number | null
+          severity?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "industrivern_incidents_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      industrivern_organization: {
+        Row: {
+          address: string | null
+          avg_employees_per_year: number
+          company_name: string
+          created_at: string
+          id: string
+          is_reinforced: boolean | null
+          naeringskode: string
+          nso_id: string | null
+          nso_registered: boolean | null
+          nso_registration_date: string | null
+          org_number: string
+          reinforcement_types: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          avg_employees_per_year?: number
+          company_name: string
+          created_at?: string
+          id?: string
+          is_reinforced?: boolean | null
+          naeringskode: string
+          nso_id?: string | null
+          nso_registered?: boolean | null
+          nso_registration_date?: string | null
+          org_number: string
+          reinforcement_types?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          avg_employees_per_year?: number
+          company_name?: string
+          created_at?: string
+          id?: string
+          is_reinforced?: boolean | null
+          naeringskode?: string
+          nso_id?: string | null
+          nso_registered?: boolean | null
+          nso_registration_date?: string | null
+          org_number?: string
+          reinforcement_types?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      industrivern_personnel: {
+        Row: {
+          appointed_date: string | null
+          created_at: string
+          deputy_for: string | null
+          emergency_phone: string | null
+          health_cert_approved: boolean | null
+          health_cert_date: string | null
+          health_cert_expires: string | null
+          id: string
+          is_active: boolean | null
+          is_deputy: boolean | null
+          profile_id: string
+          role: Database["public"]["Enums"]["industrivern_role"]
+          updated_at: string
+        }
+        Insert: {
+          appointed_date?: string | null
+          created_at?: string
+          deputy_for?: string | null
+          emergency_phone?: string | null
+          health_cert_approved?: boolean | null
+          health_cert_date?: string | null
+          health_cert_expires?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_deputy?: boolean | null
+          profile_id: string
+          role: Database["public"]["Enums"]["industrivern_role"]
+          updated_at?: string
+        }
+        Update: {
+          appointed_date?: string | null
+          created_at?: string
+          deputy_for?: string | null
+          emergency_phone?: string | null
+          health_cert_approved?: boolean | null
+          health_cert_date?: string | null
+          health_cert_expires?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_deputy?: boolean | null
+          profile_id?: string
+          role?: Database["public"]["Enums"]["industrivern_role"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "industrivern_personnel_deputy_for_fkey"
+            columns: ["deputy_for"]
+            isOneToOne: false
+            referencedRelation: "industrivern_personnel"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "industrivern_personnel_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      industrivern_qualifications: {
+        Row: {
+          code: string | null
+          created_at: string
+          description: string | null
+          external_certification: boolean | null
+          id: string
+          is_active: boolean | null
+          name: string
+          required_for_roles:
+            | Database["public"]["Enums"]["industrivern_role"][]
+            | null
+          training_hours: number | null
+          training_provider: string | null
+          updated_at: string
+          validity_months: number | null
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          external_certification?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          required_for_roles?:
+            | Database["public"]["Enums"]["industrivern_role"][]
+            | null
+          training_hours?: number | null
+          training_provider?: string | null
+          updated_at?: string
+          validity_months?: number | null
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          external_certification?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          required_for_roles?:
+            | Database["public"]["Enums"]["industrivern_role"][]
+            | null
+          training_hours?: number | null
+          training_provider?: string | null
+          updated_at?: string
+          validity_months?: number | null
+        }
+        Relationships: []
+      }
       inspection_reports: {
         Row: {
           created_at: string | null
@@ -4234,6 +5094,60 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      iv_equipment_inspections: {
+        Row: {
+          actions_taken: string | null
+          created_at: string
+          equipment_id: string
+          findings: string | null
+          id: string
+          inspected_by: string
+          inspection_date: string
+          inspection_type: string
+          passed: boolean
+          photos: Json | null
+        }
+        Insert: {
+          actions_taken?: string | null
+          created_at?: string
+          equipment_id: string
+          findings?: string | null
+          id?: string
+          inspected_by: string
+          inspection_date?: string
+          inspection_type: string
+          passed: boolean
+          photos?: Json | null
+        }
+        Update: {
+          actions_taken?: string | null
+          created_at?: string
+          equipment_id?: string
+          findings?: string | null
+          id?: string
+          inspected_by?: string
+          inspection_date?: string
+          inspection_type?: string
+          passed?: boolean
+          photos?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "iv_equipment_inspections_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "industrivern_equipment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "iv_equipment_inspections_inspected_by_fkey"
+            columns: ["inspected_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       kiosk_settings: {
         Row: {
@@ -4581,6 +5495,76 @@ export type Database = {
             columns: ["payroll_id"]
             isOneToOne: false
             referencedRelation: "payroll_calculations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      personnel_qualifications: {
+        Row: {
+          achieved_date: string
+          certificate_number: string | null
+          certificate_url: string | null
+          created_at: string
+          expires_date: string | null
+          id: string
+          notes: string | null
+          profile_id: string
+          qualification_id: string
+          status: string
+          updated_at: string
+          verified_by: string | null
+          verified_date: string | null
+        }
+        Insert: {
+          achieved_date: string
+          certificate_number?: string | null
+          certificate_url?: string | null
+          created_at?: string
+          expires_date?: string | null
+          id?: string
+          notes?: string | null
+          profile_id: string
+          qualification_id: string
+          status?: string
+          updated_at?: string
+          verified_by?: string | null
+          verified_date?: string | null
+        }
+        Update: {
+          achieved_date?: string
+          certificate_number?: string | null
+          certificate_url?: string | null
+          created_at?: string
+          expires_date?: string | null
+          id?: string
+          notes?: string | null
+          profile_id?: string
+          qualification_id?: string
+          status?: string
+          updated_at?: string
+          verified_by?: string | null
+          verified_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personnel_qualifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personnel_qualifications_qualification_id_fkey"
+            columns: ["qualification_id"]
+            isOneToOne: false
+            referencedRelation: "industrivern_qualifications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personnel_qualifications_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -6915,6 +7899,30 @@ export type Database = {
         | "vikar"
         | "laerling"
         | "sesong"
+      exercise_type:
+        | "diskusjonsovelse"
+        | "delovelse"
+        | "praktisk"
+        | "fullskala"
+        | "reell_hendelse"
+      industrivern_role:
+        | "industrivernleder"
+        | "fagleder_industrivern"
+        | "innsatsperson"
+        | "redningsstab"
+        | "orden_sikring"
+        | "forstehjelp"
+        | "brannvern"
+        | "miljo_kjemikalievern"
+        | "kjemikaliedykker"
+        | "roykdykker"
+      iv_equipment_category:
+        | "personlig_verneutstyr"
+        | "forstehjelp"
+        | "brannvern"
+        | "kjemikalievern"
+        | "kommunikasjon"
+        | "annet"
       pool_membership_status:
         | "pending"
         | "active"
@@ -7064,6 +8072,33 @@ export const Constants = {
         "vikar",
         "laerling",
         "sesong",
+      ],
+      exercise_type: [
+        "diskusjonsovelse",
+        "delovelse",
+        "praktisk",
+        "fullskala",
+        "reell_hendelse",
+      ],
+      industrivern_role: [
+        "industrivernleder",
+        "fagleder_industrivern",
+        "innsatsperson",
+        "redningsstab",
+        "orden_sikring",
+        "forstehjelp",
+        "brannvern",
+        "miljo_kjemikalievern",
+        "kjemikaliedykker",
+        "roykdykker",
+      ],
+      iv_equipment_category: [
+        "personlig_verneutstyr",
+        "forstehjelp",
+        "brannvern",
+        "kjemikalievern",
+        "kommunikasjon",
+        "annet",
       ],
       pool_membership_status: [
         "pending",
