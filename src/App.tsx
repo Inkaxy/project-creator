@@ -40,6 +40,13 @@ import KioskPage from "./pages/KioskPage";
 import RoutinesPage from "./pages/RoutinesPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import IndustrivernPage from "./pages/IndustrivernPage";
+import AMUPage from "./pages/AMUPage";
+import AMUMeetingWizardPage from "./pages/AMUMeetingWizardPage";
+import ConversationsPage from "./pages/ConversationsPage";
+import ConversationNewPage from "./pages/ConversationNewPage";
+import ConversationDetailPage from "./pages/ConversationDetailPage";
+import ConversationConductPage from "./pages/ConversationConductPage";
+import ConversationQuestionsAdminPage from "./pages/ConversationQuestionsAdminPage";
 
 const queryClient = new QueryClient();
 
@@ -85,6 +92,13 @@ const App = () => (
             <Route path="/utstyr/leverandorer" element={<ProtectedRoute><SuppliersPage /></ProtectedRoute>} />
             <Route path="/rutiner" element={<ProtectedRoute><RoutinesPage /></ProtectedRoute>} />
             <Route path="/industrivern" element={<ProtectedRoute><IndustrivernPage /></ProtectedRoute>} />
+            <Route path="/amu" element={<ProtectedRoute><AMUPage /></ProtectedRoute>} />
+            <Route path="/amu/mote/:id" element={<ProtectedRoute><AMUMeetingWizardPage /></ProtectedRoute>} />
+            <Route path="/samtaler" element={<ProtectedRoute><ConversationsPage /></ProtectedRoute>} />
+            <Route path="/samtaler/ny" element={<ProtectedRoute><ConversationNewPage /></ProtectedRoute>} />
+            <Route path="/samtaler/sporsmal" element={<ProtectedRoute><ConversationQuestionsAdminPage /></ProtectedRoute>} />
+            <Route path="/samtaler/:id" element={<ProtectedRoute><ConversationDetailPage /></ProtectedRoute>} />
+            <Route path="/samtaler/:id/gjennomfor" element={<ProtectedRoute><ConversationConductPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

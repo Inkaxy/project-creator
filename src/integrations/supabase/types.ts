@@ -1093,6 +1093,425 @@ export type Database = {
           },
         ]
       }
+      conversation_actions: {
+        Row: {
+          completed_at: string | null
+          conversation_id: string
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          priority: string | null
+          responsible_id: string
+          status: string
+          title: string
+        }
+        Insert: {
+          completed_at?: string | null
+          conversation_id: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string | null
+          responsible_id: string
+          status?: string
+          title: string
+        }
+        Update: {
+          completed_at?: string | null
+          conversation_id?: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string | null
+          responsible_id?: string
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_actions_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_actions_responsible_id_fkey"
+            columns: ["responsible_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
+      conversation_notifications: {
+        Row: {
+          channel: string
+          conversation_id: string
+          created_at: string
+          id: string
+          message: string
+          notification_type: string
+          recipient_id: string
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+          subject: string | null
+        }
+        Insert: {
+          channel: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          message: string
+          notification_type: string
+          recipient_id: string
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+        }
+        Update: {
+          channel?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          notification_type?: string
+          recipient_id?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_notifications_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_notifications_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_questions: {
+        Row: {
+          category_id: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          question_text: string
+          question_type: string
+          sort_order: number | null
+          tags: string[] | null
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          question_text: string
+          question_type?: string
+          sort_order?: number | null
+          tags?: string[] | null
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          question_text?: string
+          question_type?: string
+          sort_order?: number | null
+          tags?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_questions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "conversation_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_responses: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          id: string
+          is_skipped: boolean | null
+          manager_notes: string | null
+          question_id: string
+          response_rating: number | null
+          response_text: string | null
+          sort_order: number
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          id?: string
+          is_skipped?: boolean | null
+          manager_notes?: string | null
+          question_id: string
+          response_rating?: number | null
+          response_text?: string | null
+          sort_order: number
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          is_skipped?: boolean | null
+          manager_notes?: string | null
+          question_id?: string
+          response_rating?: number | null
+          response_text?: string | null
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_responses_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "conversation_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_template_questions: {
+        Row: {
+          id: string
+          is_required: boolean | null
+          question_id: string
+          sort_order: number
+          template_id: string
+        }
+        Insert: {
+          id?: string
+          is_required?: boolean | null
+          question_id: string
+          sort_order: number
+          template_id: string
+        }
+        Update: {
+          id?: string
+          is_required?: boolean | null
+          question_id?: string
+          sort_order?: number
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_template_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "conversation_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_template_questions_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "conversation_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_templates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          estimated_duration_minutes: number | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          name: string
+          template_type: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          estimated_duration_minutes?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name: string
+          template_type?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          estimated_duration_minutes?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name?: string
+          template_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          allow_employee_preparation: boolean | null
+          completed_at: string | null
+          created_at: string
+          duration_minutes: number | null
+          employee_id: string
+          employee_notes: string | null
+          id: string
+          location: string | null
+          location_type: string | null
+          manager_id: string
+          manager_notes: string | null
+          notification_settings: Json | null
+          overall_rating: number | null
+          reminder_sent_at: string | null
+          scheduled_date: string
+          scheduled_time: string | null
+          started_at: string | null
+          status: string
+          summary: string | null
+          template_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          allow_employee_preparation?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          employee_id: string
+          employee_notes?: string | null
+          id?: string
+          location?: string | null
+          location_type?: string | null
+          manager_id: string
+          manager_notes?: string | null
+          notification_settings?: Json | null
+          overall_rating?: number | null
+          reminder_sent_at?: string | null
+          scheduled_date: string
+          scheduled_time?: string | null
+          started_at?: string | null
+          status?: string
+          summary?: string | null
+          template_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          allow_employee_preparation?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          employee_id?: string
+          employee_notes?: string | null
+          id?: string
+          location?: string | null
+          location_type?: string | null
+          manager_id?: string
+          manager_notes?: string | null
+          notification_settings?: Json | null
+          overall_rating?: number | null
+          reminder_sent_at?: string | null
+          scheduled_date?: string
+          scheduled_time?: string | null
+          started_at?: string | null
+          status?: string
+          summary?: string | null
+          template_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "conversation_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_enrollments: {
         Row: {
           certificate_expires_at: string | null
