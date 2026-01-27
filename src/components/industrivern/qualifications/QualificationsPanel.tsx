@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,12 +20,16 @@ import { useIndustrivernPersonnel } from "@/hooks/useIndustrivernPersonnel";
 import { INDUSTRIVERN_ROLE_LABELS } from "@/types/industrivern";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
+import { AddQualificationModal } from "./AddQualificationModal";
 
 export function QualificationsPanel() {
   const { data: qualifications, isLoading: loadingQuals } = useIndustrivernQualifications();
   const { data: expiringQuals, isLoading: loadingExpiring } = useExpiringQualifications(60);
   const { data: personnel, isLoading: loadingPersonnel } = useIndustrivernPersonnel();
   const { data: personnelQuals } = usePersonnelQualifications();
+  
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedProfileId, setSelectedProfileId] = useState<string | undefined>();
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -41,6 +46,11 @@ export function QualificationsPanel() {
     }
   };
 
+  const handleAddQualification = (profileId?: string) => {
+    setSelectedProfileId(profileId);
+    setShowAddModal(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -50,7 +60,7 @@ export function QualificationsPanel() {
             Kompetansekrav og sertifiseringer for industrivern
           </p>
         </div>
-        <Button>
+        <Button onClick={() => handleAddQualification()}>
           <Plus className="h-4 w-4 mr-2" />
           Registrer kvalifikasjon
         </Button>
@@ -100,9 +110,9 @@ export function QualificationsPanel() {
                 <Skeleton key={i} className="h-24 w-full" />
               ))}
             </div>
-          ) : (
+          ) : qualifications && qualifications.length > 0 ? (
             <div className="space-y-4">
-              {qualifications?.map((qual) => (
+              {qualifications.map((qual) => (
                 <div key={qual.id} className="p-4 rounded-lg border">
                   <div className="flex items-start justify-between">
                     <div>
@@ -142,6 +152,11 @@ export function QualificationsPanel() {
                 </div>
               ))}
             </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <GraduationCap className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>Ingen kvalifikasjoner definert ennå</p>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -173,7 +188,11 @@ export function QualificationsPanel() {
                           {INDUSTRIVERN_ROLE_LABELS[person.role]}
                         </Badge>
                       </div>
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleAddQualification(person.profile_id)}
+                      >
                         <Plus className="h-4 w-4 mr-1" />
                         Legg til
                       </Button>
@@ -213,6 +232,12 @@ export function QualificationsPanel() {
           )}
         </CardContent>
       </Card>
+
+      <AddQualificationModal 
+        open={showAddModal} 
+        onOpenChange={setShowAddModal}
+        preselectedProfileId={selectedProfileId}
+      />
     </div>
   );
 }
