@@ -26,6 +26,8 @@ import {
   Wrench,
   QrCode,
   HardHat,
+  MessageCircle,
+  UsersRound,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -65,7 +67,9 @@ const navigation: NavSection[] = [
       { title: "Godkjenninger", href: "/godkjenninger", icon: CheckCircle },
       { title: "Crewshare", href: "/crewshare", icon: Users2 },
       { title: "Personalhåndbok", href: "/personalhandbok", icon: BookOpen },
+      { title: "Samtaler", href: "/samtaler", icon: MessageCircle },
       { title: "Disiplinærsaker", href: "/disiplinaersaker", icon: AlertTriangle },
+      { title: "AMU", href: "/amu", icon: UsersRound },
     ],
   },
   {
