@@ -40,7 +40,7 @@ export function useCreateEmergencyPlan() {
 
   return useMutation({
     mutationFn: async (plan: {
-      organization_chart?: Record<string, unknown>;
+      organization_chart?: Record<string, unknown> | null;
     }) => {
       // Get highest version number
       const { data: existing } = await supabase
@@ -55,7 +55,7 @@ export function useCreateEmergencyPlan() {
       const { data, error } = await supabase
         .from("emergency_plans")
         .insert({
-          organization_chart: plan.organization_chart || null,
+          organization_chart: plan.organization_chart as unknown as undefined,
           version: newVersion,
           status: "draft",
         })
