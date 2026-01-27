@@ -293,6 +293,356 @@ export type Database = {
           },
         ]
       }
+      amu_agenda_template_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          estimated_minutes: number | null
+          id: string
+          is_required: boolean | null
+          sort_order: number
+          template_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          estimated_minutes?: number | null
+          id?: string
+          is_required?: boolean | null
+          sort_order: number
+          template_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          estimated_minutes?: number | null
+          id?: string
+          is_required?: boolean | null
+          sort_order?: number
+          template_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "amu_agenda_template_items_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "amu_agenda_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      amu_agenda_templates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      amu_meeting_agenda_items: {
+        Row: {
+          actual_minutes: number | null
+          created_at: string
+          decision: string | null
+          description: string | null
+          estimated_minutes: number | null
+          id: string
+          meeting_id: string
+          notes: string | null
+          responsible_id: string | null
+          sort_order: number
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          actual_minutes?: number | null
+          created_at?: string
+          decision?: string | null
+          description?: string | null
+          estimated_minutes?: number | null
+          id?: string
+          meeting_id: string
+          notes?: string | null
+          responsible_id?: string | null
+          sort_order: number
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          actual_minutes?: number | null
+          created_at?: string
+          decision?: string | null
+          description?: string | null
+          estimated_minutes?: number | null
+          id?: string
+          meeting_id?: string
+          notes?: string | null
+          responsible_id?: string | null
+          sort_order?: number
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "amu_meeting_agenda_items_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "amu_meetings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "amu_meeting_agenda_items_responsible_id_fkey"
+            columns: ["responsible_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      amu_meeting_documents: {
+        Row: {
+          agenda_item_id: string | null
+          created_at: string
+          file_name: string
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          id: string
+          meeting_id: string
+          uploaded_by: string
+        }
+        Insert: {
+          agenda_item_id?: string | null
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          id?: string
+          meeting_id: string
+          uploaded_by: string
+        }
+        Update: {
+          agenda_item_id?: string | null
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          meeting_id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "amu_meeting_documents_agenda_item_id_fkey"
+            columns: ["agenda_item_id"]
+            isOneToOne: false
+            referencedRelation: "amu_meeting_agenda_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "amu_meeting_documents_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "amu_meetings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "amu_meeting_documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      amu_meeting_participants: {
+        Row: {
+          attendance_status: string
+          created_at: string
+          id: string
+          meeting_id: string
+          profile_id: string
+          role_in_meeting: string | null
+        }
+        Insert: {
+          attendance_status?: string
+          created_at?: string
+          id?: string
+          meeting_id: string
+          profile_id: string
+          role_in_meeting?: string | null
+        }
+        Update: {
+          attendance_status?: string
+          created_at?: string
+          id?: string
+          meeting_id?: string
+          profile_id?: string
+          role_in_meeting?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "amu_meeting_participants_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "amu_meetings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "amu_meeting_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      amu_meetings: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          general_notes: string | null
+          id: string
+          location: string | null
+          meeting_date: string
+          meeting_number: number | null
+          meeting_time: string | null
+          pdf_url: string | null
+          status: string
+          template_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          general_notes?: string | null
+          id?: string
+          location?: string | null
+          meeting_date: string
+          meeting_number?: number | null
+          meeting_time?: string | null
+          pdf_url?: string | null
+          status?: string
+          template_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          general_notes?: string | null
+          id?: string
+          location?: string | null
+          meeting_date?: string
+          meeting_number?: number | null
+          meeting_time?: string | null
+          pdf_url?: string | null
+          status?: string
+          template_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "amu_meetings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "amu_meetings_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "amu_agenda_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      amu_members: {
+        Row: {
+          appointed_date: string | null
+          created_at: string
+          expires_date: string | null
+          id: string
+          is_active: boolean
+          member_type: string
+          notes: string | null
+          profile_id: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          appointed_date?: string | null
+          created_at?: string
+          expires_date?: string | null
+          id?: string
+          is_active?: boolean
+          member_type?: string
+          notes?: string | null
+          profile_id: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          appointed_date?: string | null
+          created_at?: string
+          expires_date?: string | null
+          id?: string
+          is_active?: boolean
+          member_type?: string
+          notes?: string | null
+          profile_id?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "amu_members_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       approval_requests: {
         Row: {
           created_at: string
@@ -7888,6 +8238,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin_or_manager: { Args: { _user_id: string }; Returns: boolean }
+      is_amu_member: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "superadmin" | "daglig_leder" | "avdelingsleder" | "ansatt"
