@@ -2782,6 +2782,59 @@ export type Database = {
           },
         ]
       }
+      employee_external_ids: {
+        Row: {
+          created_at: string
+          employee_id: string
+          external_id: string
+          external_name: string | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          sync_error: string | null
+          sync_status: string | null
+          synced_at: string | null
+          system_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          external_id: string
+          external_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          sync_error?: string | null
+          sync_status?: string | null
+          synced_at?: string | null
+          system_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          external_id?: string
+          external_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          sync_error?: string | null
+          sync_status?: string | null
+          synced_at?: string | null
+          system_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_external_ids_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_functions: {
         Row: {
           certified_by: string | null
@@ -6268,6 +6321,213 @@ export type Database = {
           },
         ]
       }
+      payroll_export_lines: {
+        Row: {
+          amount: number
+          created_at: string
+          department_code: string | null
+          employee_id: string
+          error_message: string | null
+          export_id: string
+          external_employee_id: string | null
+          external_salary_code: string
+          id: string
+          period_end: string | null
+          period_start: string | null
+          project_code: string | null
+          quantity: number
+          rate: number | null
+          salary_type_id: string | null
+          salary_type_name: string | null
+          source_id: string | null
+          source_type: string | null
+          status: string | null
+          work_date: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          department_code?: string | null
+          employee_id: string
+          error_message?: string | null
+          export_id: string
+          external_employee_id?: string | null
+          external_salary_code: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          project_code?: string | null
+          quantity: number
+          rate?: number | null
+          salary_type_id?: string | null
+          salary_type_name?: string | null
+          source_id?: string | null
+          source_type?: string | null
+          status?: string | null
+          work_date?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          department_code?: string | null
+          employee_id?: string
+          error_message?: string | null
+          export_id?: string
+          external_employee_id?: string | null
+          external_salary_code?: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          project_code?: string | null
+          quantity?: number
+          rate?: number | null
+          salary_type_id?: string | null
+          salary_type_name?: string | null
+          source_id?: string | null
+          source_type?: string | null
+          status?: string | null
+          work_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_export_lines_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_export_lines_export_id_fkey"
+            columns: ["export_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_exports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_export_lines_salary_type_id_fkey"
+            columns: ["salary_type_id"]
+            isOneToOne: false
+            referencedRelation: "salary_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_exports: {
+        Row: {
+          api_response: Json | null
+          created_at: string
+          employee_count: number | null
+          error_message: string | null
+          errors: Json | null
+          export_file_url: string | null
+          export_type: string
+          exported_at: string | null
+          exported_by: string | null
+          file_format: string | null
+          id: string
+          period_end: string
+          period_start: string
+          status: string
+          target_system: string
+          total_amount: number | null
+          transaction_count: number | null
+          updated_at: string
+          warnings: Json | null
+        }
+        Insert: {
+          api_response?: Json | null
+          created_at?: string
+          employee_count?: number | null
+          error_message?: string | null
+          errors?: Json | null
+          export_file_url?: string | null
+          export_type: string
+          exported_at?: string | null
+          exported_by?: string | null
+          file_format?: string | null
+          id?: string
+          period_end: string
+          period_start: string
+          status?: string
+          target_system: string
+          total_amount?: number | null
+          transaction_count?: number | null
+          updated_at?: string
+          warnings?: Json | null
+        }
+        Update: {
+          api_response?: Json | null
+          created_at?: string
+          employee_count?: number | null
+          error_message?: string | null
+          errors?: Json | null
+          export_file_url?: string | null
+          export_type?: string
+          exported_at?: string | null
+          exported_by?: string | null
+          file_format?: string | null
+          id?: string
+          period_end?: string
+          period_start?: string
+          status?: string
+          target_system?: string
+          total_amount?: number | null
+          transaction_count?: number | null
+          updated_at?: string
+          warnings?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_exports_exported_by_fkey"
+            columns: ["exported_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_integrations: {
+        Row: {
+          api_endpoint: string | null
+          created_at: string
+          id: string
+          is_configured: boolean | null
+          is_enabled: boolean | null
+          last_sync_at: string | null
+          last_sync_error: string | null
+          last_sync_status: string | null
+          settings: Json | null
+          system_type: string
+          updated_at: string
+        }
+        Insert: {
+          api_endpoint?: string | null
+          created_at?: string
+          id?: string
+          is_configured?: boolean | null
+          is_enabled?: boolean | null
+          last_sync_at?: string | null
+          last_sync_error?: string | null
+          last_sync_status?: string | null
+          settings?: Json | null
+          system_type: string
+          updated_at?: string
+        }
+        Update: {
+          api_endpoint?: string | null
+          created_at?: string
+          id?: string
+          is_configured?: boolean | null
+          is_enabled?: boolean | null
+          last_sync_at?: string | null
+          last_sync_error?: string | null
+          last_sync_status?: string | null
+          settings?: Json | null
+          system_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       personnel_qualifications: {
         Row: {
           achieved_date: string
@@ -7196,6 +7456,119 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      salary_type_mappings: {
+        Row: {
+          created_at: string
+          external_code: string
+          external_name: string | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          salary_type_id: string
+          system_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          external_code: string
+          external_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          salary_type_id: string
+          system_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          external_code?: string
+          external_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          salary_type_id?: string
+          system_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salary_type_mappings_salary_type_id_fkey"
+            columns: ["salary_type_id"]
+            isOneToOne: false
+            referencedRelation: "salary_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      salary_types: {
+        Row: {
+          a_melding_code: string | null
+          applies_to_days: number[] | null
+          auto_calculate: boolean | null
+          calculation_type: string
+          category: string
+          code: string
+          created_at: string
+          default_rate: number | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_pension_basis: boolean | null
+          is_taxable: boolean | null
+          is_vacation_basis: boolean | null
+          name: string
+          percentage_base: string | null
+          sort_order: number | null
+          time_range_end: string | null
+          time_range_start: string | null
+          updated_at: string
+        }
+        Insert: {
+          a_melding_code?: string | null
+          applies_to_days?: number[] | null
+          auto_calculate?: boolean | null
+          calculation_type: string
+          category: string
+          code: string
+          created_at?: string
+          default_rate?: number | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_pension_basis?: boolean | null
+          is_taxable?: boolean | null
+          is_vacation_basis?: boolean | null
+          name: string
+          percentage_base?: string | null
+          sort_order?: number | null
+          time_range_end?: string | null
+          time_range_start?: string | null
+          updated_at?: string
+        }
+        Update: {
+          a_melding_code?: string | null
+          applies_to_days?: number[] | null
+          auto_calculate?: boolean | null
+          calculation_type?: string
+          category?: string
+          code?: string
+          created_at?: string
+          default_rate?: number | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_pension_basis?: boolean | null
+          is_taxable?: boolean | null
+          is_vacation_basis?: boolean | null
+          name?: string
+          percentage_base?: string | null
+          sort_order?: number | null
+          time_range_end?: string | null
+          time_range_start?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       self_certification_quotas: {
         Row: {
