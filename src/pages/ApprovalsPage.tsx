@@ -226,12 +226,25 @@ export default function ApprovalsPage() {
   const approvedTimesheets = timeEntries.filter(t => t.status === "approved");
   const rejectedTimesheets = timeEntries.filter(t => t.status === "rejected");
 
-  // Filter by search
-  const filteredApprovals = unifiedApprovals.filter(approval =>
-    approval.employeeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    approval.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (approval.subType?.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  // Filter by search and department
+  const filteredApprovals = unifiedApprovals.filter(approval => {
+    const matchesSearch = approval.employeeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      approval.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (approval.subType?.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    if (!matchesSearch) return false;
+    
+    if (selectedDepartment) {
+      // For timesheet entries, check profile department
+      if (approval.type === "timesheet") {
+        const entry = approval.originalData as TimeEntryData;
+        return entry.profiles?.department_id === selectedDepartment;
+      }
+      // For other types, we don't filter by department (could be extended)
+    }
+    
+    return true;
+  });
 
   const isLoading = absencesLoading || swapsLoading || timesheetsLoading;
 
