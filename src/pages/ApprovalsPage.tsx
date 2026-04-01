@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -23,10 +24,12 @@ import { usePendingAbsenceRequests, useApproveAbsenceRequest, useAbsenceRequests
 import { useShiftSwapRequests, useManagerApproveSwap, useManagerRejectSwap, ShiftSwapRequest } from "@/hooks/useShiftSwaps";
 import { useAllTimeEntries, useApproveTimeEntries, useRejectTimeEntry, TimeEntryData } from "@/hooks/useTimeEntries";
 import { useShifts } from "@/hooks/useShifts";
+import { useDepartments } from "@/hooks/useEmployees";
 import { AbsenceApprovalDetailModal } from "@/components/absence/AbsenceApprovalDetailModal";
 import { AdminAbsenceModal } from "@/components/absence/AdminAbsenceModal";
 import { TimesheetApprovalPanel } from "@/components/timesheet/TimesheetApprovalPanel";
 import { TimesheetDetailModal } from "@/components/timesheet/TimesheetDetailModal";
+import { DepartmentFilter } from "@/components/schedule/DepartmentFilter";
 import {
   Search,
   Calendar,
@@ -97,6 +100,13 @@ export default function ApprovalsPage() {
 
   // Admin create absence modal
   const [adminAbsenceModalOpen, setAdminAbsenceModalOpen] = useState(false);
+
+  // Multi-select for bulk approval
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // Department filter
+  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
+  const { data: departments = [] } = useDepartments();
 
   // Fetch all pending absence requests
   const { data: pendingAbsences = [], isLoading: absencesLoading } = usePendingAbsenceRequests();
@@ -216,14 +226,51 @@ export default function ApprovalsPage() {
   const approvedTimesheets = timeEntries.filter(t => t.status === "approved");
   const rejectedTimesheets = timeEntries.filter(t => t.status === "rejected");
 
-  // Filter by search
-  const filteredApprovals = unifiedApprovals.filter(approval =>
-    approval.employeeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    approval.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (approval.subType?.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  // Filter by search and department
+  const filteredApprovals = unifiedApprovals.filter(approval => {
+    const matchesSearch = approval.employeeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      approval.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (approval.subType?.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    if (!matchesSearch) return false;
+    
+    if (selectedDepartment) {
+      // For timesheet entries, check profile department
+      if (approval.type === "timesheet") {
+        const entry = approval.originalData as TimeEntryData;
+        return entry.profiles?.department_id === selectedDepartment;
+      }
+      // For other types, we don't filter by department (could be extended)
+    }
+    
+    return true;
+  });
 
   const isLoading = absencesLoading || swapsLoading || timesheetsLoading;
+
+  // Multi-select helpers
+  const selectableTimesheetIds = filteredApprovals
+    .filter(a => a.type === "timesheet" && Math.abs((a.originalData as TimeEntryData).deviation_minutes) <= 15)
+    .map(a => a.id);
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedIds(checked ? selectableTimesheetIds : []);
+  };
+
+  const allSelectableChecked = selectableTimesheetIds.length > 0 && selectableTimesheetIds.every(id => selectedIds.includes(id));
+
+  const handleBulkApprove = async () => {
+    if (selectedIds.length === 0 || !user?.id) return;
+    await approveTimeEntries.mutateAsync({
+      timeEntryIds: selectedIds,
+      approverId: user.id,
+    });
+    setSelectedIds([]);
+  };
 
   // Handle approve
   const handleApprove = async (approval: UnifiedApproval) => {
@@ -672,14 +719,21 @@ export default function ApprovalsPage() {
               <TabsTrigger value="all">Alle</TabsTrigger>
             </TabsList>
 
-            <div className="relative w-full sm:max-w-xs">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input 
-                placeholder="Søk etter navn, type..." 
-                className="pl-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+            <div className="flex items-center gap-3">
+              <DepartmentFilter
+                selectedDepartment={selectedDepartment}
+                onDepartmentChange={setSelectedDepartment}
+                departments={departments}
               />
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input 
+                  placeholder="Søk etter navn, type..." 
+                  className="pl-10"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             </div>
           </div>
 
@@ -689,7 +743,64 @@ export default function ApprovalsPage() {
             ) : filteredApprovals.length === 0 ? (
               renderEmptyState("pending")
             ) : (
-              filteredApprovals.map(approval => renderApprovalCard(approval))
+              <>
+                {/* Bulk action bar */}
+                {selectableTimesheetIds.length > 0 && (
+                  <Card className="border-dashed">
+                    <CardContent className="flex items-center justify-between p-3">
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          checked={allSelectableChecked}
+                          onCheckedChange={handleSelectAll}
+                        />
+                        <span className="text-sm text-muted-foreground">
+                          {selectedIds.length > 0
+                            ? `${selectedIds.length} av ${selectableTimesheetIds.length} valgt`
+                            : `Velg alle timelister uten avvik (${selectableTimesheetIds.length})`}
+                        </span>
+                      </div>
+                      {selectedIds.length > 0 && (
+                        <Button
+                          size="sm"
+                          className="gap-1.5"
+                          onClick={handleBulkApprove}
+                          disabled={approveTimeEntries.isPending}
+                        >
+                          {approveTimeEntries.isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <CheckCircle className="h-4 w-4" />
+                          )}
+                          Godkjenn valgte ({selectedIds.length})
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+                {filteredApprovals.map(approval => {
+                  const isTimesheet = approval.type === "timesheet";
+                  const isSelectable = isTimesheet && selectableTimesheetIds.includes(approval.id);
+                  const isSelected = selectedIds.includes(approval.id);
+
+                  return (
+                    <div key={approval.id} className="flex items-start gap-3">
+                      {isTimesheet && (
+                        <div className="pt-6">
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() => handleToggleSelect(approval.id)}
+                            disabled={!isSelectable}
+                            className={!isSelectable ? "opacity-40" : ""}
+                          />
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        {renderApprovalCard(approval)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
             )}
           </TabsContent>
 

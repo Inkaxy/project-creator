@@ -25,6 +25,7 @@ export interface TimeEntryData {
     id: string;
     full_name: string;
     avatar_url: string | null;
+    department_id: string | null;
   } | null;
   shifts?: {
     id: string;
@@ -94,7 +95,8 @@ export function useAllTimeEntries(startDate: string, endDate: string) {
           profiles!time_entries_employee_id_fkey (
             id,
             full_name,
-            avatar_url
+            avatar_url,
+            department_id
           ),
           shifts (
             id,
