@@ -554,7 +554,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
                 ) : (
                   <CheckCircle className="mr-2 h-4 w-4" />
                 )}
-                {editMode ? "Godkjenn (korrigert)" : useDeviation ? "Godkjenn med avvik" : "Godkjenn"}
+                {editMode ? "Godkjenn (korrigert)" : "Godkjenn"}
               </Button>
             </div>
           )}
