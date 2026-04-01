@@ -219,7 +219,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
       });
 
       queryClient.invalidateQueries({ queryKey: ["employee-accounts"] });
-      toast.success("Timer godkjent" + (useDeviation ? " med avvikshåndtering" : "") + (editMode ? " (korrigert)" : ""));
+      toast.success("Timer godkjent" + (editMode ? " (korrigert)" : ""));
       onOpenChange(false);
     } catch (error: any) {
       toast.error("Kunne ikke godkjenne: " + error.message);
