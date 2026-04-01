@@ -719,14 +719,21 @@ export default function ApprovalsPage() {
               <TabsTrigger value="all">Alle</TabsTrigger>
             </TabsList>
 
-            <div className="relative w-full sm:max-w-xs">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input 
-                placeholder="Søk etter navn, type..." 
-                className="pl-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+            <div className="flex items-center gap-3">
+              <DepartmentFilter
+                selectedDepartment={selectedDepartment}
+                onDepartmentChange={setSelectedDepartment}
+                departments={departments}
               />
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input 
+                  placeholder="Søk etter navn, type..." 
+                  className="pl-10"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             </div>
           </div>
 
