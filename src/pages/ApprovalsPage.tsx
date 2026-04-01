@@ -24,10 +24,12 @@ import { usePendingAbsenceRequests, useApproveAbsenceRequest, useAbsenceRequests
 import { useShiftSwapRequests, useManagerApproveSwap, useManagerRejectSwap, ShiftSwapRequest } from "@/hooks/useShiftSwaps";
 import { useAllTimeEntries, useApproveTimeEntries, useRejectTimeEntry, TimeEntryData } from "@/hooks/useTimeEntries";
 import { useShifts } from "@/hooks/useShifts";
+import { useDepartments } from "@/hooks/useEmployees";
 import { AbsenceApprovalDetailModal } from "@/components/absence/AbsenceApprovalDetailModal";
 import { AdminAbsenceModal } from "@/components/absence/AdminAbsenceModal";
 import { TimesheetApprovalPanel } from "@/components/timesheet/TimesheetApprovalPanel";
 import { TimesheetDetailModal } from "@/components/timesheet/TimesheetDetailModal";
+import { DepartmentFilter } from "@/components/schedule/DepartmentFilter";
 import {
   Search,
   Calendar,
