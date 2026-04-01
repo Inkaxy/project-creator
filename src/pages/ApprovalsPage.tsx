@@ -101,6 +101,13 @@ export default function ApprovalsPage() {
   // Admin create absence modal
   const [adminAbsenceModalOpen, setAdminAbsenceModalOpen] = useState(false);
 
+  // Multi-select for bulk approval
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // Department filter
+  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
+  const { data: departments = [] } = useDepartments();
+
   // Fetch all pending absence requests
   const { data: pendingAbsences = [], isLoading: absencesLoading } = usePendingAbsenceRequests();
   const { data: allAbsences = [], isLoading: allAbsencesLoading } = useAbsenceRequests();
