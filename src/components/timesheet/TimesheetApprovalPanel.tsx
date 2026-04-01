@@ -399,187 +399,182 @@ export function TimesheetApprovalPanel() {
                   const isSaving = savingIds.has(entry.id);
 
                   return (
-                    <Collapsible key={entry.id} asChild open={isExpanded} onOpenChange={() => toggleRow(entry.id)}>
-                      <>
-                        <TableRow
-                          className={cn(
-                            "hover:bg-muted/50 transition-colors",
-                            entry.hasDeviation && isPending && "bg-amber-50/50 dark:bg-amber-950/20"
+                    <Fragment key={entry.id}>
+                      <TableRow
+                        className={cn(
+                          "hover:bg-muted/50 transition-colors",
+                          entry.hasDeviation && isPending && "bg-amber-50/50 dark:bg-amber-950/20"
+                        )}
+                      >
+                        <TableCell>
+                          {isPending && (
+                            <Checkbox
+                              checked={selectedIds.includes(entry.id)}
+                              onCheckedChange={(c) =>
+                                setSelectedIds((p) =>
+                                  c ? [...p, entry.id] : p.filter((i) => i !== entry.id)
+                                )
+                              }
+                            />
                           )}
-                        >
-                          <TableCell>
-                            {isPending && (
-                              <Checkbox
-                                checked={selectedIds.includes(entry.id)}
-                                onCheckedChange={(c) =>
-                                  setSelectedIds((p) =>
-                                    c ? [...p, entry.id] : p.filter((i) => i !== entry.id)
-                                  )
-                                }
-                              />
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {isPending && (
-                              <CollapsibleTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-7 w-7">
-                                  {isExpanded ? (
-                                    <ChevronUp className="h-4 w-4" />
-                                  ) : (
-                                    <ChevronDown className="h-4 w-4" />
-                                  )}
+                        </TableCell>
+                        <TableCell>
+                          {isPending && (
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => toggleRow(entry.id)}>
+                              {isExpanded ? (
+                                <ChevronUp className="h-4 w-4" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4" />
+                              )}
+                            </Button>
+                          )}
+                        </TableCell>
+                        <TableCell className="font-medium whitespace-nowrap">
+                          {format(new Date(entry.date + "T00:00"), "EEE d. MMM", { locale: nb })}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <AvatarWithInitials name={entry.employeeName} size="sm" />
+                            <span className="font-medium text-sm">{entry.employeeName}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {entry.functionName ? (
+                            <Badge
+                              variant="outline"
+                              style={{
+                                borderColor: entry.functionColor || undefined,
+                                color: entry.functionColor || undefined,
+                              }}
+                            >
+                              {entry.functionName}
+                            </Badge>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="font-mono text-sm whitespace-nowrap">
+                          {entry.plannedStart && entry.plannedEnd
+                            ? `${entry.plannedStart}–${entry.plannedEnd}`
+                            : "—"}
+                        </TableCell>
+                        <TableCell className="font-mono text-sm whitespace-nowrap">
+                          {clockInTime}–{clockOutTime}
+                        </TableCell>
+                        <TableCell className="text-right font-mono text-sm">
+                          {entry.clockedHours.toFixed(1)}t
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {entry.deviation_minutes !== 0 ? (
+                            <span
+                              className={cn(
+                                "font-mono text-sm font-medium",
+                                entry.deviation_minutes > 0 ? "text-success" : "text-destructive"
+                              )}
+                            >
+                              {entry.deviation_minutes > 0 ? "+" : ""}
+                              {entry.deviation_minutes}m
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">0</span>
+                          )}
+                        </TableCell>
+                        <TableCell>{getStatusBadge(entry)}</TableCell>
+                        <TableCell>
+                          {isPending && !entry.hasDeviation && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 text-xs"
+                              onClick={() => handleApproveWithLines(entry)}
+                              disabled={isSaving}
+                            >
+                              {isSaving ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                              )}
+                              Godkjenn
+                            </Button>
+                          )}
+                          {isPending && entry.hasDeviation && !isExpanded && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 text-xs border-amber-500 text-amber-700 dark:text-amber-300"
+                              onClick={() => toggleRow(entry.id)}
+                            >
+                              <AlertTriangle className="h-3 w-3 mr-1" />
+                              Håndter
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+
+                      {/* Expanded deviation editor */}
+                      {isExpanded && (
+                        <TableRow className="bg-muted/30">
+                          <TableCell colSpan={11} className="p-4">
+                            <div className="space-y-3 max-w-3xl">
+                              <div className="flex items-center gap-3">
+                                <span className="text-sm font-medium">Benytt avvik</span>
+                                <Switch
+                                  checked={useDeviationToggle[entry.id] ?? entry.hasDeviation}
+                                  onCheckedChange={(v) =>
+                                    setUseDeviationToggle((p) => ({ ...p, [entry.id]: v }))
+                                  }
+                                />
+                              </div>
+
+                              {(useDeviationToggle[entry.id] ?? entry.hasDeviation) && (
+                                <InlineDeviationEditor
+                                  clockIn={clockInTime}
+                                  clockOut={clockOutTime}
+                                  deviationTypes={deviationTypes}
+                                  lines={
+                                    deviationLines[entry.id] || [
+                                      {
+                                        id: `init-${entry.id}`,
+                                        deviation_type_id:
+                                          deviationTypes.find((t) => t.code === "normal")?.id || "",
+                                        start_time: clockInTime,
+                                        end_time: clockOutTime,
+                                        duration_minutes: 0,
+                                      },
+                                    ]
+                                  }
+                                  onChange={(lines) =>
+                                    setDeviationLines((p) => ({ ...p, [entry.id]: lines }))
+                                  }
+                                />
+                              )}
+
+                              <div className="flex justify-end gap-2 pt-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => toggleRow(entry.id)}
+                                >
+                                  Avbryt
                                 </Button>
-                              </CollapsibleTrigger>
-                            )}
-                          </TableCell>
-                          <TableCell className="font-medium whitespace-nowrap">
-                            {format(new Date(entry.date + "T00:00"), "EEE d. MMM", { locale: nb })}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <AvatarWithInitials name={entry.employeeName} size="sm" />
-                              <span className="font-medium text-sm">{entry.employeeName}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {entry.functionName ? (
-                              <Badge
-                                variant="outline"
-                                style={{
-                                  borderColor: entry.functionColor || undefined,
-                                  color: entry.functionColor || undefined,
-                                }}
-                              >
-                                {entry.functionName}
-                              </Badge>
-                            ) : (
-                              <span className="text-muted-foreground text-sm">—</span>
-                            )}
-                          </TableCell>
-                          <TableCell className="font-mono text-sm whitespace-nowrap">
-                            {entry.plannedStart && entry.plannedEnd
-                              ? `${entry.plannedStart}–${entry.plannedEnd}`
-                              : "—"}
-                          </TableCell>
-                          <TableCell className="font-mono text-sm whitespace-nowrap">
-                            {clockInTime}–{clockOutTime}
-                          </TableCell>
-                          <TableCell className="text-right font-mono text-sm">
-                            {entry.clockedHours.toFixed(1)}t
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {entry.deviation_minutes !== 0 ? (
-                              <span
-                                className={cn(
-                                  "font-mono text-sm font-medium",
-                                  entry.deviation_minutes > 0 ? "text-success" : "text-destructive"
-                                )}
-                              >
-                                {entry.deviation_minutes > 0 ? "+" : ""}
-                                {entry.deviation_minutes}m
-                              </span>
-                            ) : (
-                              <span className="text-muted-foreground text-sm">0</span>
-                            )}
-                          </TableCell>
-                          <TableCell>{getStatusBadge(entry)}</TableCell>
-                          <TableCell>
-                            {isPending && !entry.hasDeviation && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="h-7 text-xs"
-                                onClick={() => handleApproveWithLines(entry)}
-                                disabled={isSaving}
-                              >
-                                {isSaving ? (
-                                  <Loader2 className="h-3 w-3 animate-spin" />
-                                ) : (
-                                  <CheckCircle className="h-3 w-3 mr-1" />
-                                )}
-                                Godkjenn
-                              </Button>
-                            )}
-                            {isPending && entry.hasDeviation && !isExpanded && (
-                              <CollapsibleTrigger asChild>
                                 <Button
                                   size="sm"
-                                  variant="outline"
-                                  className="h-7 text-xs border-amber-500 text-amber-700 dark:text-amber-300"
+                                  onClick={() => handleApproveWithLines(entry)}
+                                  disabled={isSaving}
                                 >
-                                  <AlertTriangle className="h-3 w-3 mr-1" />
-                                  Håndter
+                                  {isSaving ? (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <CheckCircle className="mr-2 h-4 w-4" />
+                                  )}
+                                  Godkjenn med avvik
                                 </Button>
-                              </CollapsibleTrigger>
-                            )}
+                              </div>
+                            </div>
                           </TableCell>
                         </TableRow>
-
-                        {/* Expanded deviation editor */}
-                        <CollapsibleContent asChild>
-                          <TableRow className="bg-muted/30">
-                            <TableCell colSpan={11} className="p-4">
-                              <div className="space-y-3 max-w-3xl">
-                                <div className="flex items-center gap-3">
-                                  <span className="text-sm font-medium">Benytt avvik</span>
-                                  <Switch
-                                    checked={useDeviationToggle[entry.id] ?? entry.hasDeviation}
-                                    onCheckedChange={(v) =>
-                                      setUseDeviationToggle((p) => ({ ...p, [entry.id]: v }))
-                                    }
-                                  />
-                                </div>
-
-                                {(useDeviationToggle[entry.id] ?? entry.hasDeviation) && (
-                                  <InlineDeviationEditor
-                                    clockIn={clockInTime}
-                                    clockOut={clockOutTime}
-                                    deviationTypes={deviationTypes}
-                                    lines={
-                                      deviationLines[entry.id] || [
-                                        {
-                                          id: `init-${entry.id}`,
-                                          deviation_type_id:
-                                            deviationTypes.find((t) => t.code === "normal")?.id || "",
-                                          start_time: clockInTime,
-                                          end_time: clockOutTime,
-                                          duration_minutes: 0,
-                                        },
-                                      ]
-                                    }
-                                    onChange={(lines) =>
-                                      setDeviationLines((p) => ({ ...p, [entry.id]: lines }))
-                                    }
-                                  />
-                                )}
-
-                                <div className="flex justify-end gap-2 pt-2">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => toggleRow(entry.id)}
-                                  >
-                                    Avbryt
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handleApproveWithLines(entry)}
-                                    disabled={isSaving}
-                                  >
-                                    {isSaving ? (
-                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    ) : (
-                                      <CheckCircle className="mr-2 h-4 w-4" />
-                                    )}
-                                    Godkjenn med avvik
-                                  </Button>
-                                </div>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        </CollapsibleContent>
-                      </>
-                    </Collapsible>
+                      )}
+                    </Fragment>
                   );
                 })
               )}
