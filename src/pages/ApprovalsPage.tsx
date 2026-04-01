@@ -26,6 +26,7 @@ import { useShifts } from "@/hooks/useShifts";
 import { AbsenceApprovalDetailModal } from "@/components/absence/AbsenceApprovalDetailModal";
 import { AdminAbsenceModal } from "@/components/absence/AdminAbsenceModal";
 import { TimesheetApprovalPanel } from "@/components/timesheet/TimesheetApprovalPanel";
+import { TimesheetDetailModal } from "@/components/timesheet/TimesheetDetailModal";
 import {
   Search,
   Calendar,
