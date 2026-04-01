@@ -166,8 +166,8 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
           .eq("id", entry.id);
       }
 
-      // Save deviation lines
-      if (useDeviation && deviationLines.length > 0) {
+      // Save deviation lines when in edit mode
+      if (editMode && deviationLines.length > 0) {
         const insertData = deviationLines.map((l) => {
           const dt = deviationTypes.find((t) => t.id === l.deviation_type_id);
           return {
