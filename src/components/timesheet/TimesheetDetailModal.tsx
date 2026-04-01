@@ -67,7 +67,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
   const [editClockIn, setEditClockIn] = useState("");
   const [editClockOut, setEditClockOut] = useState("");
   const [editBreak, setEditBreak] = useState(0);
-  const [_useDeviation] = useState(false); // kept for compat
+  
   const [deviationLines, setDeviationLines] = useState<DeviationLine[]>([]);
   const [managerNotes, setManagerNotes] = useState("");
   const [rejectionReason, setRejectionReason] = useState("");
