@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Clock, Calendar, MapPin, Building2, FileText, Boxes, Monitor, FileSignature } from "lucide-react";
+import { Settings, Clock, Calendar, MapPin, Building2, FileText, Boxes, Monitor, FileSignature, GitBranch } from "lucide-react";
 import { WorkTimeRulesPanel } from "@/components/settings/WorkTimeRulesPanel";
 import { AbsenceTypesPanel } from "@/components/settings/AbsenceTypesPanel";
 import { LocationsPanel } from "@/components/settings/LocationsPanel";
@@ -10,6 +10,7 @@ import { TimesheetSettingsPanel } from "@/components/settings/TimesheetSettingsP
 import { EquipmentCategoriesPanel } from "@/components/settings/EquipmentCategoriesPanel";
 import { KioskSettingsPanel } from "@/components/settings/KioskSettingsPanel";
 import { ContractTemplatesPanel } from "@/components/contracts/ContractTemplatesPanel";
+import { DeviationTypesPanel } from "@/components/settings/DeviationTypesPanel";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("work-time");
@@ -32,7 +33,7 @@ export default function SettingsPage() {
 
         {/* Settings Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9">
             <TabsTrigger value="work-time" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
               <span className="hidden sm:inline">Arbeidstid</span>
@@ -64,6 +65,10 @@ export default function SettingsPage() {
             <TabsTrigger value="kiosk" className="flex items-center gap-2">
               <Monitor className="h-4 w-4" />
               <span className="hidden sm:inline">Kiosk</span>
+            </TabsTrigger>
+            <TabsTrigger value="deviation-types" className="flex items-center gap-2">
+              <GitBranch className="h-4 w-4" />
+              <span className="hidden sm:inline">Avvikstyper</span>
             </TabsTrigger>
           </TabsList>
 
@@ -97,6 +102,10 @@ export default function SettingsPage() {
 
           <TabsContent value="kiosk">
             <KioskSettingsPanel />
+          </TabsContent>
+
+          <TabsContent value="deviation-types">
+            <DeviationTypesPanel />
           </TabsContent>
         </Tabs>
       </div>

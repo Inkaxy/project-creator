@@ -1751,6 +1751,56 @@ export type Database = {
           },
         ]
       }
+      deviation_types: {
+        Row: {
+          affects_time_bank: boolean | null
+          code: string
+          color: string | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          is_system: boolean | null
+          name: string
+          salary_type_id: string | null
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          affects_time_bank?: boolean | null
+          code: string
+          color?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          is_system?: boolean | null
+          name: string
+          salary_type_id?: string | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          affects_time_bank?: boolean | null
+          code?: string
+          color?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          is_system?: boolean | null
+          name?: string
+          salary_type_id?: string | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deviation_types_salary_type_id_fkey"
+            columns: ["salary_type_id"]
+            isOneToOne: false
+            referencedRelation: "salary_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deviations: {
         Row: {
           assigned_to: string | null
@@ -8609,6 +8659,64 @@ export type Database = {
           },
           {
             foreignKeyName: "time_entry_deviations_time_entry_id_fkey"
+            columns: ["time_entry_id"]
+            isOneToOne: false
+            referencedRelation: "time_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      time_entry_lines: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deviation_type_id: string
+          duration_minutes: number
+          end_time: string
+          id: string
+          salary_type_id: string | null
+          start_time: string
+          time_entry_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deviation_type_id: string
+          duration_minutes: number
+          end_time: string
+          id?: string
+          salary_type_id?: string | null
+          start_time: string
+          time_entry_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deviation_type_id?: string
+          duration_minutes?: number
+          end_time?: string
+          id?: string
+          salary_type_id?: string | null
+          start_time?: string
+          time_entry_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_entry_lines_deviation_type_id_fkey"
+            columns: ["deviation_type_id"]
+            isOneToOne: false
+            referencedRelation: "deviation_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entry_lines_salary_type_id_fkey"
+            columns: ["salary_type_id"]
+            isOneToOne: false
+            referencedRelation: "salary_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entry_lines_time_entry_id_fkey"
             columns: ["time_entry_id"]
             isOneToOne: false
             referencedRelation: "time_entries"
