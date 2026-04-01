@@ -25,6 +25,7 @@ export interface TimeEntryData {
     id: string;
     full_name: string;
     avatar_url: string | null;
+    department_id: string | null;
   } | null;
   shifts?: {
     id: string;
