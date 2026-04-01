@@ -475,33 +475,23 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
             </div>
           )}
 
-          {/* Deviation handling section */}
-          {isPending && (
+          {/* Deviation lines editor – shown when editing */}
+          {isPending && editMode && (
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label className="text-sm font-semibold flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-amber-600" />
-                  Avvikshåndtering – fordel timer til lønnsarter
-                </Label>
-                <Switch
-                  checked={useDeviation}
-                  onCheckedChange={setUseDeviation}
-                />
-              </div>
-              {useDeviation && (
-                <>
-                  <p className="text-xs text-muted-foreground">
-                    Del opp arbeidstiden i ulike lønnskategorier. Hver linje sendes til lønn med tilhørende lønnsart.
-                  </p>
-                  <InlineDeviationEditor
-                    clockIn={actualCi}
-                    clockOut={actualCo}
-                    deviationTypes={deviationTypes}
-                    lines={deviationLines}
-                    onChange={setDeviationLines}
-                  />
-                </>
-              )}
+              <Label className="text-sm font-semibold flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-600" />
+                Fordel timer til lønnsarter
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Del opp arbeidstiden i ulike lønnskategorier. Hver linje sendes til lønn med tilhørende lønnsart.
+              </p>
+              <InlineDeviationEditor
+                clockIn={actualCi}
+                clockOut={actualCo}
+                deviationTypes={deviationTypes}
+                lines={deviationLines}
+                onChange={setDeviationLines}
+              />
             </div>
           )}
 
