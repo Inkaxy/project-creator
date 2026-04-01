@@ -248,6 +248,30 @@ export default function ApprovalsPage() {
 
   const isLoading = absencesLoading || swapsLoading || timesheetsLoading;
 
+  // Multi-select helpers
+  const selectableTimesheetIds = filteredApprovals
+    .filter(a => a.type === "timesheet" && Math.abs((a.originalData as TimeEntryData).deviation_minutes) <= 15)
+    .map(a => a.id);
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedIds(checked ? selectableTimesheetIds : []);
+  };
+
+  const allSelectableChecked = selectableTimesheetIds.length > 0 && selectableTimesheetIds.every(id => selectedIds.includes(id));
+
+  const handleBulkApprove = async () => {
+    if (selectedIds.length === 0 || !user?.id) return;
+    await approveTimeEntries.mutateAsync({
+      timeEntryIds: selectedIds,
+      approverId: user.id,
+    });
+    setSelectedIds([]);
+  };
+
   // Handle approve
   const handleApprove = async (approval: UnifiedApproval) => {
     try {
