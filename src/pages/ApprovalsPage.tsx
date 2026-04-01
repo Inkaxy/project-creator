@@ -91,6 +91,10 @@ export default function ApprovalsPage() {
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedAbsence, setSelectedAbsence] = useState<AbsenceRequest | null>(null);
 
+  // Timesheet detail modal state
+  const [timesheetModalOpen, setTimesheetModalOpen] = useState(false);
+  const [selectedTimeEntry, setSelectedTimeEntry] = useState<TimeEntryData | null>(null);
+
   // Admin create absence modal
   const [adminAbsenceModalOpen, setAdminAbsenceModalOpen] = useState(false);
 
