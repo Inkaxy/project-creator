@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Clock, Calendar, MapPin, Building2, FileText, Boxes, Monitor, FileSignature } from "lucide-react";
+import { Settings, Clock, Calendar, MapPin, Building2, FileText, Boxes, Monitor, FileSignature, GitBranch } from "lucide-react";
 import { WorkTimeRulesPanel } from "@/components/settings/WorkTimeRulesPanel";
 import { AbsenceTypesPanel } from "@/components/settings/AbsenceTypesPanel";
 import { LocationsPanel } from "@/components/settings/LocationsPanel";
@@ -10,6 +10,7 @@ import { TimesheetSettingsPanel } from "@/components/settings/TimesheetSettingsP
 import { EquipmentCategoriesPanel } from "@/components/settings/EquipmentCategoriesPanel";
 import { KioskSettingsPanel } from "@/components/settings/KioskSettingsPanel";
 import { ContractTemplatesPanel } from "@/components/contracts/ContractTemplatesPanel";
+import { DeviationTypesPanel } from "@/components/settings/DeviationTypesPanel";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("work-time");
