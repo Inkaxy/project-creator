@@ -91,7 +91,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
       setEditClockOut(co);
       setEditBreak(entry.break_minutes || 0);
       setEditMode(false);
-      setUseDeviation(false);
+      
       setShowRejectForm(false);
       setManagerNotes("");
       setRejectionReason("");
