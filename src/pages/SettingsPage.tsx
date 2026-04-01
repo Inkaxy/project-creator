@@ -103,6 +103,10 @@ export default function SettingsPage() {
           <TabsContent value="kiosk">
             <KioskSettingsPanel />
           </TabsContent>
+
+          <TabsContent value="deviation-types">
+            <DeviationTypesPanel />
+          </TabsContent>
         </Tabs>
       </div>
     </MainLayout>
