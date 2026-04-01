@@ -26,6 +26,7 @@ import { useShifts } from "@/hooks/useShifts";
 import { AbsenceApprovalDetailModal } from "@/components/absence/AbsenceApprovalDetailModal";
 import { AdminAbsenceModal } from "@/components/absence/AdminAbsenceModal";
 import { TimesheetApprovalPanel } from "@/components/timesheet/TimesheetApprovalPanel";
+import { TimesheetDetailModal } from "@/components/timesheet/TimesheetDetailModal";
 import {
   Search,
   Calendar,
@@ -89,6 +90,10 @@ export default function ApprovalsPage() {
   // Detail modal state
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedAbsence, setSelectedAbsence] = useState<AbsenceRequest | null>(null);
+
+  // Timesheet detail modal state
+  const [timesheetModalOpen, setTimesheetModalOpen] = useState(false);
+  const [selectedTimeEntry, setSelectedTimeEntry] = useState<TimeEntryData | null>(null);
 
   // Admin create absence modal
   const [adminAbsenceModalOpen, setAdminAbsenceModalOpen] = useState(false);
@@ -296,6 +301,131 @@ export default function ApprovalsPage() {
     const Icon = config.icon;
     const isPending = approveAbsence.isPending || managerApproveSwap.isPending || approveTimeEntries.isPending;
 
+    // Enriched timesheet card
+    if (approval.type === "timesheet") {
+      const entry = approval.originalData as TimeEntryData;
+      const clockInTime = entry.clock_in ? format(new Date(entry.clock_in), "HH:mm") : "?";
+      const clockOutTime = entry.clock_out ? format(new Date(entry.clock_out), "HH:mm") : "?";
+      const plannedStart = entry.shifts?.planned_start?.slice(0, 5);
+      const plannedEnd = entry.shifts?.planned_end?.slice(0, 5);
+      const hoursWorked = entry.clock_in && entry.clock_out
+        ? ((new Date(entry.clock_out).getTime() - new Date(entry.clock_in).getTime()) / 3600000 - (entry.break_minutes || 0) / 60)
+        : 0;
+      const hasDeviation = Math.abs(entry.deviation_minutes) > 15;
+
+      return (
+        <Card
+          key={approval.id}
+          className="transition-shadow hover:shadow-md cursor-pointer group"
+          onClick={() => {
+            setSelectedTimeEntry(entry);
+            setTimesheetModalOpen(true);
+          }}
+        >
+          <CardContent className="p-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                <AvatarWithInitials name={approval.employeeName} size="lg" />
+                <div className="flex-1 min-w-0 space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="font-semibold text-foreground truncate">
+                      {approval.employeeName}
+                    </h3>
+                    <Badge className="bg-success/10 text-success border-success/30">
+                      <FileText className="mr-1 h-3 w-3" />
+                      Timeliste
+                    </Badge>
+                    {entry.shifts?.functions && (
+                      <Badge
+                        variant="outline"
+                        style={{
+                          borderColor: entry.shifts.functions.color || undefined,
+                          color: entry.shifts.functions.color || undefined,
+                        }}
+                      >
+                        {entry.shifts.functions.name}
+                      </Badge>
+                    )}
+                    {hasDeviation && (
+                      <Badge className="bg-warning/10 text-warning border-warning/30">
+                        <AlertTriangle className="mr-1 h-3 w-3" />
+                        Avvik
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
+                    <span className="font-medium text-foreground">
+                      {format(new Date(entry.date + "T00:00"), "EEE d. MMM", { locale: nb })}
+                    </span>
+                    {plannedStart && plannedEnd && (
+                      <span className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        Plan: {plannedStart}–{plannedEnd}
+                      </span>
+                    )}
+                    <span className="flex items-center gap-1 font-mono">
+                      <Clock className="h-3 w-3" />
+                      {clockInTime}–{clockOutTime}
+                    </span>
+                    <span className="font-mono font-medium text-foreground">
+                      {hoursWorked.toFixed(1)}t
+                    </span>
+                    {entry.deviation_minutes !== 0 && (
+                      <span className={`font-mono font-medium ${entry.deviation_minutes > 0 ? "text-success" : "text-destructive"}`}>
+                        {entry.deviation_minutes > 0 ? "+" : ""}{entry.deviation_minutes}m
+                      </span>
+                    )}
+                  </div>
+
+                  {entry.deviation_reason && (
+                    <p className="text-xs text-muted-foreground italic truncate">«{entry.deviation_reason}»</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex gap-2 items-center self-end sm:self-center" onClick={(e) => e.stopPropagation()}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5"
+                  onClick={() => handleRejectClick(approval)}
+                  disabled={isPending}
+                >
+                  <XCircle className="h-4 w-4" />
+                  Avslå
+                </Button>
+                {!hasDeviation ? (
+                  <Button
+                    size="sm"
+                    className="gap-1.5"
+                    onClick={() => handleApprove(approval)}
+                    disabled={isPending}
+                  >
+                    {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+                    Godkjenn
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5 border-warning text-warning hover:bg-warning/10"
+                    onClick={() => {
+                      setSelectedTimeEntry(entry);
+                      setTimesheetModalOpen(true);
+                    }}
+                  >
+                    <AlertTriangle className="h-4 w-4" />
+                    Håndter avvik
+                  </Button>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
     return (
       <Card key={approval.id} className="transition-shadow hover:shadow-md">
         <CardContent className="p-6">
@@ -320,14 +450,12 @@ export default function ApprovalsPage() {
                 </div>
                 <p className="text-muted-foreground">{approval.description}</p>
                 
-                {/* Show comment for absence */}
                 {approval.type === "absence" && (approval.originalData as AbsenceRequest).comment && (
                   <p className="text-sm text-muted-foreground italic">
                     "{(approval.originalData as AbsenceRequest).comment}"
                   </p>
                 )}
                 
-                {/* Show reason for swap */}
                 {approval.type === "shift_swap" && (approval.originalData as ShiftSwapRequest).reason && (
                   <p className="text-sm text-muted-foreground italic">
                     "{(approval.originalData as ShiftSwapRequest).reason}"
@@ -335,7 +463,7 @@ export default function ApprovalsPage() {
                 )}
 
                 <div className="flex items-center gap-4 pt-2">
-                  <Badge variant="secondary" className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                  <Badge variant="secondary" className="bg-warning/10 text-warning">
                     <Clock className="mr-1 h-3 w-3" />
                     Venter godkjenning
                   </Badge>
@@ -376,7 +504,6 @@ export default function ApprovalsPage() {
                   size="sm" 
                   className="gap-2"
                   onClick={() => {
-                    // For absences with overlapping shifts, open detail modal instead
                     if (approval.type === "absence" && approval.overlappingShifts && approval.overlappingShifts.length > 0) {
                       setSelectedAbsence(approval.originalData as AbsenceRequest);
                       setDetailModalOpen(true);
@@ -397,16 +524,15 @@ export default function ApprovalsPage() {
             )}
           </div>
 
-          {/* Overlapping shifts warning */}
           {approval.overlappingShifts && approval.overlappingShifts.length > 0 && (
-            <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 p-4">
+            <div className="mt-4 rounded-lg border border-warning/30 bg-warning/5 p-4">
               <div className="flex items-start gap-2">
-                <AlertTriangle className="mt-0.5 h-4 w-4 text-amber-600 dark:text-amber-400" />
+                <AlertTriangle className="mt-0.5 h-4 w-4 text-warning" />
                 <div className="text-sm">
-                  <p className="font-medium text-amber-800 dark:text-amber-300">
+                  <p className="font-medium text-foreground">
                     {approval.overlappingShifts.length} overlappende {approval.overlappingShifts.length === 1 ? "vakt" : "vakter"} funnet
                   </p>
-                  <ul className="mt-1 text-amber-700 dark:text-amber-400 space-y-0.5">
+                  <ul className="mt-1 text-muted-foreground space-y-0.5">
                     {approval.overlappingShifts.slice(0, 3).map((shift, i) => (
                       <li key={i}>
                         {format(new Date(shift.date), "EEEE d. MMM", { locale: nb })} {shift.time}
@@ -418,7 +544,7 @@ export default function ApprovalsPage() {
                       </li>
                     )}
                   </ul>
-                  <p className="mt-2 text-amber-600 dark:text-amber-500">
+                  <p className="mt-2 text-muted-foreground">
                     Ved godkjenning må vaktene håndteres.
                   </p>
                 </div>
@@ -735,6 +861,13 @@ export default function ApprovalsPage() {
           absence={selectedAbsence}
         />
       )}
+
+      {/* Timesheet Detail Modal */}
+      <TimesheetDetailModal
+        open={timesheetModalOpen}
+        onOpenChange={setTimesheetModalOpen}
+        entry={selectedTimeEntry}
+      />
     </MainLayout>
   );
 }
