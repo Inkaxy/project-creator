@@ -66,6 +66,10 @@ export default function SettingsPage() {
               <Monitor className="h-4 w-4" />
               <span className="hidden sm:inline">Kiosk</span>
             </TabsTrigger>
+            <TabsTrigger value="deviation-types" className="flex items-center gap-2">
+              <GitBranch className="h-4 w-4" />
+              <span className="hidden sm:inline">Avvikstyper</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="work-time">
