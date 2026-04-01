@@ -451,30 +451,27 @@ export default function ApprovalsPage() {
                   <XCircle className="h-4 w-4" />
                   Avslå
                 </Button>
-                {!hasDeviation ? (
-                  <Button
-                    size="sm"
-                    className="gap-1.5"
-                    onClick={() => handleApprove(approval)}
-                    disabled={isPending}
-                  >
-                    {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-                    Godkjenn
-                  </Button>
-                ) : (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="gap-1.5 border-warning text-warning hover:bg-warning/10"
-                    onClick={() => {
-                      setSelectedTimeEntry(entry);
-                      setTimesheetModalOpen(true);
-                    }}
-                  >
-                    <AlertTriangle className="h-4 w-4" />
-                    Håndter avvik
-                  </Button>
-                )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5"
+                  onClick={() => {
+                    setSelectedTimeEntry(entry);
+                    setTimesheetModalOpen(true);
+                  }}
+                >
+                  <Pencil className="h-4 w-4" />
+                  Rediger
+                </Button>
+                <Button
+                  size="sm"
+                  className="gap-1.5"
+                  onClick={() => handleApprove(approval)}
+                  disabled={isPending}
+                >
+                  {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+                  Godkjenn
+                </Button>
               </div>
             </div>
           </CardContent>

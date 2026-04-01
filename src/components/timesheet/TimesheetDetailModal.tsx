@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import {
@@ -68,7 +67,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
   const [editClockIn, setEditClockIn] = useState("");
   const [editClockOut, setEditClockOut] = useState("");
   const [editBreak, setEditBreak] = useState(0);
-  const [useDeviation, setUseDeviation] = useState(false);
+  
   const [deviationLines, setDeviationLines] = useState<DeviationLine[]>([]);
   const [managerNotes, setManagerNotes] = useState("");
   const [rejectionReason, setRejectionReason] = useState("");
@@ -92,7 +91,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
       setEditClockOut(co);
       setEditBreak(entry.break_minutes || 0);
       setEditMode(false);
-      setUseDeviation(false);
+      
       setShowRejectForm(false);
       setManagerNotes("");
       setRejectionReason("");
@@ -166,8 +165,8 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
           .eq("id", entry.id);
       }
 
-      // Save deviation lines
-      if (useDeviation && deviationLines.length > 0) {
+      // Save deviation lines when in edit mode
+      if (editMode && deviationLines.length > 0) {
         const insertData = deviationLines.map((l) => {
           const dt = deviationTypes.find((t) => t.id === l.deviation_type_id);
           return {
@@ -219,7 +218,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
       });
 
       queryClient.invalidateQueries({ queryKey: ["employee-accounts"] });
-      toast.success("Timer godkjent" + (useDeviation ? " med avvikshåndtering" : "") + (editMode ? " (korrigert)" : ""));
+      toast.success("Timer godkjent" + (editMode ? " (korrigert)" : ""));
       onOpenChange(false);
     } catch (error: any) {
       toast.error("Kunne ikke godkjenne: " + error.message);
@@ -475,33 +474,23 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
             </div>
           )}
 
-          {/* Deviation handling section */}
-          {isPending && (
+          {/* Deviation lines editor – shown when editing */}
+          {isPending && editMode && (
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label className="text-sm font-semibold flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-amber-600" />
-                  Avvikshåndtering – fordel timer til lønnsarter
-                </Label>
-                <Switch
-                  checked={useDeviation}
-                  onCheckedChange={setUseDeviation}
-                />
-              </div>
-              {useDeviation && (
-                <>
-                  <p className="text-xs text-muted-foreground">
-                    Del opp arbeidstiden i ulike lønnskategorier. Hver linje sendes til lønn med tilhørende lønnsart.
-                  </p>
-                  <InlineDeviationEditor
-                    clockIn={actualCi}
-                    clockOut={actualCo}
-                    deviationTypes={deviationTypes}
-                    lines={deviationLines}
-                    onChange={setDeviationLines}
-                  />
-                </>
-              )}
+              <Label className="text-sm font-semibold flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-600" />
+                Fordel timer til lønnsarter
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Del opp arbeidstiden i ulike lønnskategorier. Hver linje sendes til lønn med tilhørende lønnsart.
+              </p>
+              <InlineDeviationEditor
+                clockIn={actualCi}
+                clockOut={actualCo}
+                deviationTypes={deviationTypes}
+                lines={deviationLines}
+                onChange={setDeviationLines}
+              />
             </div>
           )}
 
@@ -564,7 +553,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
                 ) : (
                   <CheckCircle className="mr-2 h-4 w-4" />
                 )}
-                {editMode ? "Godkjenn (korrigert)" : useDeviation ? "Godkjenn med avvik" : "Godkjenn"}
+                {editMode ? "Godkjenn (korrigert)" : "Godkjenn"}
               </Button>
             </div>
           )}
