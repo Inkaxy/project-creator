@@ -743,7 +743,64 @@ export default function ApprovalsPage() {
             ) : filteredApprovals.length === 0 ? (
               renderEmptyState("pending")
             ) : (
-              filteredApprovals.map(approval => renderApprovalCard(approval))
+              <>
+                {/* Bulk action bar */}
+                {selectableTimesheetIds.length > 0 && (
+                  <Card className="border-dashed">
+                    <CardContent className="flex items-center justify-between p-3">
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          checked={allSelectableChecked}
+                          onCheckedChange={handleSelectAll}
+                        />
+                        <span className="text-sm text-muted-foreground">
+                          {selectedIds.length > 0
+                            ? `${selectedIds.length} av ${selectableTimesheetIds.length} valgt`
+                            : `Velg alle timelister uten avvik (${selectableTimesheetIds.length})`}
+                        </span>
+                      </div>
+                      {selectedIds.length > 0 && (
+                        <Button
+                          size="sm"
+                          className="gap-1.5"
+                          onClick={handleBulkApprove}
+                          disabled={approveTimeEntries.isPending}
+                        >
+                          {approveTimeEntries.isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <CheckCircle className="h-4 w-4" />
+                          )}
+                          Godkjenn valgte ({selectedIds.length})
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+                {filteredApprovals.map(approval => {
+                  const isTimesheet = approval.type === "timesheet";
+                  const isSelectable = isTimesheet && selectableTimesheetIds.includes(approval.id);
+                  const isSelected = selectedIds.includes(approval.id);
+
+                  return (
+                    <div key={approval.id} className="flex items-start gap-3">
+                      {isTimesheet && (
+                        <div className="pt-6">
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() => handleToggleSelect(approval.id)}
+                            disabled={!isSelectable}
+                            className={!isSelectable ? "opacity-40" : ""}
+                          />
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        {renderApprovalCard(approval)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
             )}
           </TabsContent>
 
