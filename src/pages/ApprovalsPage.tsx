@@ -372,17 +372,16 @@ export default function ApprovalsPage() {
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         Plan: {plannedStart}–{plannedEnd}
+                        <span className="font-mono font-medium text-foreground ml-0.5">({plannedHours.toFixed(1)}t)</span>
                       </span>
                     )}
                     <span className="flex items-center gap-1 font-mono">
                       <Clock className="h-3 w-3" />
                       {clockInTime}–{clockOutTime}
-                    </span>
-                    <span className="font-mono font-medium text-foreground">
-                      {hoursWorked.toFixed(1)}t
+                      <span className="font-medium text-foreground ml-0.5">({hoursWorked.toFixed(1)}t)</span>
                     </span>
                     {entry.deviation_minutes !== 0 && (
-                      <span className={`font-mono font-medium ${entry.deviation_minutes > 0 ? "text-success" : "text-destructive"}`}>
+                      <span className={`font-mono font-semibold ${entry.deviation_minutes > 0 ? "text-success" : "text-destructive"}`}>
                         {entry.deviation_minutes > 0 ? "+" : ""}{entry.deviation_minutes}m
                       </span>
                     )}
