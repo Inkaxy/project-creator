@@ -861,6 +861,13 @@ export default function ApprovalsPage() {
           absence={selectedAbsence}
         />
       )}
+
+      {/* Timesheet Detail Modal */}
+      <TimesheetDetailModal
+        open={timesheetModalOpen}
+        onOpenChange={setTimesheetModalOpen}
+        entry={selectedTimeEntry}
+      />
     </MainLayout>
   );
 }
