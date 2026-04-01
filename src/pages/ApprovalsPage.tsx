@@ -308,6 +308,16 @@ export default function ApprovalsPage() {
       const clockOutTime = entry.clock_out ? format(new Date(entry.clock_out), "HH:mm") : "?";
       const plannedStart = entry.shifts?.planned_start?.slice(0, 5);
       const plannedEnd = entry.shifts?.planned_end?.slice(0, 5);
+      const plannedBreak = entry.shifts?.planned_break_minutes || 0;
+      const plannedHours = plannedStart && plannedEnd
+        ? (() => {
+            const [sh, sm] = plannedStart.split(":").map(Number);
+            const [eh, em] = plannedEnd.split(":").map(Number);
+            let diff = (eh * 60 + em) - (sh * 60 + sm);
+            if (diff < 0) diff += 24 * 60;
+            return (diff - plannedBreak) / 60;
+          })()
+        : 0;
       const hoursWorked = entry.clock_in && entry.clock_out
         ? ((new Date(entry.clock_out).getTime() - new Date(entry.clock_in).getTime()) / 3600000 - (entry.break_minutes || 0) / 60)
         : 0;
