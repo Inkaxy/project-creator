@@ -987,7 +987,7 @@ export default function ApprovalsPage() {
                         <span className="text-sm text-muted-foreground">
                           {selectedIds.length > 0
                             ? `${selectedIds.length} av ${selectableTimesheetIds.length} valgt`
-                            : `Velg alle timelister uten avvik (${selectableTimesheetIds.length})`}
+                            : `Velg alle timelister (${selectableTimesheetIds.length})`}
                         </span>
                       </div>
                       {selectedIds.length > 0 && (
