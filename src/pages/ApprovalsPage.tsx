@@ -510,8 +510,7 @@ export default function ApprovalsPage() {
           className={`transition-all hover:shadow-md ${isExpanded ? "ring-2 ring-primary/30" : "cursor-pointer"}`}
           onClick={() => {
             if (!isExpanded) {
-              setSelectedTimeEntry(entry);
-              setTimesheetModalOpen(true);
+              handleToggleExpand(entry);
             }
           }}
         >
