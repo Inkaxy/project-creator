@@ -612,29 +612,72 @@ export default function ApprovalsPage() {
             {/* Inline editor panel */}
             <Collapsible open={isExpanded}>
               <CollapsibleContent>
-                <div className="mt-4 pt-4 border-t border-border space-y-4" onClick={(e) => e.stopPropagation()}>
-                  {/* Clock correction */}
+                <div className="mt-4 pt-4 border-t border-border space-y-5" onClick={(e) => e.stopPropagation()}>
+
+                  {/* Plan vs Actual summary */}
+                  <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-1.5">
+                    <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 text-sm">
+                      <span className="text-muted-foreground font-medium flex items-center gap-1.5">
+                        <Calendar className="h-3.5 w-3.5" />
+                        Planlagt
+                      </span>
+                      <span className="font-mono text-foreground">
+                        {plannedStart || "–"} – {plannedEnd || "–"}
+                        <span className="text-muted-foreground ml-2">
+                          {plannedBreak > 0 && `${plannedBreak} min pause`}
+                        </span>
+                      </span>
+                      <span className="font-mono font-semibold text-foreground">{plannedHours.toFixed(1)}t</span>
+                    </div>
+                    <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 text-sm">
+                      <span className="text-muted-foreground font-medium flex items-center gap-1.5">
+                        <Clock className="h-3.5 w-3.5" />
+                        Faktisk
+                      </span>
+                      <span className="font-mono text-foreground">
+                        {clockInTime} – {clockOutTime}
+                        <span className="text-muted-foreground ml-2">
+                          {(entry.break_minutes || 0) > 0 && `${entry.break_minutes} min pause`}
+                        </span>
+                      </span>
+                      <span className="font-mono font-semibold text-foreground">{hoursWorked.toFixed(1)}t</span>
+                    </div>
+                    {entry.deviation_minutes !== 0 && (
+                      <div className="flex justify-end">
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                          entry.deviation_minutes > 0
+                            ? "bg-success/10 text-success"
+                            : "bg-destructive/10 text-destructive"
+                        }`}>
+                          Avvik: {entry.deviation_minutes > 0 ? "+" : ""}{entry.deviation_minutes}m
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Clock correction — single row */}
                   <div>
                     <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
-                      Korriger stempling
+                      Korriger tid
                     </Label>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="flex items-end gap-3 flex-wrap">
                       <div className="space-y-1">
                         <Label className="text-xs text-muted-foreground">Inn</Label>
                         <Input
                           type="time"
                           value={editClockIn}
                           onChange={(e) => setEditClockIn(e.target.value)}
-                          className="h-9"
+                          className="h-9 w-[120px]"
                         />
                       </div>
+                      <span className="pb-2 text-muted-foreground">→</span>
                       <div className="space-y-1">
                         <Label className="text-xs text-muted-foreground">Ut</Label>
                         <Input
                           type="time"
                           value={editClockOut}
                           onChange={(e) => setEditClockOut(e.target.value)}
-                          className="h-9"
+                          className="h-9 w-[120px]"
                         />
                       </div>
                       <div className="space-y-1">
@@ -644,16 +687,28 @@ export default function ApprovalsPage() {
                           min={0}
                           value={editBreak}
                           onChange={(e) => setEditBreak(Number(e.target.value))}
-                          className="h-9"
+                          className="h-9 w-[90px]"
                         />
                       </div>
+                      {(() => {
+                        const [sh, sm] = editClockIn.split(":").map(Number);
+                        const [eh, em] = editClockOut.split(":").map(Number);
+                        let diff = (eh * 60 + em) - (sh * 60 + sm);
+                        if (diff < 0) diff += 24 * 60;
+                        const netHours = (diff - editBreak) / 60;
+                        return (
+                          <span className="pb-2 font-mono font-semibold text-foreground text-sm">
+                            Netto: {netHours.toFixed(1)}t
+                          </span>
+                        );
+                      })()}
                     </div>
                   </div>
 
                   {/* Deviation lines */}
                   <div>
                     <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
-                      Fordeling av timer
+                      Fordeling på lønnsarter
                     </Label>
                     <InlineDeviationEditor
                       clockIn={editClockIn}
