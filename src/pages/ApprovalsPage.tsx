@@ -304,28 +304,36 @@ export default function ApprovalsPage() {
     setEditBreak(entry.break_minutes || 0);
     setEditNote(entry.manager_notes || "");
 
-    // Create default deviation line (Normal, full shift)
-    const normalType = deviationTypes.find(t => t.code === "normal");
-    const plannedStart = entry.shifts?.planned_start?.slice(0, 5) || clockIn;
-    const plannedEnd = entry.shifts?.planned_end?.slice(0, 5) || clockOut;
-
-    const timeDiff = (s: string, e: string) => {
-      const [sh, sm] = s.split(":").map(Number);
-      const [eh, em] = e.split(":").map(Number);
-      let d = (eh * 60 + em) - (sh * 60 + sm);
-      if (d < 0) d += 24 * 60;
-      return d;
-    };
-
-    const lines: DeviationLine[] = [{
-      id: `line-init-${Date.now()}`,
-      deviation_type_id: normalType?.id || deviationTypes[0]?.id || "",
-      start_time: plannedStart,
-      end_time: clockOut,
-      duration_minutes: timeDiff(plannedStart, clockOut),
-    }];
-
-    setEditDeviationLines(lines);
+    // Load saved lines if they exist, otherwise create default
+    const savedLines = entry.time_entry_lines;
+    if (savedLines && savedLines.length > 0) {
+      const lines: DeviationLine[] = savedLines.map((line) => ({
+        id: line.id,
+        deviation_type_id: line.deviation_type_id,
+        start_time: line.start_time?.slice(0, 5) || clockIn,
+        end_time: line.end_time?.slice(0, 5) || clockOut,
+        duration_minutes: line.duration_minutes,
+      }));
+      setEditDeviationLines(lines);
+    } else {
+      // Create default deviation line (Normal, full shift)
+      const normalType = deviationTypes.find(t => t.code === "normal");
+      const timeDiff = (s: string, e: string) => {
+        const [sh, sm] = s.split(":").map(Number);
+        const [eh, em] = e.split(":").map(Number);
+        let d = (eh * 60 + em) - (sh * 60 + sm);
+        if (d < 0) d += 24 * 60;
+        return d;
+      };
+      const lines: DeviationLine[] = [{
+        id: `line-init-${Date.now()}`,
+        deviation_type_id: normalType?.id || deviationTypes[0]?.id || "",
+        start_time: clockIn,
+        end_time: clockOut,
+        duration_minutes: timeDiff(clockIn, clockOut),
+      }];
+      setEditDeviationLines(lines);
+    }
     setExpandedEntryId(entry.id);
   }, [expandedEntryId, deviationTypes]);
 
