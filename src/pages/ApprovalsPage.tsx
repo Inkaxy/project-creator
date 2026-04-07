@@ -570,11 +570,21 @@ export default function ApprovalsPage() {
                       {clockInTime}–{clockOutTime}
                       <span className="font-medium text-foreground ml-0.5">({hoursWorked.toFixed(1)}t)</span>
                     </span>
-                    {entry.deviation_minutes !== 0 && (
-                      <span className={`font-mono font-semibold ${entry.deviation_minutes > 0 ? "text-success" : "text-destructive"}`}>
-                        {entry.deviation_minutes > 0 ? "+" : ""}{entry.deviation_minutes}m
-                      </span>
-                    )}
+                    {entry.deviation_minutes !== 0 && (() => {
+                      const absMin = Math.abs(entry.deviation_minutes);
+                      const h = Math.floor(absMin / 60);
+                      const m = absMin % 60;
+                      const sign = entry.deviation_minutes > 0 ? "+" : "-";
+                      const parts = [];
+                      if (h > 0) parts.push(`${h}t`);
+                      if (m > 0) parts.push(`${m}m`);
+                      const formatted = parts.length > 0 ? parts.join(" ") : "0m";
+                      return (
+                        <span className={`font-mono font-semibold ${entry.deviation_minutes > 0 ? "text-success" : "text-destructive"}`}>
+                          {sign}{formatted}
+                        </span>
+                      );
+                    })()}
                   </div>
 
                   {entry.deviation_reason && (
