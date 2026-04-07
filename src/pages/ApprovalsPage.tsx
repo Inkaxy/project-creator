@@ -266,7 +266,7 @@ export default function ApprovalsPage() {
 
   // Multi-select helpers
   const selectableTimesheetIds = filteredApprovals
-    .filter(a => a.type === "timesheet" && Math.abs((a.originalData as TimeEntryData).deviation_minutes) <= 15)
+    .filter(a => a.type === "timesheet")
     .map(a => a.id);
 
   const handleToggleSelect = (id: string) => {
