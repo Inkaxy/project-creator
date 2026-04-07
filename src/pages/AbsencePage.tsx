@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Calendar, Wallet } from "lucide-react";
+import { Plus, Calendar, Wallet, Palmtree } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,6 +9,7 @@ import { TimeBankOverviewCard } from "@/components/timesheet/TimeBankOverviewCar
 import { TimeBankManagementPanel } from "@/components/timebank/TimeBankManagementPanel";
 import { AbsenceList } from "@/components/absence/AbsenceList";
 import { AbsenceApprovalsPanel } from "@/components/absence/AbsenceApprovalsPanel";
+import { VacationManagementPanel } from "@/components/absence/VacationManagementPanel";
 import { useAuth } from "@/contexts/AuthContext";
 
 const AbsencePage = () => {
@@ -46,6 +47,10 @@ const AbsencePage = () => {
               <>
                 <TabsTrigger value="approvals">Til behandling</TabsTrigger>
                 <TabsTrigger value="all">Alle søknader</TabsTrigger>
+                <TabsTrigger value="vacation" className="flex items-center gap-1">
+                  <Palmtree className="h-4 w-4" />
+                  Feriedager
+                </TabsTrigger>
                 <TabsTrigger value="timebank" className="flex items-center gap-1">
                   <Wallet className="h-4 w-4" />
                   Tidsbank
@@ -66,6 +71,10 @@ const AbsencePage = () => {
 
               <TabsContent value="all">
                 <AbsenceList showAll />
+              </TabsContent>
+
+              <TabsContent value="vacation">
+                <VacationManagementPanel />
               </TabsContent>
 
               <TabsContent value="timebank">
