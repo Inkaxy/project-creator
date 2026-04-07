@@ -115,6 +115,15 @@ export default function ApprovalsPage() {
   const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
   const { data: departments = [] } = useDepartments();
 
+  // Inline editing state
+  const [expandedEntryId, setExpandedEntryId] = useState<string | null>(null);
+  const [editClockIn, setEditClockIn] = useState("");
+  const [editClockOut, setEditClockOut] = useState("");
+  const [editBreak, setEditBreak] = useState(0);
+  const [editNote, setEditNote] = useState("");
+  const [editDeviationLines, setEditDeviationLines] = useState<DeviationLine[]>([]);
+  const { data: deviationTypes = [] } = useDeviationTypes();
+
   // Fetch all pending absence requests
   const { data: pendingAbsences = [], isLoading: absencesLoading } = usePendingAbsenceRequests();
   const { data: allAbsences = [], isLoading: allAbsencesLoading } = useAbsenceRequests();
