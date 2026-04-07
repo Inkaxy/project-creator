@@ -603,6 +603,7 @@ export default function ApprovalsPage() {
                       ))}
                     </div>
                   )}
+                </div>
               </div>
 
               <div className="flex gap-2 items-center self-end sm:self-center" onClick={(e) => e.stopPropagation()}>
