@@ -452,7 +452,7 @@ export default function ApprovalsPage() {
     const Icon = config.icon;
     const isPending = approveAbsence.isPending || managerApproveSwap.isPending || approveTimeEntries.isPending;
 
-    // Enriched timesheet card
+    // Enriched timesheet card with inline editing
     if (approval.type === "timesheet") {
       const entry = approval.originalData as TimeEntryData;
       const clockInTime = entry.clock_in ? format(new Date(entry.clock_in), "HH:mm") : "?";
@@ -473,14 +473,17 @@ export default function ApprovalsPage() {
         ? ((new Date(entry.clock_out).getTime() - new Date(entry.clock_in).getTime()) / 3600000 - (entry.break_minutes || 0) / 60)
         : 0;
       const hasDeviation = Math.abs(entry.deviation_minutes) > 15;
+      const isExpanded = expandedEntryId === entry.id;
 
       return (
         <Card
           key={approval.id}
-          className="transition-shadow hover:shadow-md cursor-pointer group"
+          className={`transition-all hover:shadow-md ${isExpanded ? "ring-2 ring-primary/30" : "cursor-pointer"}`}
           onClick={() => {
-            setSelectedTimeEntry(entry);
-            setTimesheetModalOpen(true);
+            if (!isExpanded) {
+              setSelectedTimeEntry(entry);
+              setTimesheetModalOpen(true);
+            }
           }}
         >
           <CardContent className="p-5">
@@ -557,27 +560,117 @@ export default function ApprovalsPage() {
                 </Button>
                 <Button
                   size="sm"
-                  variant="outline"
+                  variant={isExpanded ? "secondary" : "outline"}
                   className="gap-1.5"
-                  onClick={() => {
-                    setSelectedTimeEntry(entry);
-                    setTimesheetModalOpen(true);
-                  }}
+                  onClick={() => handleToggleExpand(entry)}
                 >
-                  <Pencil className="h-4 w-4" />
+                  {isExpanded ? <ChevronUp className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
                   Rediger
                 </Button>
-                <Button
-                  size="sm"
-                  className="gap-1.5"
-                  onClick={() => handleApprove(approval)}
-                  disabled={isPending}
-                >
-                  {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-                  Godkjenn
-                </Button>
+                {!isExpanded && (
+                  <Button
+                    size="sm"
+                    className="gap-1.5"
+                    onClick={() => handleApprove(approval)}
+                    disabled={isPending}
+                  >
+                    {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+                    Godkjenn
+                  </Button>
+                )}
               </div>
             </div>
+
+            {/* Inline editor panel */}
+            <Collapsible open={isExpanded}>
+              <CollapsibleContent>
+                <div className="mt-4 pt-4 border-t border-border space-y-4" onClick={(e) => e.stopPropagation()}>
+                  {/* Clock correction */}
+                  <div>
+                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
+                      Korriger stempling
+                    </Label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground">Inn</Label>
+                        <Input
+                          type="time"
+                          value={editClockIn}
+                          onChange={(e) => setEditClockIn(e.target.value)}
+                          className="h-9"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground">Ut</Label>
+                        <Input
+                          type="time"
+                          value={editClockOut}
+                          onChange={(e) => setEditClockOut(e.target.value)}
+                          className="h-9"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground">Pause (min)</Label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={editBreak}
+                          onChange={(e) => setEditBreak(Number(e.target.value))}
+                          className="h-9"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Deviation lines */}
+                  <div>
+                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
+                      Fordeling av timer
+                    </Label>
+                    <InlineDeviationEditor
+                      clockIn={editClockIn}
+                      clockOut={editClockOut}
+                      deviationTypes={deviationTypes}
+                      lines={editDeviationLines}
+                      onChange={setEditDeviationLines}
+                    />
+                  </div>
+
+                  {/* Manager note */}
+                  <div>
+                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
+                      Notat
+                    </Label>
+                    <Textarea
+                      value={editNote}
+                      onChange={(e) => setEditNote(e.target.value)}
+                      placeholder="Valgfritt notat fra leder..."
+                      className="min-h-[60px] text-sm"
+                    />
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="flex items-center justify-end gap-2 pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setExpandedEntryId(null)}
+                    >
+                      Avbryt
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="gap-1.5"
+                      onClick={() => handleSaveAndApprove(entry)}
+                      disabled={isPending}
+                    >
+                      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                      Lagre & Godkjenn
+                    </Button>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </CardContent>
         </Card>
       );
