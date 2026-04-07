@@ -636,24 +636,41 @@ export default function ApprovalsPage() {
                         Faktisk
                       </span>
                       <span className="font-mono text-foreground">
-                        {clockInTime} – {clockOutTime}
+                        {isExpanded ? editClockIn : clockInTime} – {isExpanded ? editClockOut : clockOutTime}
                         <span className="text-muted-foreground ml-2">
-                          {(entry.break_minutes || 0) > 0 && `${entry.break_minutes} min pause`}
+                          {(isExpanded ? editBreak : (entry.break_minutes || 0)) > 0 && `${isExpanded ? editBreak : entry.break_minutes} min pause`}
                         </span>
                       </span>
-                      <span className="font-mono font-semibold text-foreground">{hoursWorked.toFixed(1)}t</span>
+                      {(() => {
+                        const [sh, sm] = (isExpanded ? editClockIn : clockInTime).split(":").map(Number);
+                        const [eh, em] = (isExpanded ? editClockOut : clockOutTime).split(":").map(Number);
+                        let diff = (eh * 60 + em) - (sh * 60 + sm);
+                        if (diff < 0) diff += 24 * 60;
+                        const actualHours = (diff - (isExpanded ? editBreak : (entry.break_minutes || 0))) / 60;
+                        return <span className="font-mono font-semibold text-foreground">{actualHours.toFixed(1)}t</span>;
+                      })()}
                     </div>
-                    {entry.deviation_minutes !== 0 && (
-                      <div className="flex justify-end">
-                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                          entry.deviation_minutes > 0
-                            ? "bg-success/10 text-success"
-                            : "bg-destructive/10 text-destructive"
-                        }`}>
-                          Avvik: {entry.deviation_minutes > 0 ? "+" : ""}{entry.deviation_minutes}m
-                        </span>
-                      </div>
-                    )}
+                    {(() => {
+                      const [sh, sm] = (isExpanded ? editClockIn : clockInTime).split(":").map(Number);
+                      const [eh, em] = (isExpanded ? editClockOut : clockOutTime).split(":").map(Number);
+                      let diff = (eh * 60 + em) - (sh * 60 + sm);
+                      if (diff < 0) diff += 24 * 60;
+                      const actualMinutes = diff - (isExpanded ? editBreak : (entry.break_minutes || 0));
+                      const plannedMinutes = plannedHours * 60;
+                      const deviationMin = Math.round(actualMinutes - plannedMinutes);
+                      if (deviationMin === 0) return null;
+                      return (
+                        <div className="flex justify-end">
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                            deviationMin > 0
+                              ? "bg-success/10 text-success"
+                              : "bg-destructive/10 text-destructive"
+                          }`}>
+                            Avvik: {deviationMin > 0 ? "+" : ""}{deviationMin}m ({deviationMin > 0 ? "+" : ""}{(deviationMin / 60).toFixed(1)}t)
+                          </span>
+                        </div>
+                      );
+                    })()}
                   </div>
 
                   {/* Clock correction — single row */}
