@@ -357,6 +357,7 @@ export default function ApprovalsPage() {
         await supabase.from("time_entry_lines").insert(lineInserts);
       }
 
+      queryClient.invalidateQueries({ queryKey: ["time_entries"] });
       setExpandedEntryId(null);
       const { toast } = await import("sonner");
       toast.success("Timer lagret");
