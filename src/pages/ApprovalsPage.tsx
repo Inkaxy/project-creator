@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -89,6 +90,7 @@ interface UnifiedApproval {
 
 export default function ApprovalsPage() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("pending");
   
@@ -345,17 +347,17 @@ export default function ApprovalsPage() {
 
       if (editDeviationLines.length > 0) {
         await supabase.from("time_entry_lines").delete().eq("time_entry_id", entry.id);
-        const lineInserts = editDeviationLines.map((line, idx) => ({
+        const lineInserts = editDeviationLines.map((line) => ({
           time_entry_id: entry.id,
           deviation_type_id: line.deviation_type_id,
           start_time: line.start_time,
           end_time: line.end_time,
           duration_minutes: line.duration_minutes,
-          sort_order: idx,
         }));
         await supabase.from("time_entry_lines").insert(lineInserts);
       }
 
+      queryClient.invalidateQueries({ queryKey: ["time_entries"] });
       setExpandedEntryId(null);
       const { toast } = await import("sonner");
       toast.success("Timer lagret");
@@ -382,13 +384,12 @@ export default function ApprovalsPage() {
 
       if (editDeviationLines.length > 0) {
         await supabase.from("time_entry_lines").delete().eq("time_entry_id", entry.id);
-        const lineInserts = editDeviationLines.map((line, idx) => ({
+        const lineInserts = editDeviationLines.map((line) => ({
           time_entry_id: entry.id,
           deviation_type_id: line.deviation_type_id,
           start_time: line.start_time,
           end_time: line.end_time,
           duration_minutes: line.duration_minutes,
-          sort_order: idx,
         }));
         await supabase.from("time_entry_lines").insert(lineInserts);
       }
