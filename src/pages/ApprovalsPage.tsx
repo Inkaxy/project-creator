@@ -345,13 +345,12 @@ export default function ApprovalsPage() {
 
       if (editDeviationLines.length > 0) {
         await supabase.from("time_entry_lines").delete().eq("time_entry_id", entry.id);
-        const lineInserts = editDeviationLines.map((line, idx) => ({
+        const lineInserts = editDeviationLines.map((line) => ({
           time_entry_id: entry.id,
           deviation_type_id: line.deviation_type_id,
           start_time: line.start_time,
           end_time: line.end_time,
           duration_minutes: line.duration_minutes,
-          sort_order: idx,
         }));
         await supabase.from("time_entry_lines").insert(lineInserts);
       }
