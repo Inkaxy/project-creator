@@ -2,6 +2,24 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+export interface TimeEntryLineData {
+  id: string;
+  time_entry_id: string;
+  deviation_type_id: string;
+  start_time: string;
+  end_time: string;
+  duration_minutes: number;
+  salary_type_id: string | null;
+  created_by: string | null;
+  created_at: string;
+  deviation_types?: {
+    id: string;
+    name: string;
+    code: string;
+    color: string;
+  } | null;
+}
+
 export interface TimeEntryData {
   id: string;
   employee_id: string;
@@ -38,6 +56,7 @@ export interface TimeEntryData {
       color: string | null;
     } | null;
   } | null;
+  time_entry_lines?: TimeEntryLineData[];
 }
 
 // Fetch time entries for a user within a date range
