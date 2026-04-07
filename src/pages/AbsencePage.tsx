@@ -47,6 +47,10 @@ const AbsencePage = () => {
               <>
                 <TabsTrigger value="approvals">Til behandling</TabsTrigger>
                 <TabsTrigger value="all">Alle søknader</TabsTrigger>
+                <TabsTrigger value="vacation" className="flex items-center gap-1">
+                  <Palmtree className="h-4 w-4" />
+                  Feriedager
+                </TabsTrigger>
                 <TabsTrigger value="timebank" className="flex items-center gap-1">
                   <Wallet className="h-4 w-4" />
                   Tidsbank
