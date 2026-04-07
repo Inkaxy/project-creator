@@ -304,28 +304,36 @@ export default function ApprovalsPage() {
     setEditBreak(entry.break_minutes || 0);
     setEditNote(entry.manager_notes || "");
 
-    // Create default deviation line (Normal, full shift)
-    const normalType = deviationTypes.find(t => t.code === "normal");
-    const plannedStart = entry.shifts?.planned_start?.slice(0, 5) || clockIn;
-    const plannedEnd = entry.shifts?.planned_end?.slice(0, 5) || clockOut;
-
-    const timeDiff = (s: string, e: string) => {
-      const [sh, sm] = s.split(":").map(Number);
-      const [eh, em] = e.split(":").map(Number);
-      let d = (eh * 60 + em) - (sh * 60 + sm);
-      if (d < 0) d += 24 * 60;
-      return d;
-    };
-
-    const lines: DeviationLine[] = [{
-      id: `line-init-${Date.now()}`,
-      deviation_type_id: normalType?.id || deviationTypes[0]?.id || "",
-      start_time: plannedStart,
-      end_time: clockOut,
-      duration_minutes: timeDiff(plannedStart, clockOut),
-    }];
-
-    setEditDeviationLines(lines);
+    // Load saved lines if they exist, otherwise create default
+    const savedLines = entry.time_entry_lines;
+    if (savedLines && savedLines.length > 0) {
+      const lines: DeviationLine[] = savedLines.map((line) => ({
+        id: line.id,
+        deviation_type_id: line.deviation_type_id,
+        start_time: line.start_time?.slice(0, 5) || clockIn,
+        end_time: line.end_time?.slice(0, 5) || clockOut,
+        duration_minutes: line.duration_minutes,
+      }));
+      setEditDeviationLines(lines);
+    } else {
+      // Create default deviation line (Normal, full shift)
+      const normalType = deviationTypes.find(t => t.code === "normal");
+      const timeDiff = (s: string, e: string) => {
+        const [sh, sm] = s.split(":").map(Number);
+        const [eh, em] = e.split(":").map(Number);
+        let d = (eh * 60 + em) - (sh * 60 + sm);
+        if (d < 0) d += 24 * 60;
+        return d;
+      };
+      const lines: DeviationLine[] = [{
+        id: `line-init-${Date.now()}`,
+        deviation_type_id: normalType?.id || deviationTypes[0]?.id || "",
+        start_time: clockIn,
+        end_time: clockOut,
+        duration_minutes: timeDiff(clockIn, clockOut),
+      }];
+      setEditDeviationLines(lines);
+    }
     setExpandedEntryId(entry.id);
   }, [expandedEntryId, deviationTypes]);
 
@@ -571,6 +579,29 @@ export default function ApprovalsPage() {
 
                   {entry.deviation_reason && (
                     <p className="text-xs text-muted-foreground italic truncate">«{entry.deviation_reason}»</p>
+                  )}
+
+                  {/* Saved distribution lines as compact pills */}
+                  {entry.time_entry_lines && entry.time_entry_lines.length > 0 && !isExpanded && (
+                    <div className="flex items-center gap-1.5 flex-wrap mt-1">
+                      {entry.time_entry_lines.map((line) => (
+                        <span
+                          key={line.id}
+                          className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium border"
+                          style={{
+                            borderColor: `${line.deviation_types?.color || 'hsl(var(--border))'}40`,
+                            backgroundColor: `${line.deviation_types?.color || 'hsl(var(--muted))'}10`,
+                            color: line.deviation_types?.color || undefined,
+                          }}
+                        >
+                          <span
+                            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: line.deviation_types?.color || 'hsl(var(--muted-foreground))' }}
+                          />
+                          {line.deviation_types?.name || "Ukjent"}: {(line.duration_minutes / 60).toFixed(1)}t
+                        </span>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
