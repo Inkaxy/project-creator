@@ -509,7 +509,13 @@ export default function ApprovalsPage() {
       const hoursWorked = entry.clock_in && entry.clock_out
         ? ((new Date(entry.clock_out).getTime() - new Date(entry.clock_in).getTime()) / 3600000 - (entry.break_minutes || 0) / 60)
         : 0;
-      const hasDeviation = Math.abs(entry.deviation_minutes) > 15;
+      // Use DB deviation_minutes, but fall back to client-side calculation if 0 and there's a clear difference
+      const calculatedDeviationMinutes = entry.deviation_minutes !== 0
+        ? entry.deviation_minutes
+        : (plannedHours > 0 && hoursWorked > 0
+          ? Math.round((hoursWorked - plannedHours) * 60)
+          : 0);
+      const hasDeviation = Math.abs(calculatedDeviationMinutes) > 15;
       const isExpanded = expandedEntryId === entry.id;
 
       return (
