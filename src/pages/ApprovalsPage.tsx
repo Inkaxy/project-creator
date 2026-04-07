@@ -288,6 +288,94 @@ export default function ApprovalsPage() {
     setSelectedIds([]);
   };
 
+  // Toggle inline edit expansion
+  const handleToggleExpand = useCallback((entry: TimeEntryData) => {
+    if (expandedEntryId === entry.id) {
+      setExpandedEntryId(null);
+      return;
+    }
+    // Initialize edit fields from entry data
+    const clockIn = entry.clock_in ? format(new Date(entry.clock_in), "HH:mm") : "00:00";
+    const clockOut = entry.clock_out ? format(new Date(entry.clock_out), "HH:mm") : "00:00";
+    setEditClockIn(clockIn);
+    setEditClockOut(clockOut);
+    setEditBreak(entry.break_minutes || 0);
+    setEditNote(entry.manager_notes || "");
+
+    // Create default deviation line (Normal, full shift)
+    const normalType = deviationTypes.find(t => t.code === "normal");
+    const plannedStart = entry.shifts?.planned_start?.slice(0, 5) || clockIn;
+    const plannedEnd = entry.shifts?.planned_end?.slice(0, 5) || clockOut;
+
+    const timeDiff = (s: string, e: string) => {
+      const [sh, sm] = s.split(":").map(Number);
+      const [eh, em] = e.split(":").map(Number);
+      let d = (eh * 60 + em) - (sh * 60 + sm);
+      if (d < 0) d += 24 * 60;
+      return d;
+    };
+
+    const lines: DeviationLine[] = [{
+      id: `line-init-${Date.now()}`,
+      deviation_type_id: normalType?.id || deviationTypes[0]?.id || "",
+      start_time: plannedStart,
+      end_time: clockOut,
+      duration_minutes: timeDiff(plannedStart, clockOut),
+    }];
+
+    setEditDeviationLines(lines);
+    setExpandedEntryId(entry.id);
+  }, [expandedEntryId, deviationTypes]);
+
+  // Save inline edits and approve
+  const handleSaveAndApprove = async (entry: TimeEntryData) => {
+    if (!user?.id) return;
+    try {
+      // Update the time entry with corrected values
+      const { supabase } = await import("@/integrations/supabase/client");
+      
+      // Build new clock_in/clock_out from edited times
+      const dateStr = entry.date;
+      const newClockIn = new Date(`${dateStr}T${editClockIn}:00`).toISOString();
+      const newClockOut = new Date(`${dateStr}T${editClockOut}:00`).toISOString();
+
+      // Update the time entry
+      await supabase.from("time_entries").update({
+        clock_in: newClockIn,
+        clock_out: newClockOut,
+        break_minutes: editBreak,
+        manager_notes: editNote || null,
+      }).eq("id", entry.id);
+
+      // Save deviation lines
+      if (editDeviationLines.length > 0) {
+        // Delete existing lines first
+        await supabase.from("time_entry_lines").delete().eq("time_entry_id", entry.id);
+
+        // Insert new lines
+        const lineInserts = editDeviationLines.map((line, idx) => ({
+          time_entry_id: entry.id,
+          deviation_type_id: line.deviation_type_id,
+          start_time: line.start_time,
+          end_time: line.end_time,
+          duration_minutes: line.duration_minutes,
+          sort_order: idx,
+        }));
+        await supabase.from("time_entry_lines").insert(lineInserts);
+      }
+
+      // Approve the entry
+      await approveTimeEntries.mutateAsync({
+        timeEntryIds: [entry.id],
+        approverId: user.id,
+      });
+
+      setExpandedEntryId(null);
+    } catch (error) {
+      console.error("Save and approve failed:", error);
+    }
+  };
+
   // Handle approve
   const handleApprove = async (approval: UnifiedApproval) => {
     try {
