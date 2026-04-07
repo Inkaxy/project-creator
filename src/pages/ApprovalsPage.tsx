@@ -687,12 +687,21 @@ export default function ApprovalsPage() {
                       Avbryt
                     </Button>
                     <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5"
+                      onClick={() => handleSaveOnly(entry)}
+                    >
+                      <Save className="h-4 w-4" />
+                      Lagre
+                    </Button>
+                    <Button
                       size="sm"
                       className="gap-1.5"
                       onClick={() => handleSaveAndApprove(entry)}
                       disabled={isPending}
                     >
-                      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
                       Lagre & Godkjenn
                     </Button>
                   </div>
