@@ -509,7 +509,13 @@ export default function ApprovalsPage() {
       const hoursWorked = entry.clock_in && entry.clock_out
         ? ((new Date(entry.clock_out).getTime() - new Date(entry.clock_in).getTime()) / 3600000 - (entry.break_minutes || 0) / 60)
         : 0;
-      const hasDeviation = Math.abs(entry.deviation_minutes) > 15;
+      // Use DB deviation_minutes, but fall back to client-side calculation if 0 and there's a clear difference
+      const calculatedDeviationMinutes = entry.deviation_minutes !== 0
+        ? entry.deviation_minutes
+        : (plannedHours > 0 && hoursWorked > 0
+          ? Math.round((hoursWorked - plannedHours) * 60)
+          : 0);
+      const hasDeviation = Math.abs(calculatedDeviationMinutes) > 15;
       const isExpanded = expandedEntryId === entry.id;
 
       return (
@@ -570,17 +576,17 @@ export default function ApprovalsPage() {
                       {clockInTime}–{clockOutTime}
                       <span className="font-medium text-foreground ml-0.5">({hoursWorked.toFixed(1)}t)</span>
                     </span>
-                    {entry.deviation_minutes !== 0 && (() => {
-                      const absMin = Math.abs(entry.deviation_minutes);
+                    {calculatedDeviationMinutes !== 0 && (() => {
+                      const absMin = Math.abs(calculatedDeviationMinutes);
                       const h = Math.floor(absMin / 60);
                       const m = absMin % 60;
-                      const sign = entry.deviation_minutes > 0 ? "+" : "-";
+                      const sign = calculatedDeviationMinutes > 0 ? "+" : "-";
                       const parts = [];
                       if (h > 0) parts.push(`${h}t`);
                       if (m > 0) parts.push(`${m}m`);
                       const formatted = parts.length > 0 ? parts.join(" ") : "0m";
                       return (
-                        <span className={`font-mono font-semibold ${entry.deviation_minutes > 0 ? "text-success" : "text-destructive"}`}>
+                        <span className={`font-mono font-semibold ${calculatedDeviationMinutes > 0 ? "text-success" : "text-destructive"}`}>
                           {sign}{formatted}
                         </span>
                       );
