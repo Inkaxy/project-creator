@@ -127,6 +127,22 @@ export function useAllTimeEntries(startDate: string, endDate: string) {
               name,
               color
             )
+          ),
+          time_entry_lines (
+            id,
+            deviation_type_id,
+            start_time,
+            end_time,
+            duration_minutes,
+            salary_type_id,
+            created_by,
+            created_at,
+            deviation_types (
+              id,
+              name,
+              code,
+              color
+            )
           )
         `)
         .gte("date", startDate)
