@@ -327,19 +327,15 @@ export default function ApprovalsPage() {
     setExpandedEntryId(entry.id);
   }, [expandedEntryId, deviationTypes]);
 
-  // Save inline edits and approve
-  const handleSaveAndApprove = async (entry: TimeEntryData) => {
+  // Save inline edits only (no approval)
+  const handleSaveOnly = async (entry: TimeEntryData) => {
     if (!user?.id) return;
     try {
-      // Update the time entry with corrected values
       const { supabase } = await import("@/integrations/supabase/client");
-      
-      // Build new clock_in/clock_out from edited times
       const dateStr = entry.date;
       const newClockIn = new Date(`${dateStr}T${editClockIn}:00`).toISOString();
       const newClockOut = new Date(`${dateStr}T${editClockOut}:00`).toISOString();
 
-      // Update the time entry
       await supabase.from("time_entries").update({
         clock_in: newClockIn,
         clock_out: newClockOut,
@@ -347,12 +343,8 @@ export default function ApprovalsPage() {
         manager_notes: editNote || null,
       }).eq("id", entry.id);
 
-      // Save deviation lines
       if (editDeviationLines.length > 0) {
-        // Delete existing lines first
         await supabase.from("time_entry_lines").delete().eq("time_entry_id", entry.id);
-
-        // Insert new lines
         const lineInserts = editDeviationLines.map((line, idx) => ({
           time_entry_id: entry.id,
           deviation_type_id: line.deviation_type_id,
@@ -364,7 +356,43 @@ export default function ApprovalsPage() {
         await supabase.from("time_entry_lines").insert(lineInserts);
       }
 
-      // Approve the entry
+      setExpandedEntryId(null);
+      const { toast } = await import("sonner");
+      toast.success("Timer lagret");
+    } catch (error) {
+      console.error("Save failed:", error);
+    }
+  };
+
+  // Save inline edits and approve
+  const handleSaveAndApprove = async (entry: TimeEntryData) => {
+    if (!user?.id) return;
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const dateStr = entry.date;
+      const newClockIn = new Date(`${dateStr}T${editClockIn}:00`).toISOString();
+      const newClockOut = new Date(`${dateStr}T${editClockOut}:00`).toISOString();
+
+      await supabase.from("time_entries").update({
+        clock_in: newClockIn,
+        clock_out: newClockOut,
+        break_minutes: editBreak,
+        manager_notes: editNote || null,
+      }).eq("id", entry.id);
+
+      if (editDeviationLines.length > 0) {
+        await supabase.from("time_entry_lines").delete().eq("time_entry_id", entry.id);
+        const lineInserts = editDeviationLines.map((line, idx) => ({
+          time_entry_id: entry.id,
+          deviation_type_id: line.deviation_type_id,
+          start_time: line.start_time,
+          end_time: line.end_time,
+          duration_minutes: line.duration_minutes,
+          sort_order: idx,
+        }));
+        await supabase.from("time_entry_lines").insert(lineInserts);
+      }
+
       await approveTimeEntries.mutateAsync({
         timeEntryIds: [entry.id],
         approverId: user.id,
