@@ -266,7 +266,7 @@ export default function ApprovalsPage() {
 
   // Multi-select helpers
   const selectableTimesheetIds = filteredApprovals
-    .filter(a => a.type === "timesheet" && Math.abs((a.originalData as TimeEntryData).deviation_minutes) <= 15)
+    .filter(a => a.type === "timesheet")
     .map(a => a.id);
 
   const handleToggleSelect = (id: string) => {
@@ -987,7 +987,7 @@ export default function ApprovalsPage() {
                         <span className="text-sm text-muted-foreground">
                           {selectedIds.length > 0
                             ? `${selectedIds.length} av ${selectableTimesheetIds.length} valgt`
-                            : `Velg alle timelister uten avvik (${selectableTimesheetIds.length})`}
+                            : `Velg alle timelister (${selectableTimesheetIds.length})`}
                         </span>
                       </div>
                       {selectedIds.length > 0 && (
