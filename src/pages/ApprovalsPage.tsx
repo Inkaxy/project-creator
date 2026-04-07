@@ -55,6 +55,9 @@ import {
   Trash2,
   RotateCcw,
   Eye,
+  ChevronDown,
+  ChevronUp,
+  Save,
 } from "lucide-react";
 
 // Icon mapping for absence types
