@@ -90,6 +90,7 @@ interface UnifiedApproval {
 
 export default function ApprovalsPage() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("pending");
   
