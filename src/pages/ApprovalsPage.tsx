@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -6,11 +6,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AvatarWithInitials } from "@/components/ui/avatar-with-initials";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
+import { InlineDeviationEditor, DeviationLine } from "@/components/timesheet/InlineDeviationEditor";
+import { useDeviationTypes } from "@/hooks/useDeviationTypes";
 import {
   Dialog,
   DialogContent,
@@ -51,6 +55,9 @@ import {
   Trash2,
   RotateCcw,
   Eye,
+  ChevronDown,
+  ChevronUp,
+  Save,
 } from "lucide-react";
 
 // Icon mapping for absence types
@@ -107,6 +114,15 @@ export default function ApprovalsPage() {
   // Department filter
   const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
   const { data: departments = [] } = useDepartments();
+
+  // Inline editing state
+  const [expandedEntryId, setExpandedEntryId] = useState<string | null>(null);
+  const [editClockIn, setEditClockIn] = useState("");
+  const [editClockOut, setEditClockOut] = useState("");
+  const [editBreak, setEditBreak] = useState(0);
+  const [editNote, setEditNote] = useState("");
+  const [editDeviationLines, setEditDeviationLines] = useState<DeviationLine[]>([]);
+  const { data: deviationTypes = [] } = useDeviationTypes();
 
   // Fetch all pending absence requests
   const { data: pendingAbsences = [], isLoading: absencesLoading } = usePendingAbsenceRequests();
@@ -272,6 +288,94 @@ export default function ApprovalsPage() {
     setSelectedIds([]);
   };
 
+  // Toggle inline edit expansion
+  const handleToggleExpand = useCallback((entry: TimeEntryData) => {
+    if (expandedEntryId === entry.id) {
+      setExpandedEntryId(null);
+      return;
+    }
+    // Initialize edit fields from entry data
+    const clockIn = entry.clock_in ? format(new Date(entry.clock_in), "HH:mm") : "00:00";
+    const clockOut = entry.clock_out ? format(new Date(entry.clock_out), "HH:mm") : "00:00";
+    setEditClockIn(clockIn);
+    setEditClockOut(clockOut);
+    setEditBreak(entry.break_minutes || 0);
+    setEditNote(entry.manager_notes || "");
+
+    // Create default deviation line (Normal, full shift)
+    const normalType = deviationTypes.find(t => t.code === "normal");
+    const plannedStart = entry.shifts?.planned_start?.slice(0, 5) || clockIn;
+    const plannedEnd = entry.shifts?.planned_end?.slice(0, 5) || clockOut;
+
+    const timeDiff = (s: string, e: string) => {
+      const [sh, sm] = s.split(":").map(Number);
+      const [eh, em] = e.split(":").map(Number);
+      let d = (eh * 60 + em) - (sh * 60 + sm);
+      if (d < 0) d += 24 * 60;
+      return d;
+    };
+
+    const lines: DeviationLine[] = [{
+      id: `line-init-${Date.now()}`,
+      deviation_type_id: normalType?.id || deviationTypes[0]?.id || "",
+      start_time: plannedStart,
+      end_time: clockOut,
+      duration_minutes: timeDiff(plannedStart, clockOut),
+    }];
+
+    setEditDeviationLines(lines);
+    setExpandedEntryId(entry.id);
+  }, [expandedEntryId, deviationTypes]);
+
+  // Save inline edits and approve
+  const handleSaveAndApprove = async (entry: TimeEntryData) => {
+    if (!user?.id) return;
+    try {
+      // Update the time entry with corrected values
+      const { supabase } = await import("@/integrations/supabase/client");
+      
+      // Build new clock_in/clock_out from edited times
+      const dateStr = entry.date;
+      const newClockIn = new Date(`${dateStr}T${editClockIn}:00`).toISOString();
+      const newClockOut = new Date(`${dateStr}T${editClockOut}:00`).toISOString();
+
+      // Update the time entry
+      await supabase.from("time_entries").update({
+        clock_in: newClockIn,
+        clock_out: newClockOut,
+        break_minutes: editBreak,
+        manager_notes: editNote || null,
+      }).eq("id", entry.id);
+
+      // Save deviation lines
+      if (editDeviationLines.length > 0) {
+        // Delete existing lines first
+        await supabase.from("time_entry_lines").delete().eq("time_entry_id", entry.id);
+
+        // Insert new lines
+        const lineInserts = editDeviationLines.map((line, idx) => ({
+          time_entry_id: entry.id,
+          deviation_type_id: line.deviation_type_id,
+          start_time: line.start_time,
+          end_time: line.end_time,
+          duration_minutes: line.duration_minutes,
+          sort_order: idx,
+        }));
+        await supabase.from("time_entry_lines").insert(lineInserts);
+      }
+
+      // Approve the entry
+      await approveTimeEntries.mutateAsync({
+        timeEntryIds: [entry.id],
+        approverId: user.id,
+      });
+
+      setExpandedEntryId(null);
+    } catch (error) {
+      console.error("Save and approve failed:", error);
+    }
+  };
+
   // Handle approve
   const handleApprove = async (approval: UnifiedApproval) => {
     try {
@@ -348,7 +452,7 @@ export default function ApprovalsPage() {
     const Icon = config.icon;
     const isPending = approveAbsence.isPending || managerApproveSwap.isPending || approveTimeEntries.isPending;
 
-    // Enriched timesheet card
+    // Enriched timesheet card with inline editing
     if (approval.type === "timesheet") {
       const entry = approval.originalData as TimeEntryData;
       const clockInTime = entry.clock_in ? format(new Date(entry.clock_in), "HH:mm") : "?";
@@ -369,14 +473,17 @@ export default function ApprovalsPage() {
         ? ((new Date(entry.clock_out).getTime() - new Date(entry.clock_in).getTime()) / 3600000 - (entry.break_minutes || 0) / 60)
         : 0;
       const hasDeviation = Math.abs(entry.deviation_minutes) > 15;
+      const isExpanded = expandedEntryId === entry.id;
 
       return (
         <Card
           key={approval.id}
-          className="transition-shadow hover:shadow-md cursor-pointer group"
+          className={`transition-all hover:shadow-md ${isExpanded ? "ring-2 ring-primary/30" : "cursor-pointer"}`}
           onClick={() => {
-            setSelectedTimeEntry(entry);
-            setTimesheetModalOpen(true);
+            if (!isExpanded) {
+              setSelectedTimeEntry(entry);
+              setTimesheetModalOpen(true);
+            }
           }}
         >
           <CardContent className="p-5">
@@ -453,27 +560,117 @@ export default function ApprovalsPage() {
                 </Button>
                 <Button
                   size="sm"
-                  variant="outline"
+                  variant={isExpanded ? "secondary" : "outline"}
                   className="gap-1.5"
-                  onClick={() => {
-                    setSelectedTimeEntry(entry);
-                    setTimesheetModalOpen(true);
-                  }}
+                  onClick={() => handleToggleExpand(entry)}
                 >
-                  <Pencil className="h-4 w-4" />
+                  {isExpanded ? <ChevronUp className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
                   Rediger
                 </Button>
-                <Button
-                  size="sm"
-                  className="gap-1.5"
-                  onClick={() => handleApprove(approval)}
-                  disabled={isPending}
-                >
-                  {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-                  Godkjenn
-                </Button>
+                {!isExpanded && (
+                  <Button
+                    size="sm"
+                    className="gap-1.5"
+                    onClick={() => handleApprove(approval)}
+                    disabled={isPending}
+                  >
+                    {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+                    Godkjenn
+                  </Button>
+                )}
               </div>
             </div>
+
+            {/* Inline editor panel */}
+            <Collapsible open={isExpanded}>
+              <CollapsibleContent>
+                <div className="mt-4 pt-4 border-t border-border space-y-4" onClick={(e) => e.stopPropagation()}>
+                  {/* Clock correction */}
+                  <div>
+                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
+                      Korriger stempling
+                    </Label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground">Inn</Label>
+                        <Input
+                          type="time"
+                          value={editClockIn}
+                          onChange={(e) => setEditClockIn(e.target.value)}
+                          className="h-9"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground">Ut</Label>
+                        <Input
+                          type="time"
+                          value={editClockOut}
+                          onChange={(e) => setEditClockOut(e.target.value)}
+                          className="h-9"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground">Pause (min)</Label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={editBreak}
+                          onChange={(e) => setEditBreak(Number(e.target.value))}
+                          className="h-9"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Deviation lines */}
+                  <div>
+                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
+                      Fordeling av timer
+                    </Label>
+                    <InlineDeviationEditor
+                      clockIn={editClockIn}
+                      clockOut={editClockOut}
+                      deviationTypes={deviationTypes}
+                      lines={editDeviationLines}
+                      onChange={setEditDeviationLines}
+                    />
+                  </div>
+
+                  {/* Manager note */}
+                  <div>
+                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
+                      Notat
+                    </Label>
+                    <Textarea
+                      value={editNote}
+                      onChange={(e) => setEditNote(e.target.value)}
+                      placeholder="Valgfritt notat fra leder..."
+                      className="min-h-[60px] text-sm"
+                    />
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="flex items-center justify-end gap-2 pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setExpandedEntryId(null)}
+                    >
+                      Avbryt
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="gap-1.5"
+                      onClick={() => handleSaveAndApprove(entry)}
+                      disabled={isPending}
+                    >
+                      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                      Lagre & Godkjenn
+                    </Button>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </CardContent>
         </Card>
       );
