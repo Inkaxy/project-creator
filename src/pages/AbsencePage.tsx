@@ -73,6 +73,10 @@ const AbsencePage = () => {
                 <AbsenceList showAll />
               </TabsContent>
 
+              <TabsContent value="vacation">
+                <VacationManagementPanel />
+              </TabsContent>
+
               <TabsContent value="timebank">
                 <TimeBankManagementPanel />
               </TabsContent>
