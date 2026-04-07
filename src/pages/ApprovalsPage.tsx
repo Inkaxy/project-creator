@@ -580,7 +580,29 @@ export default function ApprovalsPage() {
                   {entry.deviation_reason && (
                     <p className="text-xs text-muted-foreground italic truncate">«{entry.deviation_reason}»</p>
                   )}
-                </div>
+
+                  {/* Saved distribution lines as compact pills */}
+                  {entry.time_entry_lines && entry.time_entry_lines.length > 0 && !isExpanded && (
+                    <div className="flex items-center gap-1.5 flex-wrap mt-1">
+                      {entry.time_entry_lines.map((line) => (
+                        <span
+                          key={line.id}
+                          className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium border"
+                          style={{
+                            borderColor: `${line.deviation_types?.color || 'hsl(var(--border))'}40`,
+                            backgroundColor: `${line.deviation_types?.color || 'hsl(var(--muted))'}10`,
+                            color: line.deviation_types?.color || undefined,
+                          }}
+                        >
+                          <span
+                            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: line.deviation_types?.color || 'hsl(var(--muted-foreground))' }}
+                          />
+                          {line.deviation_types?.name || "Ukjent"}: {(line.duration_minutes / 60).toFixed(1)}t
+                        </span>
+                      ))}
+                    </div>
+                  )}
               </div>
 
               <div className="flex gap-2 items-center self-end sm:self-center" onClick={(e) => e.stopPropagation()}>
