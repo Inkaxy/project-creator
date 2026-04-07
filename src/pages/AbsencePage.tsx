@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Calendar, Wallet } from "lucide-react";
+import { Plus, Calendar, Wallet, Palmtree } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,6 +9,7 @@ import { TimeBankOverviewCard } from "@/components/timesheet/TimeBankOverviewCar
 import { TimeBankManagementPanel } from "@/components/timebank/TimeBankManagementPanel";
 import { AbsenceList } from "@/components/absence/AbsenceList";
 import { AbsenceApprovalsPanel } from "@/components/absence/AbsenceApprovalsPanel";
+import { VacationManagementPanel } from "@/components/absence/VacationManagementPanel";
 import { useAuth } from "@/contexts/AuthContext";
 
 const AbsencePage = () => {
