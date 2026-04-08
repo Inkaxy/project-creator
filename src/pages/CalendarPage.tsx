@@ -98,6 +98,9 @@ export default function CalendarPage() {
     return { calendarDays: days, weekNumbers: weeks };
   }, [currentDate]);
 
+  // Norwegian holidays for current month's year
+  const holidays = useMemo(() => getNorwegianHolidays(currentDate.getFullYear()), [currentDate]);
+
   const dayNames = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"];
   const today = new Date();
   const todayStr = format(today, 'yyyy-MM-dd');
