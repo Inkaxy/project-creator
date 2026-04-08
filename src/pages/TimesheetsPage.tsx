@@ -51,8 +51,10 @@ import {
   Send,
   ChevronLeft,
   ChevronRight,
+  Printer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PrintTimesheetModal } from "@/components/timesheet/PrintTimesheetModal";
 
 const statusConfig = {
   draft: { label: "Kladd", className: "bg-muted text-muted-foreground" },
@@ -91,7 +93,7 @@ export default function TimesheetsPage() {
     entry: null,
   });
   const [rejectReason, setRejectReason] = useState("");
-
+  const [printModalOpen, setPrintModalOpen] = useState(false);
   // Filter entries
   const filteredEntries = entries?.filter((entry) => {
     if (statusFilter === "all") return true;
@@ -209,6 +211,10 @@ export default function TimesheetsPage() {
                 Send til godkjenning
               </Button>
             )}
+            <Button variant="outline" onClick={() => setPrintModalOpen(true)}>
+              <Printer className="mr-2 h-4 w-4" />
+              Skriv ut
+            </Button>
             <Button variant="outline">
               <Download className="mr-2 h-4 w-4" />
               Eksporter
@@ -522,6 +528,12 @@ export default function TimesheetsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <PrintTimesheetModal
+        open={printModalOpen}
+        onOpenChange={setPrintModalOpen}
+        currentWeekStart={currentWeekStart}
+      />
     </MainLayout>
   );
 }
