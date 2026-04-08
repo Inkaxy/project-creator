@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format, startOfMonth, endOfMonth, addMonths, subMonths, getWeek } from "date-fns";
+import { getNorwegianHolidays } from "@/lib/norwegian-holidays";
 import { nb } from "date-fns/locale";
 import { 
   useCalendarEvents, 
