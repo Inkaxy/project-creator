@@ -47,6 +47,7 @@ import ConversationNewPage from "./pages/ConversationNewPage";
 import ConversationDetailPage from "./pages/ConversationDetailPage";
 import ConversationConductPage from "./pages/ConversationConductPage";
 import ConversationQuestionsAdminPage from "./pages/ConversationQuestionsAdminPage";
+import TimeAccountingPage from "./pages/TimeAccountingPage";
 
 const queryClient = new QueryClient();
 
