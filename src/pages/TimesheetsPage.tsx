@@ -211,6 +211,10 @@ export default function TimesheetsPage() {
                 Send til godkjenning
               </Button>
             )}
+            <Button variant="outline" onClick={() => setPrintModalOpen(true)}>
+              <Printer className="mr-2 h-4 w-4" />
+              Skriv ut
+            </Button>
             <Button variant="outline">
               <Download className="mr-2 h-4 w-4" />
               Eksporter
