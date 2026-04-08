@@ -97,6 +97,10 @@ export function RegisterSickLeaveModal({
       onSuccess: () => {
         toast.success("Sykefravær registrert");
         onOpenChange(false);
+        // Check if egenmelding quota is exhausted and notify managers
+        if (leaveType === "egenmelding") {
+          checkAndNotifyQuotaExhaustion(employeeId);
+        }
       },
       onError: () => {
         toast.error("Kunne ikke registrere sykefravær");
