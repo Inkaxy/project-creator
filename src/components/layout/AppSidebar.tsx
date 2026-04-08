@@ -90,6 +90,7 @@ const navigation: NavSection[] = [
       { title: "Timelister", href: "/timelister", icon: Clock },
       { title: "Lønnskjøring", href: "/lonnskjoring", icon: DollarSign },
       { title: "Rapporter", href: "/rapporter", icon: BarChart3 },
+      { title: "Timeregnskap", href: "/timeregnskap", icon: Calculator },
     ],
   },
   {

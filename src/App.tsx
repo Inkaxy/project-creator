@@ -47,6 +47,7 @@ import ConversationNewPage from "./pages/ConversationNewPage";
 import ConversationDetailPage from "./pages/ConversationDetailPage";
 import ConversationConductPage from "./pages/ConversationConductPage";
 import ConversationQuestionsAdminPage from "./pages/ConversationQuestionsAdminPage";
+import TimeAccountingPage from "./pages/TimeAccountingPage";
 
 const queryClient = new QueryClient();
 
@@ -85,6 +86,7 @@ const App = () => (
             <Route path="/disiplinaersaker" element={<ProtectedRoute><DisciplinaryCasesPage /></ProtectedRoute>} />
             <Route path="/lonnskjoring" element={<ProtectedRoute><PayrollPage /></ProtectedRoute>} />
             <Route path="/rapporter" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
+            <Route path="/timeregnskap" element={<ProtectedRoute><TimeAccountingPage /></ProtectedRoute>} />
             <Route path="/vaktoppsett" element={<ProtectedRoute><ShiftSetupPage /></ProtectedRoute>} />
             <Route path="/utstyr" element={<ProtectedRoute><EquipmentPage /></ProtectedRoute>} />
             <Route path="/utstyr/:id" element={<ProtectedRoute><EquipmentDetailPage /></ProtectedRoute>} />
