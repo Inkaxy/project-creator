@@ -51,8 +51,10 @@ import {
   Send,
   ChevronLeft,
   ChevronRight,
+  Printer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PrintTimesheetModal } from "@/components/timesheet/PrintTimesheetModal";
 
 const statusConfig = {
   draft: { label: "Kladd", className: "bg-muted text-muted-foreground" },
