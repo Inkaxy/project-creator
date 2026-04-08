@@ -249,6 +249,7 @@ export default function CalendarPage() {
                         const isToday = dateStr === todayStr;
                         const isWeekend = index >= 5;
                         const isSelected = dateStr === selectedDate;
+                        const holidayName = day ? holidays.get(dateStr) || null : null;
 
                         return (
                           <div
@@ -259,6 +260,7 @@ export default function CalendarPage() {
                               "[&:last-child]:border-r-0",
                               isWeekend && "bg-muted/30",
                               !day && "bg-muted/50 cursor-default",
+                              holidayName && "bg-destructive/5",
                               isSelected && "ring-2 ring-primary ring-inset",
                               day && "hover:bg-accent/50"
                             )}
