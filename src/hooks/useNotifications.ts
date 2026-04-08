@@ -13,6 +13,7 @@ export type NotificationType =
   | "sick_leave_deadline_warning"
   | "sick_leave_deadline_overdue"
   | "sick_leave_registered"
+  | "self_cert_quota_exhausted"
   | "general";
 
 export interface NotificationData {

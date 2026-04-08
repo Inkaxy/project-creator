@@ -45,6 +45,7 @@ const typeConfig: Record<NotificationType, { icon: typeof Bell; className: strin
   sick_leave_deadline_warning: { icon: Thermometer, className: "text-warning" },
   sick_leave_deadline_overdue: { icon: AlertTriangle, className: "text-destructive" },
   sick_leave_registered: { icon: Thermometer, className: "text-primary" },
+  self_cert_quota_exhausted: { icon: AlertTriangle, className: "text-destructive" },
   general: { icon: Bell, className: "text-muted-foreground" },
 };
 
