@@ -30,6 +30,7 @@ import { useEmployees } from "@/hooks/useEmployees";
 import { useCreateSickLeave, SickLeaveType, useSelfCertQuota } from "@/hooks/useSickLeave";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { checkAndNotifyQuotaExhaustion } from "@/hooks/useSelfCertQuotaAlert";
 
 interface RegisterSickLeaveModalProps {
   open: boolean;
