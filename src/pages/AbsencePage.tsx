@@ -100,6 +100,13 @@ const AbsencePage = () => {
         open={requestModalOpen}
         onOpenChange={setRequestModalOpen}
       />
+
+      {isAdminOrManager() && (
+        <AdminAbsenceModal
+          open={adminModalOpen}
+          onOpenChange={setAdminModalOpen}
+        />
+      )}
     </MainLayout>
   );
 };
