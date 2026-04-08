@@ -528,6 +528,12 @@ export default function TimesheetsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <PrintTimesheetModal
+        open={printModalOpen}
+        onOpenChange={setPrintModalOpen}
+        currentWeekStart={currentWeekStart}
+      />
     </MainLayout>
   );
 }
