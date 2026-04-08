@@ -29,10 +29,18 @@ const AbsencePage = () => {
               Søk om fravær og se dine kontoer
             </p>
           </div>
-          <Button onClick={() => setRequestModalOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Søk om fravær
-          </Button>
+          <div className="flex gap-2">
+            {isAdminOrManager() && (
+              <Button variant="outline" onClick={() => setAdminModalOpen(true)}>
+                <UserPlus className="mr-2 h-4 w-4" />
+                Registrer for ansatt
+              </Button>
+            )}
+            <Button onClick={() => setRequestModalOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Søk om fravær
+            </Button>
+          </div>
         </div>
 
         {/* Account Balances */}
