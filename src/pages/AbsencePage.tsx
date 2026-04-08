@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Plus, Calendar, Wallet, Palmtree } from "lucide-react";
+import { Plus, Calendar, Wallet, Palmtree, UserPlus } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AbsenceRequestModal } from "@/components/absence/AbsenceRequestModal";
+import { AdminAbsenceModal } from "@/components/absence/AdminAbsenceModal";
 import { AccountBalanceCard } from "@/components/absence/AccountBalanceCard";
 import { TimeBankOverviewCard } from "@/components/timesheet/TimeBankOverviewCard";
 import { TimeBankManagementPanel } from "@/components/timebank/TimeBankManagementPanel";
