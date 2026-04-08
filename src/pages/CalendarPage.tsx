@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format, startOfMonth, endOfMonth, addMonths, subMonths, getWeek } from "date-fns";
+import { getNorwegianHolidays } from "@/lib/norwegian-holidays";
 import { nb } from "date-fns/locale";
 import { 
   useCalendarEvents, 
@@ -96,6 +97,9 @@ export default function CalendarPage() {
 
     return { calendarDays: days, weekNumbers: weeks };
   }, [currentDate]);
+
+  // Norwegian holidays for current month's year
+  const holidays = useMemo(() => getNorwegianHolidays(currentDate.getFullYear()), [currentDate]);
 
   const dayNames = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"];
   const today = new Date();
@@ -245,6 +249,7 @@ export default function CalendarPage() {
                         const isToday = dateStr === todayStr;
                         const isWeekend = index >= 5;
                         const isSelected = dateStr === selectedDate;
+                        const holidayName = day ? holidays.get(dateStr) || null : null;
 
                         return (
                           <div
@@ -255,6 +260,7 @@ export default function CalendarPage() {
                               "[&:last-child]:border-r-0",
                               isWeekend && "bg-muted/30",
                               !day && "bg-muted/50 cursor-default",
+                              holidayName && "bg-destructive/5",
                               isSelected && "ring-2 ring-primary ring-inset",
                               day && "hover:bg-accent/50"
                             )}
@@ -262,15 +268,31 @@ export default function CalendarPage() {
                             {day && (
                               <>
                                 <div className="flex items-center justify-between mb-1">
-                                  <div
-                                    className={cn(
-                                      "flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium",
-                                      isToday
-                                        ? "bg-primary text-primary-foreground"
-                                        : "text-foreground"
+                                  <div className="flex items-center gap-1">
+                                    <div
+                                      className={cn(
+                                        "flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium",
+                                        isToday
+                                          ? "bg-primary text-primary-foreground"
+                                          : holidayName
+                                          ? "text-destructive font-bold"
+                                          : "text-foreground"
+                                      )}
+                                    >
+                                      {day}
+                                    </div>
+                                    {holidayName && (
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Badge variant="destructive" className="text-[9px] px-1 py-0 leading-tight truncate max-w-[80px]">
+                                            {holidayName}
+                                          </Badge>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top">
+                                          <p>{holidayName}</p>
+                                        </TooltipContent>
+                                      </Tooltip>
                                     )}
-                                  >
-                                    {day}
                                   </div>
                                   {/* Weather inline */}
                                   {showWeather && (() => {
