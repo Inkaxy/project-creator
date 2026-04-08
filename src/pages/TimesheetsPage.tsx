@@ -93,7 +93,7 @@ export default function TimesheetsPage() {
     entry: null,
   });
   const [rejectReason, setRejectReason] = useState("");
-
+  const [printModalOpen, setPrintModalOpen] = useState(false);
   // Filter entries
   const filteredEntries = entries?.filter((entry) => {
     if (statusFilter === "all") return true;
