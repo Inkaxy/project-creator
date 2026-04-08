@@ -16,6 +16,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const AbsencePage = () => {
   const { isAdminOrManager } = useAuth();
   const [requestModalOpen, setRequestModalOpen] = useState(false);
+  const [adminModalOpen, setAdminModalOpen] = useState(false);
 
   return (
     <MainLayout>
