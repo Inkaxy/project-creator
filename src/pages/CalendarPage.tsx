@@ -268,15 +268,31 @@ export default function CalendarPage() {
                             {day && (
                               <>
                                 <div className="flex items-center justify-between mb-1">
-                                  <div
-                                    className={cn(
-                                      "flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium",
-                                      isToday
-                                        ? "bg-primary text-primary-foreground"
-                                        : "text-foreground"
+                                  <div className="flex items-center gap-1">
+                                    <div
+                                      className={cn(
+                                        "flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium",
+                                        isToday
+                                          ? "bg-primary text-primary-foreground"
+                                          : holidayName
+                                          ? "text-destructive font-bold"
+                                          : "text-foreground"
+                                      )}
+                                    >
+                                      {day}
+                                    </div>
+                                    {holidayName && (
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Badge variant="destructive" className="text-[9px] px-1 py-0 leading-tight truncate max-w-[80px]">
+                                            {holidayName}
+                                          </Badge>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top">
+                                          <p>{holidayName}</p>
+                                        </TooltipContent>
+                                      </Tooltip>
                                     )}
-                                  >
-                                    {day}
                                   </div>
                                   {/* Weather inline */}
                                   {showWeather && (() => {
