@@ -1,38 +1,45 @@
+## Mål
+Legge til flere oppføringer som vises på `/godkjenninger`-siden, slik at du har mer data å teste godkjenningsflyten med.
 
-# Forbedret inline timeredigering
+## Bakgrunn
+Godkjenningssiden viser tre typer oppføringer:
+1. **Fraværssøknader** (status `pending`)
+2. **Vaktbytter** (status `pending_manager`)
+3. **Timelister / stemplede timer** (status `submitted`, fra siste 30 dager)
 
-## Redesign av det ekspanderte redigeringspanelet
+I dag er listen tynn fordi det finnes få oppføringer i disse statusene i databasen.
 
-### 1. Tydelig planlagt vs faktisk sammenligning (øverst)
-Vis en visuell sammenligning med to rader:
-```
-┌──────────────────────────────────────────────────┐
-│  📋 Planlagt    08:00 – 16:00    30 min pause    │  7.5t
-│  ⏱  Faktisk    09:55 – 18:50    30 min pause    │  8.4t
-│                                  Avvik: +50m      │
-└──────────────────────────────────────────────────┘
-```
-Read-only oppsummering som gir kontekst før man redigerer.
+## Plan
 
-### 2. Enklere redigeringsseksjon
-Én samlet seksjon "Korriger tid" med inn/ut/pause på én linje:
-```
-KORRIGER TID
-Inn: [09:55]  →  Ut: [18:50]  |  Pause: [30] min  |  Netto: 8.4t
-```
-Netto-timer oppdateres live basert på inn/ut/pause.
+### 1. Sjekk eksisterende demo-data
+Kjør et raskt søk i databasen for å se hvilke ansatte, avdelinger og vakter som finnes, så de nye oppføringene knyttes til ekte profiler (ikke ugyldige ID-er).
 
-### 3. Fordeling av timer (forbedret)
-Beholder InlineDeviationEditor men med tydligere overskrift:
-```
-FORDELING PÅ LØNNSARTER
-Normal    │ 08:00 │ 16:00 │ 7.5t   [🗑]
-Overtid   │ 16:00 │ 18:50 │ 2.8t   [🗑]
-                    [+ Legg til linje]
-                    Sum: 10.3t / 8.4t  ← rødt hvis mismatch
-```
+### 2. Opprett en seed-migrasjon som legger til:
+- **~8 nye timelister til godkjenning** (`time_entries.status = 'submitted'`)
+  - Spredt over de siste 14 dagene
+  - Variert: noen normale, noen med avvik (startet sent, sluttet sent, lang pause) for å teste avviksflyten
+  - Knyttet til reelle `employee_id` fra `profiles` på tvers av flere avdelinger
+  - Inkluderer `clock_in`, `clock_out`, `break_minutes`, `date`
+- **~4 nye fraværssøknader** (`absence_requests.status = 'pending'`)
+  - Blanding av Ferie, Avspasering og Permisjon med lønn
+  - Datoer fram i tid (1–6 uker fram)
+  - Forskjellige ansatte
+- **~3 nye vaktbytter** (`shift_swaps.status = 'pending_manager'`)
+  - Bruker eksisterende publiserte vakter som `original_shift_id`
+  - Variert type: `swap`, `giveaway`, `cover`
 
-### 4. Notat + handlingsknapper (uendret)
+### 3. Verifisering
+Etter migrasjonen kjøres åpnes `/godkjenninger`-siden og det bekreftes at:
+- Antall i fanen "Til godkjenning" har økt
+- Filter pr. avdeling fungerer
+- Avviks-editoren åpnes for timeposter med avvik
 
-### Filer som endres
-- `src/pages/ApprovalsPage.tsx` — kun inline editor-panelet redesignes (linje 614-710)
+## Tekniske detaljer
+- All seeding gjøres som en SQL-migrasjon (ingen kodeendringer nødvendig).
+- ID-er hentes via `SELECT` i migrasjonen (ikke hardkodet) for å unngå brudd hvis demo-data endres.
+- Bruker `gen_random_uuid()` for nye rader og `now() - interval 'X days'` for tidsstempler.
+- Ingen RLS-endringer; bruker eksisterende roller.
+
+## Det dette ikke gjør
+- Endrer ikke selve godkjenningssiden eller logikken bak.
+- Sletter ikke eksisterende godkjenninger.
