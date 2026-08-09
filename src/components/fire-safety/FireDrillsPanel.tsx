@@ -234,7 +234,7 @@ export function FireDrillsPanel() {
       ) : (
         <div className="grid gap-4">
           {drills.map(drill => (
-            <Card key={drill.id} className="hover:shadow-md transition-shadow">
+            <Card key={drill.id} className="hover:border-border-strong transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">

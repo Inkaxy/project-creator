@@ -301,7 +301,7 @@ export default function MyPage() {
               {courses.map((course, index) => (
                 <div
                   key={index}
-                  className="rounded-lg border border-border p-4 transition-shadow hover:shadow-md"
+                  className="rounded-lg border border-border p-4 transition-colors hover:border-border-strong"
                 >
                   <div className="mb-3 flex items-start justify-between">
                     <h4 className="font-medium text-foreground">{course.name}</h4>

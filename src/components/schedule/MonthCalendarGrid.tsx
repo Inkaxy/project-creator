@@ -305,7 +305,7 @@ function ShiftItem({
       onClick={onClick}
       className={cn(
         "group relative flex items-center gap-1 px-1 py-0.5 rounded text-[10px] cursor-pointer transition-all",
-        "hover:shadow-sm",
+        "hover:border-border-strong",
         isSelected && "ring-2 ring-primary ring-offset-1"
       )}
       style={{

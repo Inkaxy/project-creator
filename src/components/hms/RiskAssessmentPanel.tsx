@@ -340,7 +340,7 @@ export function RiskAssessmentPanel() {
       ) : (
         <div className="grid gap-4">
           {risks.map((risk) => (
-            <Card key={risk.id} className="hover:shadow-md transition-shadow">
+            <Card key={risk.id} className="hover:border-border-strong transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">

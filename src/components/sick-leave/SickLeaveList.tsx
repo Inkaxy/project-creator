@@ -86,7 +86,7 @@ export function SickLeaveList({ status = "all" }: SickLeaveListProps) {
           ) + 1;
           
           return (
-            <Card key={sickLeave.id} className="hover:shadow-md transition-shadow">
+            <Card key={sickLeave.id} className="hover:border-border-strong transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start gap-4">
                   {/* Avatar */}

@@ -57,7 +57,7 @@ export function ConversationCard({ conversation, onClick }: ConversationCardProp
 
   return (
     <Card 
-      className="cursor-pointer transition-all hover:shadow-md hover:border-primary/20"
+      className="cursor-pointer transition-all hover:border-border-strong hover:border-primary/20"
       onClick={onClick}
     >
       <CardContent className="flex items-center gap-4 py-4">

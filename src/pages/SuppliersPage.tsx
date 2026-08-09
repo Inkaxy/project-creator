@@ -130,7 +130,7 @@ export default function SuppliersPage() {
         ) : filteredSuppliers && filteredSuppliers.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredSuppliers.map((supplier) => (
-              <Card key={supplier.id} className="hover:shadow-md transition-shadow">
+              <Card key={supplier.id} className="hover:border-border-strong transition-shadow">
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">

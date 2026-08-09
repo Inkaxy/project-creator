@@ -521,7 +521,7 @@ export default function ApprovalsPage() {
       return (
         <Card
           key={approval.id}
-          className={`transition-all hover:shadow-md ${isExpanded ? "ring-2 ring-primary/30" : "cursor-pointer"}`}
+          className={`transition-all hover:border-border-strong ${isExpanded ? "ring-2 ring-primary/30" : "cursor-pointer"}`}
           onClick={() => {
             if (!isExpanded) {
               handleToggleExpand(entry);
@@ -833,7 +833,7 @@ export default function ApprovalsPage() {
     }
 
     return (
-      <Card key={approval.id} className="transition-shadow hover:shadow-md">
+      <Card key={approval.id} className="transition-colors hover:border-border-strong">
         <CardContent className="p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-4">
@@ -1166,7 +1166,7 @@ export default function ApprovalsPage() {
                 {approvedAbsences.map(absence => (
                   <Card 
                     key={absence.id} 
-                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    className="cursor-pointer hover:border-border-strong transition-shadow"
                     onClick={() => {
                       setSelectedAbsence(absence);
                       setDetailModalOpen(true);
@@ -1217,7 +1217,7 @@ export default function ApprovalsPage() {
                 {rejectedAbsences.map(absence => (
                   <Card 
                     key={absence.id} 
-                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    className="cursor-pointer hover:border-border-strong transition-shadow"
                     onClick={() => {
                       setSelectedAbsence(absence);
                       setDetailModalOpen(true);
