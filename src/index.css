@@ -179,9 +179,7 @@
 /* Berøringsmål minst 44x44 px i comfortable */
 [data-density="comfortable"] button,
 [data-density="comfortable"] a[role="button"],
-[data-density="comfortable"] [role="checkbox"],
-[data-density="comfortable"] [role="switch"],
-[data-density="comfortable"] [role="radio"] {
+[data-density="comfortable"] [role="switch"] {
   min-height: 2.75rem;
   min-width: 2.75rem;
 }
@@ -189,10 +187,8 @@
 [data-density="comfortable"] [role="radio"] {
   height: 1.5rem;
   width: 1.5rem;
-}
-[data-density="comfortable"] button.h-auto,
-[data-density="comfortable"] a[role="button"].h-auto {
-  min-height: 2.75rem;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 0.625rem transparent;
 }
 
 /* Skygge kun for svevende lag */
