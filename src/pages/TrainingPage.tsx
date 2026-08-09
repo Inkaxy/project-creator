@@ -54,35 +54,35 @@ const COURSE_CATEGORIES: CourseCategory[] = [
     title: "HMS", 
     icon: Shield, 
     description: "Helse, miljø og sikkerhet",
-    color: "text-success-text"
+    color: "text-success"
   },
   { 
     id: "hms-ledere", 
     title: "HMS for Ledere", 
     icon: UserCog, 
     description: "Lovpålagt HMS-opplæring for ledere",
-    color: "text-success-text"
+    color: "text-success"
   },
   { 
     id: "mattrygghet", 
     title: "Mattrygghet", 
     icon: Utensils, 
     description: "Hygiene og matsikkerhet",
-    color: "text-info-text"
+    color: "text-info"
   },
   { 
     id: "brannvern", 
     title: "Brannvern", 
     icon: Flame, 
     description: "Forebygging og beredskap",
-    color: "text-warning-text"
+    color: "text-warning"
   },
   { 
     id: "ledelse", 
     title: "Ledelse", 
     icon: Users, 
     description: "Lederutvikling og opplæring",
-    color: "text-ai-text"
+    color: "text-ai"
   },
   { 
     id: "obligatorisk", 

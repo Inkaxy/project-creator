@@ -36,7 +36,7 @@ function getServiceTypeBadge(type: string) {
     planned: { label: "Planlagt", className: "bg-info-light text-info-text border border-info-border" },
     preventive: { label: "Forebyggende", className: "bg-success-light text-success-text border border-success-border" },
     repair: { label: "Reparasjon", className: "bg-warning-light text-warning-text border border-warning-border" },
-    warranty: { label: "Garanti", className: "bg-ai-light text-ai-text border border-ai-border" },
+    warranty: { label: "Garanti", className: "bg-ai-light text-ai border border-ai-border" },
     calibration: { label: "Kalibrering", className: "bg-info-light text-info-text border border-info-border" },
     certification: { label: "Sertifisering", className: "bg-info-light text-info-text border border-info-border" },
   };

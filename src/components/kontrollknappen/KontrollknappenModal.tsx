@@ -67,7 +67,7 @@ const INSPECTION_TYPES = [
     id: "skjenkekontroll" as InspectionType, 
     title: "Skjenkekontroll", 
     icon: Wine, 
-    color: "text-ai-text",
+    color: "text-ai",
     description: "Bevilling, kunnskapsprøve, rutiner"
   },
 ];

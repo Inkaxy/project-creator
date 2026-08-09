@@ -50,7 +50,7 @@ const TYPE_CONFIG = {
   skjenkekontroll: { 
     title: "Skjenkekontroll", 
     icon: Wine, 
-    color: "text-ai-text",
+    color: "text-ai",
     bgColor: "bg-ai-light border border-ai-border"
   },
 };

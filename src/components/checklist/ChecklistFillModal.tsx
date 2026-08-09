@@ -126,7 +126,7 @@ export function ChecklistFillModal({
       case "closing":
         return "bg-warning-light text-warning-text border border-warning-border";
       case "cleaning":
-        return "bg-ai-light text-ai-text border border-ai-border";
+        return "bg-ai-light text-ai border border-ai-border";
       default:
         return "bg-muted text-muted-foreground";
     }
