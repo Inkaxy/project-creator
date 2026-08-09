@@ -667,9 +667,9 @@ export function WageLaddersManagementModal({
               )}
 
               {showBackPayPreview && backPayCalculations.length > 0 && (
-                <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800">
+                <Card className="border-warning-border bg-warning-light">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2 text-amber-800 dark:text-amber-200">
+                    <CardTitle className="text-sm flex items-center gap-2 text-warning-text">
                       <AlertTriangle className="h-4 w-4" />
                       Etterbetaling vil beregnes
                     </CardTitle>

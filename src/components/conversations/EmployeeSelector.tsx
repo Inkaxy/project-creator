@@ -115,13 +115,13 @@ export function EmployeeSelector({ selectedEmployees, onSelectionChange }: Emplo
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{employee.full_name}</span>
                   {neverHadConversation && (
-                    <Badge variant="outline" className="gap-1 border-orange-500 text-orange-500">
+                    <Badge variant="outline" className="gap-1 border-warning-border text-warning-text">
                       <AlertCircle className="h-3 w-3" />
                       Aldri hatt samtale
                     </Badge>
                   )}
                   {longTimeSince && (
-                    <Badge variant="outline" className="gap-1 border-yellow-500 text-yellow-500">
+                    <Badge variant="outline" className="gap-1 border-warning-border text-warning-text">
                       <Clock className="h-3 w-3" />
                       {monthsSinceLastConv}+ mnd siden
                     </Badge>

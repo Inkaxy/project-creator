@@ -30,11 +30,11 @@ const statusLabels: Record<ConversationStatus, string> = {
 
 const statusColors: Record<ConversationStatus, string> = {
   draft: 'bg-muted text-muted-foreground',
-  scheduled: 'bg-blue-500/10 text-blue-500',
-  confirmed: 'bg-green-500/10 text-green-500',
-  in_progress: 'bg-yellow-500/10 text-yellow-500',
-  completed: 'bg-green-500/10 text-green-500',
-  cancelled: 'bg-red-500/10 text-red-500',
+  scheduled: 'bg-info-light text-info-text border border-info-border',
+  confirmed: 'bg-success-light text-success-text border border-success-border',
+  in_progress: 'bg-warning-light text-warning-text border border-warning-border',
+  completed: 'bg-success-light text-success-text border border-success-border',
+  cancelled: 'bg-destructive-light text-destructive-text border border-destructive-border',
 };
 
 const locationIcons = {
@@ -103,7 +103,7 @@ export function ConversationCard({ conversation, onClick }: ConversationCardProp
 
             {conversation.status === 'completed' && conversation.overall_rating && (
               <div className="flex items-center gap-1">
-                <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                <Star className="h-4 w-4 fill-warning text-warning" />
                 <span>{conversation.overall_rating}/5</span>
               </div>
             )}

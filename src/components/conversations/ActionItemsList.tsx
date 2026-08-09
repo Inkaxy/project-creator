@@ -15,8 +15,8 @@ interface ActionItemsListProps {
 
 const priorityColors: Record<ActionPriority, string> = {
   low: 'bg-muted text-muted-foreground',
-  medium: 'bg-yellow-500/10 text-yellow-600',
-  high: 'bg-red-500/10 text-red-600',
+  medium: 'bg-warning-light text-warning-text border border-warning-border',
+  high: 'bg-destructive-light text-destructive-text border border-destructive-border',
 };
 
 const priorityLabels: Record<ActionPriority, string> = {
@@ -88,7 +88,7 @@ export function ActionItemsList({ conversationId, canManage }: ActionItemsListPr
                     </span>
                   )}
                   {action.due_date && (
-                    <span className={`flex items-center gap-1 text-xs ${isOverdue ? 'text-red-500' : 'text-muted-foreground'}`}>
+                    <span className={`flex items-center gap-1 text-xs ${isOverdue ? 'text-destructive-text' : 'text-muted-foreground'}`}>
                       {isOverdue && <AlertCircle className="h-3 w-3" />}
                       <Clock className="h-3 w-3" />
                       {format(new Date(action.due_date), 'dd.MM.yyyy', { locale: nb })}

@@ -210,7 +210,7 @@ export default function ConversationConductPage() {
                     idx === currentIndex
                       ? 'bg-primary text-primary-foreground'
                       : isAnswered
-                        ? 'bg-green-500/20 text-green-600'
+                        ? 'bg-success-light text-success-text border border-success-border'
                         : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >

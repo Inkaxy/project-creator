@@ -17,9 +17,9 @@ const accountIcons: Record<EmployeeAccount["account_type"], typeof Palmtree> = {
 };
 
 const accountColors: Record<EmployeeAccount["account_type"], string> = {
-  vacation: "text-emerald-500",
-  time_bank: "text-blue-500",
-  night_bank: "text-purple-500",
+  vacation: "text-success-text",
+  time_bank: "text-info-text",
+  night_bank: "text-ai-text",
 };
 
 export const AccountBalanceCard = ({ employeeId, year, compact = false }: AccountBalanceCardProps) => {

@@ -109,7 +109,7 @@ export function SelfCertQuotasPanel() {
           </CardContent>
         </Card>
 
-        <Card className={summary.highUsage.length > 0 ? "border-yellow-500" : ""}>
+        <Card className={summary.highUsage.length > 0 ? "border-warning-border" : ""}>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Høy bruk (75%+)
@@ -162,7 +162,7 @@ export function SelfCertQuotasPanel() {
                   isDanger 
                     ? "border-destructive bg-destructive/5" 
                     : isWarning 
-                      ? "border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20" 
+                      ? "border-warning-border bg-warning-light" 
                       : ""
                 }`}
               >
@@ -191,7 +191,7 @@ export function SelfCertQuotasPanel() {
                       </Badge>
                     )}
                     {isWarning && !isDanger && (
-                      <Badge variant="outline" className="text-yellow-600 border-yellow-500">
+                      <Badge variant="outline" className="text-warning-text border-warning-border">
                         Høy bruk
                       </Badge>
                     )}
@@ -209,7 +209,7 @@ export function SelfCertQuotasPanel() {
                     </div>
                     <Progress 
                       value={Math.min(daysPct, 100)} 
-                      className={`h-2 ${isDanger ? '[&>div]:bg-destructive' : isWarning ? '[&>div]:bg-yellow-500' : ''}`}
+                      className={`h-2 ${isDanger ? '[&>div]:bg-destructive' : isWarning ? '[&>div]:bg-warning' : ''}`}
                     />
                     <p className="text-xs text-muted-foreground">
                       {daysRemaining > 0 ? `${daysRemaining} dager igjen` : 'Ingen dager igjen'}

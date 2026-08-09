@@ -253,8 +253,8 @@ export const VacationManagementPanel = () => {
         <Card>
           <CardContent className="pt-4 pb-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-500/10">
-                <Palmtree className="h-5 w-5 text-emerald-500" />
+              <div className="p-2 rounded-lg bg-success-light">
+                <Palmtree className="h-5 w-5 text-success" />
               </div>
               <div>
                 <p className="text-2xl font-bold">
@@ -268,8 +268,8 @@ export const VacationManagementPanel = () => {
         <Card>
           <CardContent className="pt-4 pb-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-500/10">
-                <Palmtree className="h-5 w-5 text-blue-500" />
+              <div className="p-2 rounded-lg bg-info-light">
+                <Palmtree className="h-5 w-5 text-info" />
               </div>
               <div>
                 <p className="text-2xl font-bold">
@@ -283,8 +283,8 @@ export const VacationManagementPanel = () => {
         <Card>
           <CardContent className="pt-4 pb-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-500/10">
-                <Palmtree className="h-5 w-5 text-amber-500" />
+              <div className="p-2 rounded-lg bg-warning-light">
+                <Palmtree className="h-5 w-5 text-warning" />
               </div>
               <div>
                 <p className="text-2xl font-bold">

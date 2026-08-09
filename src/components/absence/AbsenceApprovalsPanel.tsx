@@ -133,7 +133,7 @@ export const AbsenceApprovalsPanel = () => {
                 )}
 
                 {request.overlapping_shift_action && (
-                  <div className="flex items-center gap-1 mt-2 text-sm text-amber-600">
+                  <div className="flex items-center gap-1 mt-2 text-sm text-warning-text">
                     <AlertTriangle className="h-3 w-3" />
                     <span>
                       Overlappende vakter:{" "}

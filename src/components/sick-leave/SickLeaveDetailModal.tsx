@@ -227,7 +227,7 @@ export function SickLeaveDetailModal({
               </CardHeader>
               <CardContent>
                 {employerStatus.isComplete ? (
-                  <div className="flex items-center gap-2 text-green-600">
+                  <div className="flex items-center gap-2 text-success-text">
                     <CheckCircle className="h-5 w-5" />
                     <span className="font-medium">Arbeidsgiverperioden fullført</span>
                   </div>
@@ -307,16 +307,16 @@ export function SickLeaveDetailModal({
 
             {/* NAV inntektsmelding status */}
             {employerStatus.isComplete && sickLeave.status === "active" && (
-              <Card className="border-blue-500 bg-blue-50 dark:bg-blue-950/20">
+              <Card className="border-info-border bg-info-light">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                  <CardTitle className="text-base flex items-center gap-2 text-info-text">
                     <Send className="h-4 w-4" />
                     NAV Inntektsmelding
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm">
                   {sickLeave.income_report_sent_at ? (
-                    <div className="flex items-center gap-2 text-green-600">
+                    <div className="flex items-center gap-2 text-success-text">
                       <CheckCircle className="h-4 w-4" />
                       <span>
                         Sendt {format(new Date(sickLeave.income_report_sent_at), "d. MMM yyyy", { locale: nb })}
@@ -376,7 +376,7 @@ export function SickLeaveDetailModal({
                       key={deadline.label}
                       className={`flex items-center justify-between p-3 rounded-lg border ${
                         deadline.completedAt
-                          ? "bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-800"
+                          ? "bg-success-light border-success-border"
                           : isOverdue
                           ? "bg-destructive/10 border-destructive"
                           : ""
@@ -385,7 +385,7 @@ export function SickLeaveDetailModal({
                       <div className="flex items-center gap-3">
                         <div className={`p-2 rounded-full ${
                           deadline.completedAt
-                            ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                            ? "bg-success-light text-success-text border border-success-border"
                             : isOverdue
                             ? "bg-destructive/20 text-destructive"
                             : "bg-muted text-muted-foreground"
@@ -406,7 +406,7 @@ export function SickLeaveDetailModal({
 
                       <div className="flex items-center gap-2">
                         {deadline.completedAt ? (
-                          <Badge variant="outline" className="text-green-600">
+                          <Badge variant="outline" className="text-success-text">
                             Fullført
                           </Badge>
                         ) : (

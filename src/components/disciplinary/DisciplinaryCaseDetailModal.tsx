@@ -209,13 +209,13 @@ export function DisciplinaryCaseDetailModal({
 
               {/* Blocking Info */}
               {(displayCase.blocks_clock_in || displayCase.blocks_timesheet) && (
-                <Card className="border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950">
+                <Card className="border-warning-border bg-warning-light">
                   <CardContent className="py-4">
-                    <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
+                    <div className="flex items-center gap-2 text-warning-text">
                       <Shield className="h-5 w-5" />
                       <span className="font-medium">Blokkering aktiv</span>
                     </div>
-                    <div className="mt-2 text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
+                    <div className="mt-2 text-sm text-warning-text space-y-1">
                       {displayCase.blocks_clock_in && (
                         <p>• Ansatt kan ikke stemple inn før saken er kvittert</p>
                       )}
@@ -305,9 +305,9 @@ export function DisciplinaryCaseDetailModal({
                       <CardContent className="py-4">
                         <div className="flex items-center gap-2 mb-2">
                           {response.response_type === 'disputed' ? (
-                            <XCircle className="h-5 w-5 text-red-600" />
+                            <XCircle className="h-5 w-5 text-destructive" />
                           ) : (
-                            <CheckCircle2 className="h-5 w-5 text-green-600" />
+                            <CheckCircle2 className="h-5 w-5 text-success" />
                           )}
                           <span className="font-medium">
                             {response.response_type === 'disputed' 
@@ -406,7 +406,7 @@ export function DisciplinaryCaseDetailModal({
             <AlertDialogDescription>
               Saken vil bli sendt til {displayCase.employee?.full_name} og de vil bli bedt om å kvittere.
               {(displayCase.blocks_clock_in || displayCase.blocks_timesheet) && (
-                <span className="block mt-2 text-yellow-600">
+                <span className="block mt-2 text-warning-text">
                   ⚠️ Ansatten vil bli blokkert fra {displayCase.blocks_clock_in && 'innstempling'}
                   {displayCase.blocks_clock_in && displayCase.blocks_timesheet && ' og '}
                   {displayCase.blocks_timesheet && 'timelistelevering'} til saken er kvittert.
