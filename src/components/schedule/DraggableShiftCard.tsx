@@ -75,12 +75,14 @@ export function DraggableShiftCard({ shift, onShiftClick, isAdminOrManager, show
       onDragEnd={handleDragEnd}
       onClick={(e) => { e.stopPropagation(); onShiftClick(shift); }}
       className={cn(
-        "mb-1 cursor-pointer rounded-lg p-2 text-xs transition-all hover:scale-[1.02] group relative",
+        "mb-1 cursor-pointer rounded-md p-2 text-xs transition-all group relative",
         !shift.employee_id 
-          ? "border-2 border-dashed border-primary bg-primary/10" 
+          ? "bg-shift-open-light border-l-[3px] border-l-shift-open border border-dashed border-shift-open" 
           : shift.is_night_shift 
-            ? "bg-destructive/10 text-destructive" 
-            : "bg-primary/10 text-primary",
+            ? "bg-shift-night-light border-l-[3px] border-l-shift-night" 
+            : Number(shift.planned_start?.slice(0, 2)) >= 16
+              ? "bg-shift-evening-light border-l-[3px] border-l-shift-evening"
+              : "bg-shift-day-light border-l-[3px] border-l-shift-day text-foreground",
         isAdminOrManager && "cursor-grab active:cursor-grabbing"
       )}
     >
@@ -99,8 +101,8 @@ export function DraggableShiftCard({ shift, onShiftClick, isAdminOrManager, show
             style={{ backgroundColor: shift.functions.color || "#3B82F6" }}
           />
           <div>
-            <p className="font-medium">{shift.functions.name}</p>
-            <p className="opacity-80">{shift.planned_start?.slice(0,5)}-{shift.planned_end?.slice(0,5)}</p>
+            <p className="font-normal text-detail text-muted-foreground">{shift.functions.name}</p>
+            <p className="font-normal text-detail text-muted-foreground tabular-nums">{shift.planned_start?.slice(0,5)}-{shift.planned_end?.slice(0,5)}</p>
           </div>
         </div>
       ) : shift.profiles ? (
@@ -108,7 +110,7 @@ export function DraggableShiftCard({ shift, onShiftClick, isAdminOrManager, show
           <AvatarWithInitials name={shift.profiles.full_name} size="sm" />
           <div>
             <p className="font-medium">{shift.profiles.full_name.split(" ")[0]}</p>
-            <p className="opacity-80">{shift.planned_start?.slice(0,5)}-{shift.planned_end?.slice(0,5)}</p>
+            <p className="font-normal text-detail text-muted-foreground tabular-nums">{shift.planned_start?.slice(0,5)}-{shift.planned_end?.slice(0,5)}</p>
           </div>
         </div>
       ) : (
