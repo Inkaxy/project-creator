@@ -200,7 +200,7 @@ export default function OnboardingPage() {
   const progress = ((currentStep - 1) / 3) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 p-4">
+    <div className="min-h-screen bg-background p-4">
       <div className="mx-auto max-w-2xl">
         {/* Header */}
         <div className="mb-8 text-center">

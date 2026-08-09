@@ -42,7 +42,7 @@ export function SickLeaveList({ status = "all" }: SickLeaveListProps) {
     switch (type) {
       case "egenmelding": return "bg-info-light text-info-text border border-info-border";
       case "sykemelding": return "bg-warning-light text-warning-text border border-warning-border";
-      case "gradert_sykemelding": return "bg-ai-light text-ai-text border border-ai-border";
+      case "gradert_sykemelding": return "bg-ai-light text-ai border border-ai-border";
       case "arbeidsrelatert_sykdom": return "bg-destructive-light text-destructive-text border border-destructive-border";
       default: return "bg-muted text-muted-foreground";
     }

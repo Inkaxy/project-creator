@@ -460,7 +460,7 @@ export default function TimesheetsPage() {
         <div className="grid gap-4 sm:grid-cols-3">
           <Card>
             <CardContent className="flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-light">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-light">
                 <Clock className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -471,7 +471,7 @@ export default function TimesheetsPage() {
           </Card>
           <Card>
             <CardContent className="flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-night-light">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-night-light">
                 <Clock className="h-6 w-6 text-night" />
               </div>
               <div>
@@ -482,7 +482,7 @@ export default function TimesheetsPage() {
           </Card>
           <Card>
             <CardContent className="flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-warning-light">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-warning-light">
                 <AlertTriangle className="h-6 w-6 text-warning" />
               </div>
               <div>

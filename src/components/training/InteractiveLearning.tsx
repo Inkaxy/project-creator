@@ -573,7 +573,7 @@ export function InteractiveLearning({
   return (
     <div className="space-y-6">
       {/* Learning Progress Header */}
-      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
+      <Card className="bg-primary-light border border-primary-border">
         <CardContent className="py-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">

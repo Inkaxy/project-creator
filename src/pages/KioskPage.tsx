@@ -510,7 +510,7 @@ export default function KioskPage() {
   );
 
   const renderPinEntry = () => (
-    <div className="h-full flex items-center justify-center bg-gradient-to-br from-background to-muted p-6">
+    <div className="h-full flex items-center justify-center bg-background p-6">
       <Card className="w-full max-w-sm shadow-2xl">
         <CardContent className="pt-6 space-y-6">
           <Button
@@ -535,7 +535,7 @@ export default function KioskPage() {
             {[0, 1, 2, 3].map((i) => (
               <div
                 key={i}
-                className={`h-12 w-12 rounded-xl border-2 flex items-center justify-center text-2xl font-semibold transition-all ${
+                className={`h-12 w-12 rounded-lg border-2 flex items-center justify-center text-2xl font-semibold transition-all ${
                   pin[i] ? "border-primary bg-primary/10" : "border-border"
                 }`}
               >
@@ -577,7 +577,7 @@ export default function KioskPage() {
     const shift = selectedEmployee ? todayShifts.find(s => s.employee_id === selectedEmployee.id) : null;
     
     return (
-      <div className="h-full flex items-center justify-center bg-gradient-to-br from-background to-muted p-6">
+      <div className="h-full flex items-center justify-center bg-background p-6">
         <Card className="w-full max-w-sm shadow-2xl overflow-hidden">
           <div className={`h-2 ${activeEntry ? "bg-success" : "bg-primary"}`} />
           <CardContent className="pt-6 space-y-6">
@@ -655,7 +655,7 @@ export default function KioskPage() {
   };
 
   const renderSuccess = () => (
-    <div className="h-full flex items-center justify-center bg-gradient-to-br from-background to-muted p-6">
+    <div className="h-full flex items-center justify-center bg-background p-6">
       <Card className="w-full max-w-sm shadow-2xl overflow-hidden">
         <div className={`h-2 ${actionResult?.success ? (actionResult.type === "in" ? "bg-primary" : "bg-destructive") : "bg-destructive"}`} />
         <CardContent className="py-12 text-center space-y-4">

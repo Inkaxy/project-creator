@@ -169,7 +169,7 @@ export function SeniorityGamificationCard({
 
   return (
     <>
-      <Card className="bg-gradient-to-br from-primary/5 via-primary/10 to-accent/10 border-primary/20 overflow-hidden">
+      <Card className="bg-primary-light border border-primary-border overflow-hidden">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -198,7 +198,7 @@ export function SeniorityGamificationCard({
 
         <CardContent className="space-y-5">
           {/* Main Level Display */}
-          <div className="flex items-center justify-between p-4 bg-background/60 rounded-xl border border-border/50">
+          <div className="flex items-center justify-between p-4 bg-background/60 rounded-lg border border-border/50">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-3xl font-semibold text-foreground">
@@ -311,7 +311,7 @@ export function SeniorityGamificationCard({
 
           {/* Max Level Celebration */}
           {isMaxLevel && (
-            <div className="p-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-xl border border-primary/30 text-center">
+            <div className="p-4 bg-primary-light rounded-lg border border-primary-border text-center">
               <div className="text-4xl mb-2">🎉</div>
               <Badge variant="default" className="text-sm px-3 py-1">
                 Høyeste nivå oppnådd!

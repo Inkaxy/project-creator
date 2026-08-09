@@ -26,7 +26,7 @@ interface TimeBankTransactionHistoryProps {
 
 const referenceTypeLabels: Record<string, { label: string; icon: typeof Clock; color: string }> = {
   adjustment: { label: "Manuell justering", icon: RefreshCw, color: "text-info-text" },
-  overtime: { label: "Overtid", icon: Clock, color: "text-ai-text" },
+  overtime: { label: "Overtid", icon: Clock, color: "text-ai" },
   absence: { label: "Fravær", icon: Calendar, color: "text-warning-text" },
   carryover: { label: "Overført", icon: RefreshCw, color: "text-info-text" },
   payout: { label: "Utbetaling", icon: Banknote, color: "text-success" },

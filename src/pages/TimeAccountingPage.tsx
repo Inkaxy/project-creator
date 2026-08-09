@@ -280,7 +280,7 @@ export default function TimeAccountingPage() {
                 variant={viewMode === m ? "default" : "ghost"}
                 size="sm"
                 onClick={() => { setViewMode(m); setCompareDate(null); }}
-                className={cn("text-xs", viewMode === m && "shadow-sm")}
+                className={cn("text-xs", viewMode === m && "bg-card border border-border")}
               >
                 {m === "week" ? "Uke" : m === "month" ? "Måned" : "År"}
               </Button>
@@ -511,7 +511,7 @@ function SummaryCard({ title, icon: Icon, current, compare }: { title: string; i
   const pct = compare && compare > 0 ? Math.round(((current - compare) / compare) * 100) : null;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+    <div className="rounded-lg border border-border bg-card p-5">
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-sm font-medium text-muted-foreground">{title}</p>

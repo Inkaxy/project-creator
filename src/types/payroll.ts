@@ -316,11 +316,11 @@ export const SALARY_CATEGORIES: Array<{
   color: string;
 }> = [
   { value: 'hourly', label: 'Timelønn', color: 'bg-info-light text-info-text border border-info-border' },
-  { value: 'monthly', label: 'Månedslønn', color: 'bg-ai-light text-ai-text border border-ai-border' },
+  { value: 'monthly', label: 'Månedslønn', color: 'bg-ai-light text-ai border border-ai-border' },
   { value: 'supplement', label: 'Tillegg', color: 'bg-success-light text-success-text border border-success-border' },
   { value: 'overtime', label: 'Overtid', color: 'bg-warning-light text-warning-text border border-warning-border' },
   { value: 'absence', label: 'Fravær', color: 'bg-warning-light text-warning-text border border-warning-border' },
-  { value: 'bonus', label: 'Bonus', color: 'bg-ai-light text-ai-text border border-ai-border' },
+  { value: 'bonus', label: 'Bonus', color: 'bg-ai-light text-ai border border-ai-border' },
   { value: 'deduction', label: 'Trekk', color: 'bg-destructive-light text-destructive-text border border-destructive-border' },
   { value: 'other', label: 'Annet', color: 'bg-muted text-foreground border border-border' },
 ];
