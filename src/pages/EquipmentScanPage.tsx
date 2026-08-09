@@ -61,7 +61,7 @@ export default function EquipmentScanPage() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div data-density="comfortable" className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
           <Button

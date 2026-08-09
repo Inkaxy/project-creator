@@ -224,7 +224,7 @@ export default function PayrollPage() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div data-density="compact" className="space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-center sm:justify-between lg:pl-0">
           <div>

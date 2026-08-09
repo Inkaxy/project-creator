@@ -94,7 +94,7 @@ export default function MyPage() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div data-density="comfortable" className="space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-start sm:justify-between lg:pl-0">
           <div className="flex items-center gap-4">
