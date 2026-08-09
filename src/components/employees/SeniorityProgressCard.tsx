@@ -132,7 +132,7 @@ export function SeniorityProgressCard({
 
   return (
     <>
-      <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+      <Card className="bg-primary-light border border-primary-border">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">

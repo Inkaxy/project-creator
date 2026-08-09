@@ -42,7 +42,7 @@ const statusConfig: Record<string, {
     label: "Venter på kontrakt",
     variant: "secondary",
     icon: FileSignature,
-    className: "bg-ai-light text-ai-text border border-ai-border",
+    className: "bg-ai-light text-ai border border-ai-border",
   },
   signature_pending: {
     label: "Venter på signatur",

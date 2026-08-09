@@ -16,7 +16,7 @@ export function ScheduleViewToggle({ viewMode, onViewModeChange }: ScheduleViewT
         variant={viewMode === "functions" ? "default" : "ghost"}
         size="sm"
         onClick={() => onViewModeChange("functions")}
-        className={cn("gap-2", viewMode === "functions" && "shadow-sm")}
+        className={cn("gap-2", viewMode === "functions" && "bg-card border border-border")}
       >
         <LayoutGrid className="h-4 w-4" />
         Funksjoner
@@ -25,7 +25,7 @@ export function ScheduleViewToggle({ viewMode, onViewModeChange }: ScheduleViewT
         variant={viewMode === "employees" ? "default" : "ghost"}
         size="sm"
         onClick={() => onViewModeChange("employees")}
-        className={cn("gap-2", viewMode === "employees" && "shadow-sm")}
+        className={cn("gap-2", viewMode === "employees" && "bg-card border border-border")}
       >
         <Users className="h-4 w-4" />
         Ansatte

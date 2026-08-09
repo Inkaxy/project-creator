@@ -514,7 +514,7 @@ export function FixedSalaryCalculator({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
+      <Card className="bg-primary-light border border-primary-border">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5 text-primary" />
@@ -953,7 +953,7 @@ export function FixedSalaryCalculator({
 
       {/* Results */}
       {result && result.totalOrdinaryHours + result.totalNightHours > 0 && (
-        <Card className="border-primary/30 bg-gradient-to-r from-primary/5 to-transparent">
+        <Card className="bg-primary-light border border-primary-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-primary" />

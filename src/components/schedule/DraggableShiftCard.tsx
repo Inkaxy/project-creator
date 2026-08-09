@@ -35,14 +35,14 @@ export function DraggableShiftCard({ shift, onShiftClick, isAdminOrManager, show
     // Add visual feedback
     const target = e.target as HTMLElement;
     target.style.opacity = "0.5";
-    target.classList.add("scale-105", "shadow-lg");
+    target.classList.add("scale-105", "ring-2", "ring-primary");
   };
 
   const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
     setIsDragging(false);
     const target = e.target as HTMLElement;
     target.style.opacity = "1";
-    target.classList.remove("scale-105", "shadow-lg");
+    target.classList.remove("scale-105", "ring-2", "ring-primary");
   };
 
   // Handle Escape key to cancel drag
@@ -56,7 +56,7 @@ export function DraggableShiftCard({ shift, onShiftClick, isAdminOrManager, show
         // Reset visual state
         if (elementRef.current) {
           elementRef.current.style.opacity = "1";
-          elementRef.current.classList.remove("scale-105", "shadow-lg");
+          elementRef.current.classList.remove("scale-105", "ring-2", "ring-primary");
         }
         // Dispatch a custom event to signal drag cancellation
         document.dispatchEvent(new CustomEvent("dragcancel"));

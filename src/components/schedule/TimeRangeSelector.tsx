@@ -15,7 +15,7 @@ export function TimeRangeSelector({ timeRange, onTimeRangeChange }: TimeRangeSel
         variant={timeRange === "week" ? "default" : "ghost"}
         size="sm"
         onClick={() => onTimeRangeChange("week")}
-        className={cn("gap-1 text-xs", timeRange === "week" && "shadow-sm")}
+        className={cn("gap-1 text-xs", timeRange === "week" && "bg-card border border-border")}
       >
         1 uke
       </Button>
@@ -23,7 +23,7 @@ export function TimeRangeSelector({ timeRange, onTimeRangeChange }: TimeRangeSel
         variant={timeRange === "2weeks" ? "default" : "ghost"}
         size="sm"
         onClick={() => onTimeRangeChange("2weeks")}
-        className={cn("gap-1 text-xs", timeRange === "2weeks" && "shadow-sm")}
+        className={cn("gap-1 text-xs", timeRange === "2weeks" && "bg-card border border-border")}
       >
         2 uker
       </Button>
@@ -31,7 +31,7 @@ export function TimeRangeSelector({ timeRange, onTimeRangeChange }: TimeRangeSel
         variant={timeRange === "month" ? "default" : "ghost"}
         size="sm"
         onClick={() => onTimeRangeChange("month")}
-        className={cn("gap-1 text-xs", timeRange === "month" && "shadow-sm")}
+        className={cn("gap-1 text-xs", timeRange === "month" && "bg-card border border-border")}
       >
         1 mnd
       </Button>

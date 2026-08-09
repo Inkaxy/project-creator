@@ -86,7 +86,7 @@ export function MeetingRecorderPanel({ meeting, onTranscriptionComplete }: Props
   }
 
   return (
-    <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
+    <Card className="bg-primary-light border border-primary-border">
       <CardContent className="p-4 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

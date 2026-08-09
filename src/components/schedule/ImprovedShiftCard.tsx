@@ -96,7 +96,7 @@ export const ImprovedShiftCard = forwardRef<HTMLDivElement, ImprovedShiftCardPro
         {/* Sick leave indicator badge */}
         {sickLeave && (
           <div className="absolute -top-2 -left-1 z-10">
-            <div className="bg-destructive text-destructive-foreground rounded-full px-1.5 py-0.5 flex items-center gap-1 text-[10px] font-medium shadow-sm">
+            <div className="bg-destructive text-destructive-foreground rounded-full px-1.5 py-0.5 flex items-center gap-1 text-[10px] font-medium">
               <Thermometer className="h-3 w-3" />
               <span>{sickLeave.leave_type === 'egenmelding' ? 'Egenm.' : 'Syk'}</span>
               {sickLeave.sick_leave_percentage < 100 && (

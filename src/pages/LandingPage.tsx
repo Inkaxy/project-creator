@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import crewplanLogo from "@/assets/crewplan-logo-v2.png";
+import { Logo } from "@/components/Logo";
 import {
   Calendar,
   Clock,
@@ -206,8 +206,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
-              <img src={crewplanLogo} alt="CrewPlan" className="h-10 w-10" />
-              <span className="text-xl font-bold text-foreground">CrewPlan</span>
+              <Logo size="sm" />
             </div>
             <div className="hidden md:flex items-center gap-8">
               <a href="#moduler" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
@@ -238,10 +237,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 sm:py-32">
-        {/* Background gradient */}
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,hsl(var(--primary)/0.05),transparent_50%)]" />
-        <div className="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-primary/5 shadow-xl shadow-primary/5 ring-1 ring-primary/5 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center" />
+      <section className="border-b border-border bg-background py-20 sm:py-32">
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
@@ -249,7 +245,7 @@ export default function LandingPage() {
               <Sparkles className="mr-2 h-4 w-4 text-primary" />
               Ny: CrewAI - Din intelligente assistent
             </Badge>
-            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
+            <h1 className="text-4xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
               Personaladministrasjon{" "}
               <span className="text-primary">gjort enkelt</span>
             </h1>
@@ -283,7 +279,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-3xl font-bold text-primary sm:text-4xl">{stat.value}</div>
+                <div className="text-3xl font-semibold tabular-nums text-primary sm:text-4xl">{stat.value}</div>
                 <div className="mt-1 text-sm text-muted-foreground">{stat.label}</div>
               </div>
             ))}
@@ -295,8 +291,7 @@ export default function LandingPage() {
       <section className="py-20 sm:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-5xl">
-            <Card className="relative overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background">
-              <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/10 to-transparent" />
+            <Card className="relative overflow-hidden bg-card border border-border">
               <CardContent className="relative p-8 sm:p-12">
                 <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
                   <div>
@@ -304,7 +299,7 @@ export default function LandingPage() {
                       <Bot className="mr-2 h-4 w-4" />
                       Kunstig Intelligens
                     </Badge>
-                    <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                    <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
                       Møt CrewAI
                     </h2>
                     <p className="mt-4 text-lg text-muted-foreground">
@@ -326,7 +321,7 @@ export default function LandingPage() {
                     </ul>
                   </div>
                   <div className="relative">
-                    <div className="rounded-2xl bg-card border shadow-xl p-6">
+                    <div className="rounded-lg bg-card border border-border p-6">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                           <Bot className="h-5 w-5 text-primary" />
@@ -363,7 +358,7 @@ export default function LandingPage() {
       <section id="moduler" className="py-20 sm:py-24 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
               Alle modulene du trenger
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
@@ -377,8 +372,8 @@ export default function LandingPage() {
                 <Card
                   key={module.id}
                   className={cn(
-                    "relative overflow-hidden transition-all hover:shadow-lg hover:border-primary/30",
-                    module.popular && "border-primary/50 shadow-md"
+                    "relative overflow-hidden transition-all hover:border-primary",
+                    module.popular && "border-2 border-primary"
                   )}
                 >
                   {module.popular && (
@@ -424,7 +419,7 @@ export default function LandingPage() {
       <section className="py-20 sm:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
               Hvorfor velge CrewPlan?
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
@@ -485,7 +480,7 @@ export default function LandingPage() {
       <section id="priser" className="py-20 sm:py-24 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
               Enkel og transparent prising
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
@@ -498,7 +493,7 @@ export default function LandingPage() {
                 key={index}
                 className={cn(
                   "relative flex flex-col",
-                  tier.popular && "border-primary shadow-xl scale-105"
+                  tier.popular && "border-2 border-primary scale-105"
                 )}
               >
                 {tier.popular && (
@@ -517,11 +512,11 @@ export default function LandingPage() {
                   <div className="text-center mb-6">
                     {tier.price !== null ? (
                       <>
-                        <span className="text-4xl font-bold">kr {tier.price.toLocaleString()}</span>
+                        <span className="text-4xl font-semibold">kr {tier.price.toLocaleString()}</span>
                         <span className="text-muted-foreground ml-1">/{tier.period}</span>
                       </>
                     ) : (
-                      <span className="text-2xl font-bold">{tier.period}</span>
+                      <span className="text-2xl font-semibold">{tier.period}</span>
                     )}
                     <p className="text-sm text-muted-foreground mt-2">{tier.employees}</p>
                     <p className="text-sm font-medium text-primary mt-1">
@@ -581,7 +576,7 @@ export default function LandingPage() {
           <Card className="relative overflow-hidden bg-primary text-primary-foreground">
             <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_50%,transparent_75%)]" />
             <CardContent className="relative py-16 px-8 sm:px-16 text-center">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
+              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl mb-4">
                 Klar til å forenkle hverdagen?
               </h2>
               <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto mb-8">
@@ -612,8 +607,7 @@ export default function LandingPage() {
           <div className="grid gap-8 md:grid-cols-4">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <img src={crewplanLogo} alt="CrewPlan" className="h-8 w-8" />
-                <span className="font-bold">CrewPlan</span>
+                <Logo size="sm" />
               </div>
               <p className="text-sm text-muted-foreground">
                 Personaladministrasjon gjort enkelt for hotell, restaurant og servicebransjen.

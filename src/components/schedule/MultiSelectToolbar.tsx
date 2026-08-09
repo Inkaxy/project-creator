@@ -26,7 +26,7 @@ export function MultiSelectToolbar({
 
   return (
     <div className={cn(
-      "fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-lg border border-border bg-card p-3 shadow-lg transition-all",
+      "fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-lg border border-border bg-card p-3 shadow-overlay transition-all",
       isDragging && "ring-2 ring-primary"
     )}>
       <Badge variant="secondary" className="text-sm">

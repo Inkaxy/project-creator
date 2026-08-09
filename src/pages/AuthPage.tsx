@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, Loader2, Sparkles } from 'lucide-react';
-import crewplanLogo from '@/assets/crewplan-logo-v2.png';
+import { Logo } from '@/components/Logo';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -133,7 +133,7 @@ export default function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-4 text-center">
-          <img src={crewplanLogo} alt="Crewplan" className="mx-auto h-20 w-20" />
+          <Logo size="lg" showWordmark={false} className="mx-auto justify-center" />
           <div>
             <CardTitle className="text-2xl font-semibold">Crewplan</CardTitle>
             <CardDescription className="mt-2">

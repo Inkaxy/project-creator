@@ -204,10 +204,10 @@ export function ClockInOutCard() {
 
   if (isLoading) {
     return (
-      <Card className="border-primary/20 bg-gradient-to-r from-primary-light to-background">
+      <Card className="bg-primary-light border border-primary-border">
         <CardContent className="p-6">
           <div className="flex items-center gap-4">
-            <div className="h-14 w-14 rounded-xl bg-primary/10 animate-pulse" />
+            <div className="h-14 w-14 rounded-lg bg-primary/10 animate-pulse" />
             <div className="space-y-2">
               <div className="h-4 w-24 bg-muted animate-pulse rounded" />
               <div className="h-6 w-32 bg-muted animate-pulse rounded" />
@@ -237,11 +237,11 @@ export function ClockInOutCard() {
         />
       )}
 
-      <Card className="border-primary/20 bg-gradient-to-r from-primary-light to-background">
+      <Card className="bg-primary-light border border-primary-border">
         <CardContent className="p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-primary/10">
                 {isClockedIn ? (
                   <Clock className="h-7 w-7 text-primary animate-pulse" />
                 ) : isNightShift ? (

@@ -32,14 +32,14 @@ const steps = [
     title: "Ansatt fyller ut personopplysninger",
     description: "De registrerer personnummer, kontonummer og kontaktinfo selv",
     icon: FileText,
-    color: "text-ai-text",
+    color: "text-ai",
   },
   {
     number: 4,
     title: "Ansatt oppretter brukerkonto",
     description: "De velger passord og aktiverer kontoen sin",
     icon: KeyRound,
-    color: "text-ai-text",
+    color: "text-ai",
   },
   {
     number: 5,
