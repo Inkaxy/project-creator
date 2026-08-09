@@ -44,11 +44,11 @@ const statusLabels: Record<ConversationStatus, string> = {
 
 const statusColors: Record<ConversationStatus, string> = {
   draft: 'bg-muted text-muted-foreground',
-  scheduled: 'bg-blue-500/10 text-blue-600',
-  confirmed: 'bg-green-500/10 text-green-600',
-  in_progress: 'bg-yellow-500/10 text-yellow-600',
-  completed: 'bg-green-500/10 text-green-600',
-  cancelled: 'bg-red-500/10 text-red-600',
+  scheduled: 'bg-info-light text-info-text border border-info-border',
+  confirmed: 'bg-success-light text-success-text border border-success-border',
+  in_progress: 'bg-warning-light text-warning-text border border-warning-border',
+  completed: 'bg-success-light text-success-text border border-success-border',
+  cancelled: 'bg-destructive-light text-destructive-text border border-destructive-border',
 };
 
 export default function ConversationDetailPage() {
@@ -268,7 +268,7 @@ export default function ConversationDetailPage() {
                                   key={star}
                                   className={`h-5 w-5 ${
                                     star <= (response.response_rating || 0)
-                                      ? 'fill-yellow-400 text-yellow-400'
+                                      ? 'fill-warning text-warning-text'
                                       : 'text-muted-foreground'
                                   }`}
                                 />
@@ -358,7 +358,7 @@ export default function ConversationDetailPage() {
                                 key={star}
                                 className={`h-5 w-5 ${
                                   star <= conversation.overall_rating!
-                                    ? 'fill-yellow-400 text-yellow-400'
+                                    ? 'fill-warning text-warning-text'
                                     : 'text-muted-foreground'
                                 }`}
                               />

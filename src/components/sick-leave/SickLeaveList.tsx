@@ -40,10 +40,10 @@ export function SickLeaveList({ status = "all" }: SickLeaveListProps) {
 
   const getLeaveTypeColor = (type: string) => {
     switch (type) {
-      case "egenmelding": return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
-      case "sykemelding": return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
-      case "gradert_sykemelding": return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
-      case "arbeidsrelatert_sykdom": return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
+      case "egenmelding": return "bg-info-light text-info-text border border-info-border";
+      case "sykemelding": return "bg-warning-light text-warning-text border border-warning-border";
+      case "gradert_sykemelding": return "bg-ai-light text-ai-text border border-ai-border";
+      case "arbeidsrelatert_sykdom": return "bg-destructive-light text-destructive-text border border-destructive-border";
       default: return "bg-muted text-muted-foreground";
     }
   };
@@ -115,7 +115,7 @@ export function SickLeaveList({ status = "all" }: SickLeaveListProps) {
                             ` ${sickLeave.sick_leave_percentage}%`}
                         </Badge>
                         {sickLeave.status === "completed" && (
-                          <Badge variant="outline" className="text-green-600">
+                          <Badge variant="outline" className="text-success-text">
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Avsluttet
                           </Badge>
@@ -146,8 +146,8 @@ export function SickLeaveList({ status = "all" }: SickLeaveListProps) {
                       <div className="mt-3">
                         {employerStatus.isComplete ? (
                           <div className="flex items-center gap-2 text-sm">
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                            <span className="text-green-600 font-medium">
+                            <CheckCircle className="h-4 w-4 text-success" />
+                            <span className="text-success-text font-medium">
                               Arbeidsgiverperioden fullført
                             </span>
                             <span className="text-muted-foreground">

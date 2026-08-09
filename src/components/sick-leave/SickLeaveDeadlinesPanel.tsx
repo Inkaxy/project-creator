@@ -101,7 +101,7 @@ export function SickLeaveDeadlinesPanel() {
     return (
       <Card>
         <CardContent className="py-8 text-center">
-          <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-4" />
+          <CheckCircle className="h-12 w-12 mx-auto text-success mb-4" />
           <h3 className="font-semibold">Ingen kommende frister</h3>
           <p className="text-muted-foreground">
             Alle oppfølgingsfrister er under kontroll
@@ -114,7 +114,7 @@ export function SickLeaveDeadlinesPanel() {
   const DeadlineCard = ({ deadline, variant }: { deadline: UpcomingDeadline; variant: "overdue" | "soon" | "later" }) => {
     const colorClasses = {
       overdue: "border-destructive bg-destructive/5",
-      soon: "border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20",
+      soon: "border-warning-border bg-warning-light",
       later: "",
     };
 
@@ -127,7 +127,7 @@ export function SickLeaveDeadlinesPanel() {
             variant === "overdue" 
               ? "bg-destructive/10 text-destructive" 
               : variant === "soon" 
-                ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
+                ? "bg-warning-light text-warning-text border border-warning-border"
                 : "bg-muted text-muted-foreground"
           }`}>
             {getDeadlineIcon(deadline.deadlineType)}
@@ -191,10 +191,10 @@ export function SickLeaveDeadlinesPanel() {
 
       {/* Frister denne uken */}
       {upcomingThisWeek.length > 0 && (
-        <Card className="border-yellow-500">
+        <Card className="border-warning-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-yellow-600" />
+              <Clock className="h-5 w-5 text-warning" />
               Denne uken ({upcomingThisWeek.length})
             </CardTitle>
             <CardDescription>

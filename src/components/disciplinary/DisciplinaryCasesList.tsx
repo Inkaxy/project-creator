@@ -72,13 +72,13 @@ export function DisciplinaryCasesList({ onSelectCase }: DisciplinaryCasesListPro
   const getStatusIcon = (status: CaseStatus) => {
     switch (status) {
       case 'acknowledged':
-        return <CheckCircle2 className="h-4 w-4 text-green-600" />;
+        return <CheckCircle2 className="h-4 w-4 text-success" />;
       case 'disputed':
-        return <XCircle className="h-4 w-4 text-red-600" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
       case 'pending_acknowledgment':
-        return <Timer className="h-4 w-4 text-yellow-600" />;
+        return <Timer className="h-4 w-4 text-warning" />;
       case 'draft':
-        return <FileText className="h-4 w-4 text-gray-400" />;
+        return <FileText className="h-4 w-4 text-muted-foreground" />;
       default:
         return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
@@ -87,11 +87,11 @@ export function DisciplinaryCasesList({ onSelectCase }: DisciplinaryCasesListPro
   const getSeverityIcon = (severity: DisciplinarySeverity) => {
     switch (severity) {
       case 'high':
-        return <AlertTriangle className="h-4 w-4 text-red-600" />;
+        return <AlertTriangle className="h-4 w-4 text-destructive" />;
       case 'medium':
-        return <Zap className="h-4 w-4 text-yellow-600" />;
+        return <Zap className="h-4 w-4 text-warning" />;
       default:
-        return <Zap className="h-4 w-4 text-green-600" />;
+        return <Zap className="h-4 w-4 text-success" />;
     }
   };
 

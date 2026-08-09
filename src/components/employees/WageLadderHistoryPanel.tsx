@@ -81,12 +81,12 @@ export function WageLadderHistoryPanel() {
                           </span>
                           <Badge variant="outline">Nivå {entry.level}</Badge>
                           {isIncrease ? (
-                            <Badge variant="outline" className="text-green-600 border-green-300">
+                            <Badge variant="outline" className="text-success-text border-success-border">
                               <TrendingUp className="h-3 w-3 mr-1" />
                               Økning
                             </Badge>
                           ) : (
-                            <Badge variant="outline" className="text-amber-600 border-amber-300">
+                            <Badge variant="outline" className="text-warning-text border-warning-border">
                               <TrendingDown className="h-3 w-3 mr-1" />
                               Reduksjon
                             </Badge>

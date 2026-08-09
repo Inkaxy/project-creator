@@ -88,8 +88,8 @@ export default function ConversationsPage() {
 
           <Card>
             <CardContent className="flex items-center gap-4 pt-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-500/10">
-                <MessageSquare className="h-6 w-6 text-green-500" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-success-light">
+                <MessageSquare className="h-6 w-6 text-success" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Gjennomført</p>
@@ -100,8 +100,8 @@ export default function ConversationsPage() {
 
           <Card>
             <CardContent className="flex items-center gap-4 pt-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-500/10">
-                <Star className="h-6 w-6 text-yellow-500" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-warning-light">
+                <Star className="h-6 w-6 text-warning" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Gj.snitt rating</p>
@@ -112,8 +112,8 @@ export default function ConversationsPage() {
 
           <Card>
             <CardContent className="flex items-center gap-4 pt-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-500/10">
-                <ListTodo className="h-6 w-6 text-purple-500" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-ai-light">
+                <ListTodo className="h-6 w-6 text-ai" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Ventende oppgaver</p>

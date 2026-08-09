@@ -325,7 +325,7 @@ export const AbsenceApprovalDetailModal = ({
         {/* Status Badge */}
         <div className="flex items-center gap-2">
           {isPending && (
-            <Badge variant="secondary" className="bg-amber-100 text-amber-700">
+            <Badge variant="secondary" className="bg-warning-light text-warning-text border border-warning-border">
               <Clock className="h-3 w-3 mr-1" />
               Avventer
             </Badge>

@@ -177,7 +177,7 @@ export function OnboardingDetailModal({ onboarding, open, onOpenChange }: Onboar
                     <div className="flex flex-col items-center">
                       <div className={`flex h-8 w-8 items-center justify-center rounded-full ${
                         step.completed 
-                          ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400" 
+                          ? "bg-success-light text-success-text border border-success-border" 
                           : "bg-muted text-muted-foreground"
                       }`}>
                         {step.completed ? (
@@ -188,7 +188,7 @@ export function OnboardingDetailModal({ onboarding, open, onOpenChange }: Onboar
                       </div>
                       {index < steps.length - 1 && (
                         <div className={`h-full w-0.5 ${
-                          step.completed ? "bg-green-200 dark:bg-green-900/50" : "bg-muted"
+                          step.completed ? "bg-success-light" : "bg-muted"
                         }`} />
                       )}
                     </div>

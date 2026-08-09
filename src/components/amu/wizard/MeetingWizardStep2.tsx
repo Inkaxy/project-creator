@@ -60,7 +60,7 @@ export function MeetingWizardStep2({ meeting, onUpdate }: Props) {
         {participants.map(p => (
           <div key={p.id} className="flex items-center justify-between p-3 border rounded-lg">
             <div className="flex items-center gap-3">
-              {p.attendance_status === "attended" ? <UserCheck className="h-5 w-5 text-green-600" /> : <UserX className="h-5 w-5 text-muted-foreground" />}
+              {p.attendance_status === "attended" ? <UserCheck className="h-5 w-5 text-success" /> : <UserX className="h-5 w-5 text-muted-foreground" />}
               <span className="font-medium">{p.profile?.full_name}</span>
             </div>
             <div className="flex items-center gap-2">

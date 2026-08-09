@@ -90,11 +90,11 @@ export function WageAdjustmentsPanel() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge variant="outline" className="text-amber-600 border-amber-300"><Clock className="h-3 w-3 mr-1" />Venter</Badge>;
+        return <Badge variant="outline" className="text-warning-text border-warning-border"><Clock className="h-3 w-3 mr-1" />Venter</Badge>;
       case "approved":
-        return <Badge variant="outline" className="text-green-600 border-green-300"><Check className="h-3 w-3 mr-1" />Godkjent</Badge>;
+        return <Badge variant="outline" className="text-success-text border-success-border"><Check className="h-3 w-3 mr-1" />Godkjent</Badge>;
       case "exported":
-        return <Badge variant="outline" className="text-blue-600 border-blue-300"><Download className="h-3 w-3 mr-1" />Eksportert</Badge>;
+        return <Badge variant="outline" className="text-info-text border-info-border"><Download className="h-3 w-3 mr-1" />Eksportert</Badge>;
       case "paid":
         return <Badge variant="outline" className="text-primary"><DollarSign className="h-3 w-3 mr-1" />Utbetalt</Badge>;
       case "rejected":
@@ -144,7 +144,7 @@ export function WageAdjustmentsPanel() {
               </Button>
             )}
             {exportedCount > 0 && (
-              <Button variant="outline" size="sm" onClick={handleMarkAllAsPaid} className="text-green-600 hover:text-green-700">
+              <Button variant="outline" size="sm" onClick={handleMarkAllAsPaid} className="text-success-text hover:text-green-700">
                 <Check className="h-4 w-4 mr-2" />
                 Merk utbetalt ({exportedCount})
               </Button>
@@ -231,7 +231,7 @@ function AdjustmentCard({
               size="sm"
               onClick={() => onApprove(adjustment.id)}
               disabled={isPending}
-              className="text-green-600 hover:text-green-700 hover:bg-green-50"
+              className="text-success-text hover:text-green-700 hover:bg-green-50"
             >
               <Check className="h-4 w-4 mr-1" />
               Godkjenn
@@ -255,7 +255,7 @@ function AdjustmentCard({
             size="sm"
             onClick={() => onMarkAsPaid(adjustment.id)}
             disabled={isPending}
-            className="text-green-600 hover:text-green-700 hover:bg-green-50"
+            className="text-success-text hover:text-green-700 hover:bg-green-50"
           >
             <DollarSign className="h-4 w-4 mr-1" />
             Merk utbetalt

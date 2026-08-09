@@ -204,7 +204,7 @@ export function SeniorityProgressCard({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-green-600" />
+                  <DollarSign className="h-4 w-4 text-success" />
                   <div className="text-sm">
                     <p className="text-muted-foreground">Neste timelønn</p>
                     <p className="font-semibold text-foreground">
@@ -227,8 +227,8 @@ export function SeniorityProgressCard({
 
           {/* At max level */}
           {!seniorityProgress?.nextLevel && (
-            <div className="p-3 bg-green-500/10 rounded-lg text-center">
-              <Badge variant="default" className="bg-green-600">
+            <div className="p-3 bg-success-light rounded-lg text-center">
+              <Badge variant="default" className="bg-success">
                 🎉 Høyeste nivå oppnådd!
               </Badge>
             </div>
@@ -258,7 +258,7 @@ export function SeniorityProgressCard({
                       className="flex items-center justify-between text-sm p-2 bg-muted/50 rounded"
                     >
                       <div>
-                        <span className={entry.hours_added >= 0 ? "text-green-600" : "text-destructive"}>
+                        <span className={entry.hours_added >= 0 ? "text-success-text" : "text-destructive"}>
                           {entry.hours_added >= 0 ? "+" : ""}{entry.hours_added.toLocaleString("nb-NO")} t
                         </span>
                         <Badge variant="outline" className="ml-2 text-xs">

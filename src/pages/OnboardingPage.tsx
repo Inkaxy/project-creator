@@ -238,7 +238,7 @@ export default function OnboardingPage() {
                   isActive
                     ? "bg-primary text-primary-foreground"
                     : isCompleted
-                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                    ? "bg-success-light text-success-text border border-success-border"
                     : "bg-muted text-muted-foreground"
                 }`}
               >
@@ -487,8 +487,8 @@ export default function OnboardingPage() {
         {currentStep >= 3 && (
           <Card>
             <CardHeader className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-                <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success-light">
+                <CheckCircle className="h-8 w-8 text-success" />
               </div>
               <CardTitle>Registrering fullført!</CardTitle>
               <CardDescription>

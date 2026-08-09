@@ -15,8 +15,8 @@ interface ActionItemsListProps {
 
 const priorityColors: Record<ActionPriority, string> = {
   low: 'bg-muted text-muted-foreground',
-  medium: 'bg-yellow-500/10 text-yellow-600',
-  high: 'bg-red-500/10 text-red-600',
+  medium: 'bg-warning-light text-warning-text border border-warning-border',
+  high: 'bg-destructive-light text-destructive-text border border-destructive-border',
 };
 
 const priorityLabels: Record<ActionPriority, string> = {

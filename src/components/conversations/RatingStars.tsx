@@ -27,7 +27,7 @@ export function RatingStars({ value, onChange, readonly = false, size = 'md' }: 
           <Star
             className={`${sizeClasses[size]} ${
               star <= value
-                ? 'fill-yellow-400 text-yellow-400'
+                ? 'fill-warning text-warning-text'
                 : 'text-muted-foreground'
             }`}
           />

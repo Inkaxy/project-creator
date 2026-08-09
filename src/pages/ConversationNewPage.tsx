@@ -116,12 +116,12 @@ export default function ConversationNewPage() {
                 <div 
                   key={step.id}
                   className={`flex flex-col items-center gap-1 ${
-                    isActive ? 'text-primary' : isCompleted ? 'text-green-500' : 'text-muted-foreground'
+                    isActive ? 'text-primary' : isCompleted ? 'text-success-text' : 'text-muted-foreground'
                   }`}
                 >
                   <div className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${
                     isActive ? 'border-primary bg-primary text-primary-foreground' : 
-                    isCompleted ? 'border-green-500 bg-green-500 text-white' : 
+                    isCompleted ? 'border-success-border bg-success text-white' : 
                     'border-muted-foreground/30'
                   }`}>
                     {isCompleted ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
