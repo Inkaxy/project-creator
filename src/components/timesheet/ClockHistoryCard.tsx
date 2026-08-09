@@ -74,7 +74,7 @@ export function ClockHistoryCard() {
             <Clock className="h-5 w-5 text-primary" />
             Denne uken
           </CardTitle>
-          <Badge variant="outline" className="text-lg font-bold">
+          <Badge variant="outline" className="text-lg font-semibold">
             {totalHours.toFixed(1)}t
           </Badge>
         </div>
@@ -104,7 +104,7 @@ export function ClockHistoryCard() {
                     <p className="text-xs text-muted-foreground uppercase">
                       {format(new Date(entry.date), "EEE", { locale: nb })}
                     </p>
-                    <p className="text-lg font-bold">
+                    <p className="text-lg font-semibold">
                       {format(new Date(entry.date), "d", { locale: nb })}
                     </p>
                   </div>

@@ -65,7 +65,7 @@ const SickLeavePage = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">Sykefravær</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em]">Sykefravær</h1>
             <p className="text-muted-foreground">
               Administrer sykefravær, oppfølging og arbeidsgiverperiode
             </p>
@@ -84,7 +84,7 @@ const SickLeavePage = () => {
               <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{activeSickLeaves.length}</div>
+              <div className="text-2xl font-semibold">{activeSickLeaves.length}</div>
               <p className="text-xs text-muted-foreground">
                 {employerPeriodActive} i arbeidsgiverperioden
               </p>
@@ -120,7 +120,7 @@ const SickLeavePage = () => {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{employerPeriodActive}</div>
+              <div className="text-2xl font-semibold">{employerPeriodActive}</div>
               <p className="text-xs text-muted-foreground">
                 Dag 1-16 (arbeidsgiver betaler)
               </p>
@@ -133,7 +133,7 @@ const SickLeavePage = () => {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-semibold">
                 {activeSickLeaves.length - employerPeriodActive}
               </div>
               <p className="text-xs text-muted-foreground">

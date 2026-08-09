@@ -60,7 +60,7 @@ export function OrganizationPanel() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Industrivernorganisasjon</h2>
+          <h2 className="text-2xl font-semibold">Industrivernorganisasjon</h2>
           <p className="text-muted-foreground">
             Administrer roller og personell i industrivernet
           </p>

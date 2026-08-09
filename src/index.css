@@ -176,6 +176,21 @@
 [data-density="compact"] { --control-h: 2rem; --row-h: 2rem; --cell-py: 0.25rem; --cell-px: 0.5rem; --card-pad: 0.75rem; --text-body: 0.78125rem; }
 [data-density="comfortable"] { --control-h: 3rem; --row-h: 3.25rem; --cell-py: 0.875rem; --cell-px: 1rem; --card-pad: 1.25rem; --text-body: 1rem; }
 
+/* Berøringsmål minst 44x44 px i comfortable */
+[data-density="comfortable"] button,
+[data-density="comfortable"] a[role="button"],
+[data-density="comfortable"] [role="switch"] {
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+}
+[data-density="comfortable"] [role="checkbox"],
+[data-density="comfortable"] [role="radio"] {
+  height: 1.5rem;
+  width: 1.5rem;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 0.625rem transparent;
+}
+
 /* Skygge kun for svevende lag */
 :root {
   --shadow-overlay: 0 0 1px rgba(0,0,0,.14), 0 2px 4px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.12);

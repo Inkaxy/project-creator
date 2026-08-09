@@ -59,7 +59,7 @@ export default function ConversationsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Medarbeidersamtaler</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em]">Medarbeidersamtaler</h1>
             <p className="text-muted-foreground">
               Planlegg og gjennomfør strukturerte samtaler med ansatte
             </p>
@@ -81,7 +81,7 @@ export default function ConversationsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Denne måneden</p>
-                <p className="text-2xl font-bold">{stats?.thisMonth || 0}</p>
+                <p className="text-2xl font-semibold">{stats?.thisMonth || 0}</p>
               </div>
             </CardContent>
           </Card>
@@ -93,7 +93,7 @@ export default function ConversationsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Gjennomført</p>
-                <p className="text-2xl font-bold">{stats?.completed || 0}</p>
+                <p className="text-2xl font-semibold">{stats?.completed || 0}</p>
               </div>
             </CardContent>
           </Card>
@@ -105,7 +105,7 @@ export default function ConversationsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Gj.snitt rating</p>
-                <p className="text-2xl font-bold">{stats?.avgRating || '-'}</p>
+                <p className="text-2xl font-semibold">{stats?.avgRating || '-'}</p>
               </div>
             </CardContent>
           </Card>
@@ -117,7 +117,7 @@ export default function ConversationsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Ventende oppgaver</p>
-                <p className="text-2xl font-bold">{stats?.pendingActions || 0}</p>
+                <p className="text-2xl font-semibold">{stats?.pendingActions || 0}</p>
               </div>
             </CardContent>
           </Card>

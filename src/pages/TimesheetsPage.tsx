@@ -191,11 +191,11 @@ export default function TimesheetsPage() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div data-density="compact" className="space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-center sm:justify-between lg:pl-0">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Timelister</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">Timelister</h1>
             <p className="text-muted-foreground">
               Uke {weekNumber}, {format(currentWeekStart, "d. MMM", { locale: nb })} - {format(currentWeekEnd, "d. MMM yyyy", { locale: nb })}
             </p>
@@ -465,7 +465,7 @@ export default function TimesheetsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Totalt timer</p>
-                <p className="text-2xl font-bold text-foreground">{totalHours.toFixed(1)}t</p>
+                <p className="text-2xl font-semibold text-foreground">{totalHours.toFixed(1)}t</p>
               </div>
             </CardContent>
           </Card>
@@ -476,7 +476,7 @@ export default function TimesheetsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Natt-timer</p>
-                <p className="text-2xl font-bold text-foreground">{nightHours.toFixed(1)}t</p>
+                <p className="text-2xl font-semibold text-foreground">{nightHours.toFixed(1)}t</p>
               </div>
             </CardContent>
           </Card>
@@ -487,7 +487,7 @@ export default function TimesheetsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Avvik</p>
-                <p className="text-2xl font-bold text-foreground">{deviationCount}</p>
+                <p className="text-2xl font-semibold text-foreground">{deviationCount}</p>
               </div>
             </CardContent>
           </Card>

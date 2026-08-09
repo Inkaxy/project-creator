@@ -167,7 +167,7 @@ export default function TrainingPage() {
             <GraduationCap className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Opplæring</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em]">Opplæring</h1>
             <p className="text-muted-foreground">
               Kurs, sertifikater og kompetanseutvikling
             </p>
@@ -247,14 +247,14 @@ export default function TrainingPage() {
                       <GraduationCap className="h-4 w-4 text-success" />
                       <span className="text-sm font-medium">Fullført</span>
                     </div>
-                    <span className="text-lg font-bold text-success">{completedCount}</span>
+                    <span className="text-lg font-semibold text-success">{completedCount}</span>
                   </div>
                   <div className="flex items-center justify-between rounded-lg bg-primary/10 p-3">
                     <div className="flex items-center gap-2">
                       <BookOpen className="h-4 w-4 text-primary" />
                       <span className="text-sm font-medium">Pågående</span>
                     </div>
-                    <span className="text-lg font-bold text-primary">{inProgressCount}</span>
+                    <span className="text-lg font-semibold text-primary">{inProgressCount}</span>
                   </div>
                   {expiringCount > 0 && (
                     <div className="flex items-center justify-between rounded-lg bg-warning/10 p-3">
@@ -262,7 +262,7 @@ export default function TrainingPage() {
                         <AlertCircle className="h-4 w-4 text-warning" />
                         <span className="text-sm font-medium">Utløper snart</span>
                       </div>
-                      <span className="text-lg font-bold text-warning">{expiringCount}</span>
+                      <span className="text-lg font-semibold text-warning">{expiringCount}</span>
                     </div>
                   )}
                 </CardContent>

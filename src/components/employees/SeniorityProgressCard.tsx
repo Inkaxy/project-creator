@@ -151,7 +151,7 @@ export function SeniorityProgressCard({
           {/* Current Level Info */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-2xl font-bold text-foreground">
+              <p className="text-2xl font-semibold text-foreground">
                 Nivå {seniorityProgress?.level || 1}
                 <span className="text-sm font-normal text-muted-foreground ml-2">
                   av {totalLevels}
@@ -162,7 +162,7 @@ export function SeniorityProgressCard({
               </p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-primary">
+              <p className="text-2xl font-semibold text-primary">
                 {seniorityProgress?.hourlyRate || 0} kr/t
               </p>
               <p className="text-sm text-muted-foreground">Timelønn</p>

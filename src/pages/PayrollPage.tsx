@@ -224,11 +224,11 @@ export default function PayrollPage() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div data-density="compact" className="space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-center sm:justify-between lg:pl-0">
           <div>
-            <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground flex items-center gap-2">
               <DollarSign className="h-8 w-8" />
               Lønnskjøring
             </h1>
@@ -266,7 +266,7 @@ export default function PayrollPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Totalt timer</p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-semibold text-foreground">
                     {stats.totalHours.toFixed(1)}t
                   </p>
                 </div>
@@ -282,7 +282,7 @@ export default function PayrollPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Overtid</p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-semibold text-foreground">
                     {stats.totalOvertime.toFixed(1)}t
                   </p>
                 </div>
@@ -298,7 +298,7 @@ export default function PayrollPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Natt-timer</p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-semibold text-foreground">
                     {stats.totalNight.toFixed(1)}t
                   </p>
                 </div>
@@ -314,7 +314,7 @@ export default function PayrollPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Helg-timer</p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-semibold text-foreground">
                     {stats.totalWeekend.toFixed(1)}t
                   </p>
                 </div>
@@ -330,7 +330,7 @@ export default function PayrollPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Venter godkjenning</p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-semibold text-foreground">
                     {stats.pendingCount}
                   </p>
                 </div>

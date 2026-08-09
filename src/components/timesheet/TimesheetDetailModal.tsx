@@ -278,7 +278,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
               </Badge>
             )}
             {hasDeviation ? (
-              <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200 border-amber-500">
+              <Badge className="bg-warning-light text-warning-text border-warning-border">
                 <AlertTriangle className="mr-1 h-3 w-3" />
                 Avvik {deviationMin > 0 ? "+" : ""}{deviationMin} min
               </Badge>
@@ -317,7 +317,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
                   className={cn(
                     "absolute top-9 h-5 rounded border",
                     hasDeviation
-                      ? "bg-amber-200/60 border-amber-500 dark:bg-amber-800/40"
+                      ? "bg-warning-light border-warning-border"
                       : "bg-success/20 border-success/40"
                   )}
                   style={{
@@ -327,7 +327,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
                 >
                   <span className={cn(
                     "absolute inset-0 flex items-center justify-center text-[10px] font-medium",
-                    hasDeviation ? "text-amber-800 dark:text-amber-200" : "text-success"
+                    hasDeviation ? "text-warning-text" : "text-success"
                   )}>
                     Faktisk: {actualCi}–{actualCo}
                   </span>
@@ -466,7 +466,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
                 )}
               </div>
               <span className={cn(
-                "font-mono text-lg font-bold",
+                "font-mono text-lg font-semibold",
                 deviationMin > 0 ? "text-success" : deviationMin < 0 ? "text-destructive" : "text-muted-foreground"
               )}>
                 {deviationMin > 0 ? "+" : ""}{deviationMin}m
@@ -478,7 +478,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
           {isPending && editMode && (
             <div className="space-y-3">
               <Label className="text-sm font-semibold flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-amber-600" />
+                <AlertTriangle className="h-4 w-4 text-warning" />
                 Fordel timer til lønnsarter
               </Label>
               <p className="text-xs text-muted-foreground">

@@ -96,7 +96,7 @@ export default function AMUMeetingWizardPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">{meeting.title}</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em]">{meeting.title}</h1>
             <p className="text-sm text-muted-foreground">
               AMU &gt; Møter &gt; {meeting.title}
             </p>

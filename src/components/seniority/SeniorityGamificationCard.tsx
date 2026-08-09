@@ -201,7 +201,7 @@ export function SeniorityGamificationCard({
           <div className="flex items-center justify-between p-4 bg-background/60 rounded-xl border border-border/50">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-3xl font-bold text-foreground">
+                <span className="text-3xl font-semibold text-foreground">
                   Nivå {seniorityProgress?.level || 1}
                 </span>
                 <Badge variant="secondary" className="text-xs">
@@ -218,7 +218,7 @@ export function SeniorityGamificationCard({
             <div className="text-right">
               <div className="flex items-center gap-1 justify-end">
                 <DollarSign className="h-6 w-6 text-primary" />
-                <span className="text-3xl font-bold text-primary">
+                <span className="text-3xl font-semibold text-primary">
                   {seniorityProgress?.hourlyRate || 0}
                 </span>
                 <span className="text-lg text-muted-foreground">kr/t</span>
@@ -236,7 +236,7 @@ export function SeniorityGamificationCard({
                   <span className="font-medium text-foreground">
                     Fremgang til Nivå {seniorityProgress.nextLevel}
                   </span>
-                  <span className="font-bold text-primary">
+                  <span className="font-semibold text-primary">
                     {Math.round(progressPercentage)}%
                   </span>
                 </div>
@@ -259,7 +259,7 @@ export function SeniorityGamificationCard({
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3 bg-background/50 rounded-lg border border-border/50 text-center">
                   <Target className="h-5 w-5 text-primary mx-auto mb-1" />
-                  <p className="text-lg font-bold text-foreground">
+                  <p className="text-lg font-semibold text-foreground">
                     {seniorityProgress.hoursToNextLevel.toLocaleString("nb-NO")}
                   </p>
                   <p className="text-xs text-muted-foreground">Timer til mål</p>
@@ -268,7 +268,7 @@ export function SeniorityGamificationCard({
                 {estimatedDate && (
                   <div className="p-3 bg-background/50 rounded-lg border border-border/50 text-center">
                     <Calendar className="h-5 w-5 text-secondary-foreground mx-auto mb-1" />
-                    <p className="text-lg font-bold text-foreground">
+                    <p className="text-lg font-semibold text-foreground">
                       {format(estimatedDate, "MMM yyyy", { locale: nb })}
                     </p>
                     <p className="text-xs text-muted-foreground">Estimert dato</p>
@@ -278,7 +278,7 @@ export function SeniorityGamificationCard({
                 {monthlyGain && monthlyGain > 0 && (
                   <div className="p-3 bg-background/50 rounded-lg border border-border/50 text-center">
                     <Zap className="h-5 w-5 text-accent-foreground mx-auto mb-1" />
-                    <p className="text-lg font-bold text-primary">
+                    <p className="text-lg font-semibold text-primary">
                       +{monthlyGain.toLocaleString("nb-NO")}
                     </p>
                     <p className="text-xs text-muted-foreground">kr/mnd ekstra</p>

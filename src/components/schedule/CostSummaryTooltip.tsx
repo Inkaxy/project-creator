@@ -29,7 +29,7 @@ export function CostSummaryTooltip({ children, costs }: CostSummaryTooltipProps)
         <div className="space-y-2">
           <div className="flex items-center justify-between border-b border-border pb-2">
             <span className="text-sm font-medium">Kostnadsfordeling</span>
-            <span className="text-sm font-bold text-primary">
+            <span className="text-sm font-semibold text-primary">
               {costs.totalCost.toLocaleString("nb-NO")} kr
             </span>
           </div>

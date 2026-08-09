@@ -611,15 +611,15 @@ export function EditTemplateModal({
           <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
             <div className="flex gap-6">
               <div className="text-center">
-                <div className="text-2xl font-bold">{totals.shifts}</div>
+                <div className="text-2xl font-semibold">{totals.shifts}</div>
                 <div className="text-xs text-muted-foreground">Vakter</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">{totals.hours}t</div>
+                <div className="text-2xl font-semibold">{totals.hours}t</div>
                 <div className="text-xs text-muted-foreground">Timer</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">
+                <div className="text-2xl font-semibold">
                   {totals.cost.toLocaleString("nb-NO")} kr
                 </div>
                 <div className="text-xs text-muted-foreground">Est. kostnad/uke</div>

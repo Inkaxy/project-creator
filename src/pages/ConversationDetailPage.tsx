@@ -159,7 +159,7 @@ export default function ConversationDetailPage() {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-xl font-bold">
+                <h1 className="text-xl font-semibold tracking-[-0.008em]">
                   Samtale med {conversation.employee?.full_name}
                 </h1>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">

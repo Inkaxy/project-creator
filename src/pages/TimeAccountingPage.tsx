@@ -261,11 +261,11 @@ export default function TimeAccountingPage() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div data-density="compact" className="space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Timeregnskap</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">Timeregnskap</h1>
             <p className="text-muted-foreground">Oversikt over stemplede timer per avdeling og ansatt</p>
           </div>
         </div>
@@ -515,7 +515,7 @@ function SummaryCard({ title, icon: Icon, current, compare }: { title: string; i
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="text-2xl font-bold text-foreground">{formatMinutes(current)}</p>
+          <p className="text-2xl font-semibold text-foreground">{formatMinutes(current)}</p>
           {diff != null && pct != null && (
             <div className={cn("flex items-center gap-1 text-xs font-medium", diff >= 0 ? "text-primary" : "text-destructive")}>
               {diff >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}

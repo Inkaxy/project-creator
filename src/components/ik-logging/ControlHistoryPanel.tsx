@@ -122,7 +122,7 @@ export function ControlHistoryPanel({ departmentId }: ControlHistoryPanelProps) 
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Totalt registrert</p>
-                <p className="text-2xl font-bold">{logs.length}</p>
+                <p className="text-2xl font-semibold">{logs.length}</p>
               </div>
               <History className="h-8 w-8 text-muted-foreground/50" />
             </div>
@@ -134,7 +134,7 @@ export function ControlHistoryPanel({ departmentId }: ControlHistoryPanelProps) 
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Uten avvik</p>
-                <p className="text-2xl font-bold text-success">
+                <p className="text-2xl font-semibold text-success">
                   {logs.filter((l) => !l.has_deviations).length}
                 </p>
               </div>
@@ -148,7 +148,7 @@ export function ControlHistoryPanel({ departmentId }: ControlHistoryPanelProps) 
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Med avvik</p>
-                <p className="text-2xl font-bold text-destructive">
+                <p className="text-2xl font-semibold text-destructive">
                   {logs.filter((l) => l.has_deviations).length}
                 </p>
               </div>

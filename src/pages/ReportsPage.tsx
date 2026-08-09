@@ -148,11 +148,11 @@ export default function ReportsPage() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div data-density="compact" className="space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-center sm:justify-between lg:pl-0">
           <div>
-            <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground flex items-center gap-2">
               <BarChart3 className="h-8 w-8" />
               Rapporter
             </h1>
@@ -224,7 +224,7 @@ export default function ReportsPage() {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Timer denne måneden</p>
-                      <p className="text-xl font-bold text-foreground">
+                      <p className="text-xl font-semibold text-foreground">
                         {workStats.totalHours.toFixed(0)}
                       </p>
                     </div>
@@ -240,7 +240,7 @@ export default function ReportsPage() {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Aktive ansatte</p>
-                      <p className="text-xl font-bold text-foreground">
+                      <p className="text-xl font-semibold text-foreground">
                         {employees.filter(e => e.is_active).length}
                       </p>
                     </div>
@@ -256,7 +256,7 @@ export default function ReportsPage() {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Fraværsdager</p>
-                      <p className="text-xl font-bold text-foreground">
+                      <p className="text-xl font-semibold text-foreground">
                         {absenceStats.totalDays.toFixed(0)}
                       </p>
                     </div>
@@ -272,7 +272,7 @@ export default function ReportsPage() {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Åpne avvik</p>
-                      <p className="text-xl font-bold text-foreground">
+                      <p className="text-xl font-semibold text-foreground">
                         {deviationStats?.byStatus?.open || 0}
                       </p>
                     </div>
@@ -295,7 +295,7 @@ export default function ReportsPage() {
               <CardContent>
                 <div className="flex items-center gap-6">
                   <div className="relative">
-                    <div className={`text-5xl font-bold ${getScoreColor(complianceScore)}`}>
+                    <div className={`text-5xl font-semibold ${getScoreColor(complianceScore)}`}>
                       {complianceScore}
                     </div>
                     <div className="text-sm text-muted-foreground">av 100</div>
@@ -382,7 +382,7 @@ export default function ReportsPage() {
                       <Clock className="h-4 w-4 text-primary" />
                       <span className="font-medium">Totalt arbeidet</span>
                     </div>
-                    <p className="text-3xl font-bold">{workStats.totalHours.toFixed(1)}t</p>
+                    <p className="text-3xl font-semibold">{workStats.totalHours.toFixed(1)}t</p>
                     <p className="text-sm text-muted-foreground mt-1">
                       {workStats.totalEntries} registrerte vakter
                     </p>
@@ -393,7 +393,7 @@ export default function ReportsPage() {
                       <TrendingUp className="h-4 w-4 text-warning" />
                       <span className="font-medium">Overtid</span>
                     </div>
-                    <p className="text-3xl font-bold text-warning">{workStats.totalOvertime.toFixed(1)}t</p>
+                    <p className="text-3xl font-semibold text-warning">{workStats.totalOvertime.toFixed(1)}t</p>
                     <p className="text-sm text-muted-foreground mt-1">
                       Timer over 9t/dag
                     </p>
@@ -404,7 +404,7 @@ export default function ReportsPage() {
                       <Activity className="h-4 w-4 text-success" />
                       <span className="font-medium">Snitt per vakt</span>
                     </div>
-                    <p className="text-3xl font-bold">{workStats.avgHoursPerEntry.toFixed(1)}t</p>
+                    <p className="text-3xl font-semibold">{workStats.avgHoursPerEntry.toFixed(1)}t</p>
                     <p className="text-sm text-muted-foreground mt-1">
                       Gjennomsnittlig arbeidstid
                     </p>
@@ -415,7 +415,7 @@ export default function ReportsPage() {
                       <TrendingDown className="h-4 w-4 text-destructive" />
                       <span className="font-medium">Sent fremmøte</span>
                     </div>
-                    <p className="text-3xl font-bold text-destructive">{workStats.lateArrivals}</p>
+                    <p className="text-3xl font-semibold text-destructive">{workStats.lateArrivals}</p>
                     <p className="text-sm text-muted-foreground mt-1">
                       Registrerte forsinkelser
                     </p>
@@ -466,7 +466,7 @@ export default function ReportsPage() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-muted-foreground">Totalt fravær</span>
-                        <span className="font-bold text-xl">{absenceStats.totalDays} dager</span>
+                        <span className="font-semibold text-xl">{absenceStats.totalDays} dager</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-muted-foreground">Antall søknader</span>
@@ -499,7 +499,7 @@ export default function ReportsPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="text-center py-4">
-                    <div className={`text-6xl font-bold ${getScoreColor(complianceScore)}`}>
+                    <div className={`text-6xl font-semibold ${getScoreColor(complianceScore)}`}>
                       {complianceScore}%
                     </div>
                     <p className={`text-lg font-medium mt-2 ${getScoreColor(complianceScore)}`}>
@@ -532,7 +532,7 @@ export default function ReportsPage() {
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t">
                     <span className="font-medium">Totalt</span>
-                    <span className="font-bold">{deviationStats?.total || 0}</span>
+                    <span className="font-semibold">{deviationStats?.total || 0}</span>
                   </div>
                 </CardContent>
               </Card>

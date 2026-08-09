@@ -241,7 +241,7 @@ export function DeviationHandlerModal({
                     <p className="text-sm text-muted-foreground">
                       {isPositiveDeviation ? "Ekstratid" : "Manglende tid"}
                     </p>
-                    <p className="text-2xl font-bold">
+                    <p className="text-2xl font-semibold">
                       {isPositiveDeviation ? "+" : "-"}{absMinutes} minutter
                     </p>
                   </div>

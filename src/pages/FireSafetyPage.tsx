@@ -51,7 +51,7 @@ export default function FireSafetyPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            <h1 className="text-xl font-semibold tracking-[-0.008em] flex items-center gap-2">
               <Flame className="h-8 w-8 text-destructive" />
               Brannvern
             </h1>

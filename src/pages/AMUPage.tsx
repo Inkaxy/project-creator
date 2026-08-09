@@ -12,7 +12,7 @@ export default function AMUPage() {
     <MainLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Arbeidsmiljøutvalg (AMU)</h1>
+          <h1 className="text-xl font-semibold tracking-[-0.008em]">Arbeidsmiljøutvalg (AMU)</h1>
           <p className="text-muted-foreground">
             Administrer AMU-medlemmer og møter iht. Arbeidsmiljøloven § 7-1
           </p>

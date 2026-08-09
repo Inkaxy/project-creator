@@ -365,7 +365,7 @@ export const AbsenceApprovalDetailModal = ({
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Total påvirkning av konto</p>
-                <p className="text-xl font-bold">{absence.total_days} dager</p>
+                <p className="text-xl font-semibold">{absence.total_days} dager</p>
               </div>
             </div>
 

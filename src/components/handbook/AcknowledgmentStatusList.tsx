@@ -96,7 +96,7 @@ export function AcknowledgmentStatusList({ handbookId, version }: Acknowledgment
                 <CheckCircle className="h-5 w-5 text-success" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.acknowledged}</p>
+                <p className="text-2xl font-semibold">{stats.acknowledged}</p>
                 <p className="text-sm text-muted-foreground">Signert</p>
               </div>
             </div>
@@ -109,7 +109,7 @@ export function AcknowledgmentStatusList({ handbookId, version }: Acknowledgment
                 <Clock className="h-5 w-5 text-warning" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.pending}</p>
+                <p className="text-2xl font-semibold">{stats.pending}</p>
                 <p className="text-sm text-muted-foreground">Ikke lest</p>
               </div>
             </div>
@@ -122,7 +122,7 @@ export function AcknowledgmentStatusList({ handbookId, version }: Acknowledgment
                 <AlertTriangle className="h-5 w-5 text-destructive" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.outdated}</p>
+                <p className="text-2xl font-semibold">{stats.outdated}</p>
                 <p className="text-sm text-muted-foreground">Utdatert</p>
               </div>
             </div>

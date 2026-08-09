@@ -104,7 +104,7 @@ export function SelfCertQuotasPanel() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{quotas.length}</div>
+            <div className="text-2xl font-semibold">{quotas.length}</div>
             <p className="text-xs text-muted-foreground">aktive kvoter</p>
           </CardContent>
         </Card>
@@ -116,7 +116,7 @@ export function SelfCertQuotasPanel() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{summary.highUsage.length}</div>
+            <div className="text-2xl font-semibold">{summary.highUsage.length}</div>
             <p className="text-xs text-muted-foreground">ansatte</p>
           </CardContent>
         </Card>
@@ -128,7 +128,7 @@ export function SelfCertQuotasPanel() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">{summary.maxedOut.length}</div>
+            <div className="text-2xl font-semibold text-destructive">{summary.maxedOut.length}</div>
             <p className="text-xs text-muted-foreground">ansatte</p>
           </CardContent>
         </Card>

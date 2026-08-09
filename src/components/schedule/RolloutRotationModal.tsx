@@ -215,7 +215,7 @@ export function RolloutRotationModal({
                 checked={overwriteExisting}
                 onCheckedChange={(c) => setOverwriteExisting(!!c)}
               />
-              <Label htmlFor="overwrite" className="text-sm font-normal text-amber-600">
+              <Label htmlFor="overwrite" className="text-sm font-normal text-warning-text">
                 <AlertTriangle className="h-3 w-3 inline mr-1" />
                 Overskriv eksisterende vakter
               </Label>
@@ -233,7 +233,7 @@ export function RolloutRotationModal({
                       className={cn(
                         "flex items-center justify-between p-2 rounded text-sm",
                         week.hasHoliday 
-                          ? "bg-red-50 dark:bg-red-950/30" 
+                          ? "bg-destructive-light" 
                           : "bg-muted/50"
                       )}
                     >
@@ -262,15 +262,15 @@ export function RolloutRotationModal({
           <div className="rounded-md bg-muted/50 p-3">
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold">{totalWeeks}</div>
+                <div className="text-2xl font-semibold">{totalWeeks}</div>
                 <div className="text-xs text-muted-foreground">Uker</div>
               </div>
               <div>
-                <div className="text-2xl font-bold">{totalShifts}</div>
+                <div className="text-2xl font-semibold">{totalShifts}</div>
                 <div className="text-xs text-muted-foreground">Vakter</div>
               </div>
               <div>
-                <div className="text-2xl font-bold">
+                <div className="text-2xl font-semibold">
                   {Math.round(totalCost).toLocaleString("nb-NO")} kr
                 </div>
                 <div className="text-xs text-muted-foreground">Est. kostnad</div>

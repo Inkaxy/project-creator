@@ -173,7 +173,7 @@ export default function WageSupplementsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-center sm:justify-between lg:pl-0">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Lønnssatser</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">Lønnssatser</h1>
             <p className="text-muted-foreground">Administrer lønnsstiger, tillegg og etterbetalinger</p>
           </div>
         </div>
@@ -188,31 +188,31 @@ export default function WageSupplementsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{wageLadders.length}</p>
+              <p className="text-2xl font-semibold">{wageLadders.length}</p>
               <p className="text-xs text-muted-foreground">aktive stiger</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-sm font-medium">
-                <DollarSign className="h-4 w-4 text-green-600" />
+                <DollarSign className="h-4 w-4 text-success" />
                 Tillegg
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{supplements.filter(s => s.is_active).length}</p>
+              <p className="text-2xl font-semibold">{supplements.filter(s => s.is_active).length}</p>
               <p className="text-xs text-muted-foreground">aktive tillegg</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-sm font-medium">
-                <Receipt className="h-4 w-4 text-amber-600" />
+                <Receipt className="h-4 w-4 text-warning" />
                 Etterbetalinger
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{pendingAdjustments.length}</p>
+              <p className="text-2xl font-semibold">{pendingAdjustments.length}</p>
               <p className="text-xs text-muted-foreground">venter godkjenning</p>
             </CardContent>
           </Card>
@@ -224,7 +224,7 @@ export default function WageSupplementsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">
+              <p className="text-2xl font-semibold">
                 {supplements.filter(s => s.applies_to === 'weekend' && s.is_active).length}
               </p>
               <p className="text-xs text-muted-foreground">aktive</p>
@@ -275,7 +275,7 @@ export default function WageSupplementsPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold">{activeCount}</p>
+                  <p className="text-2xl font-semibold">{activeCount}</p>
                   <p className="text-xs text-muted-foreground">aktive tillegg</p>
                 </CardContent>
               </Card>

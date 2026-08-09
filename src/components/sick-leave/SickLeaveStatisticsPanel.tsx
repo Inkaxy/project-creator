@@ -131,7 +131,7 @@ export function SickLeaveStatisticsPanel() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{statistics.totalSickLeaves}</div>
+            <div className="text-2xl font-semibold">{statistics.totalSickLeaves}</div>
             <p className="text-xs text-muted-foreground">registreringer</p>
           </CardContent>
         </Card>
@@ -143,7 +143,7 @@ export function SickLeaveStatisticsPanel() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{statistics.totalDays}</div>
+            <div className="text-2xl font-semibold">{statistics.totalDays}</div>
             <p className="text-xs text-muted-foreground">siste 12 måneder</p>
           </CardContent>
         </Card>
@@ -155,7 +155,7 @@ export function SickLeaveStatisticsPanel() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{statistics.avgDuration}</div>
+            <div className="text-2xl font-semibold">{statistics.avgDuration}</div>
             <p className="text-xs text-muted-foreground">dager per fravær</p>
           </CardContent>
         </Card>
@@ -167,7 +167,7 @@ export function SickLeaveStatisticsPanel() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{statistics.activeSickLeaves}</div>
+            <div className="text-2xl font-semibold">{statistics.activeSickLeaves}</div>
             <p className="text-xs text-muted-foreground">pågående sykefravær</p>
           </CardContent>
         </Card>

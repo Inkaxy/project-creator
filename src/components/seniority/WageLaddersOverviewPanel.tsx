@@ -264,21 +264,21 @@ export function WageLaddersOverviewPanel({
                     <div className="grid grid-cols-3 gap-4 pt-2">
                       <div className="p-3 bg-muted/50 rounded-lg text-center">
                         <DollarSign className="h-5 w-5 text-primary mx-auto mb-1" />
-                        <p className="text-lg font-bold text-foreground">
+                        <p className="text-lg font-semibold text-foreground">
                           {minRate.toLocaleString("nb-NO")}
                         </p>
                         <p className="text-xs text-muted-foreground">Startlønn</p>
                       </div>
                       <div className="p-3 bg-muted/50 rounded-lg text-center">
                         <TrendingUp className="h-5 w-5 text-primary mx-auto mb-1" />
-                        <p className="text-lg font-bold text-foreground">
+                        <p className="text-lg font-semibold text-foreground">
                           {maxRate.toLocaleString("nb-NO")}
                         </p>
                         <p className="text-xs text-muted-foreground">Topplønn</p>
                       </div>
                       <div className="p-3 bg-muted/50 rounded-lg text-center">
                         <Clock className="h-5 w-5 text-primary mx-auto mb-1" />
-                        <p className="text-lg font-bold text-foreground">
+                        <p className="text-lg font-semibold text-foreground">
                           {levels.length > 0 && levels[levels.length - 1].min_hours > 0
                             ? levels[levels.length - 1].min_hours.toLocaleString("nb-NO")
                             : "-"}

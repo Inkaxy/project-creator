@@ -111,7 +111,7 @@ export function EmployeeSalaryTab({ employee, employeeDetails }: EmployeeSalaryT
                 <div className="grid grid-cols-3 gap-4 text-sm">
                   <div>
                     <p className="text-muted-foreground">Grunnlag timelønn</p>
-                    <p className="font-bold text-primary text-lg">{currentLevel.hourlyRate.toFixed(2)} kr</p>
+                    <p className="font-semibold text-primary text-lg">{currentLevel.hourlyRate.toFixed(2)} kr</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Ansiennitetsnivå</p>
@@ -173,7 +173,7 @@ export function EmployeeSalaryTab({ employee, employeeDetails }: EmployeeSalaryT
                   <div className="mt-3 pt-3 border-t border-border">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Effektiv timelønn (beregnet):</span>
-                      <span className={`font-bold ${Math.abs(effectiveHourlyRate - currentLevel.hourlyRate) < 1 ? 'text-primary' : 'text-destructive'}`}>
+                      <span className={`font-semibold ${Math.abs(effectiveHourlyRate - currentLevel.hourlyRate) < 1 ? 'text-primary' : 'text-destructive'}`}>
                         {effectiveHourlyRate.toFixed(2)} kr/t
                         {Math.abs(effectiveHourlyRate - currentLevel.hourlyRate) < 1 && (
                           <span className="text-primary ml-2">✓ Matcher lønnsstige</span>

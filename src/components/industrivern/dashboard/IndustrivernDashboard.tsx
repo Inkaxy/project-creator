@@ -57,7 +57,7 @@ export function IndustrivernDashboard() {
               <Skeleton className="h-12 w-24" />
             ) : (
               <>
-                <div className={`text-3xl font-bold ${getComplianceColor(compliance?.totalScore || 0)}`}>
+                <div className={`text-3xl font-semibold ${getComplianceColor(compliance?.totalScore || 0)}`}>
                   {compliance?.totalScore}%
                 </div>
                 <Progress 
@@ -112,7 +112,7 @@ export function IndustrivernDashboard() {
               <Skeleton className="h-12 w-20" />
             ) : (
               <>
-                <div className="text-3xl font-bold">{personnel?.length || 0}</div>
+                <div className="text-3xl font-semibold">{personnel?.length || 0}</div>
                 <p className="text-xs text-muted-foreground mt-2">
                   aktive medlemmer
                 </p>

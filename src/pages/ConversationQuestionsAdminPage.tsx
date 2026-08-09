@@ -186,7 +186,7 @@ export default function ConversationQuestionsAdminPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Spørsmålsbank</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em]">Spørsmålsbank</h1>
             <p className="text-muted-foreground">
               Administrer kategorier og spørsmål for medarbeidersamtaler
             </p>

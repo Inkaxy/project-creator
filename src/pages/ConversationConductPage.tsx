@@ -183,7 +183,7 @@ export default function ConversationConductPage() {
               </AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="font-bold">Samtale med {conversation.employee?.full_name}</h1>
+              <h1 className="text-xl font-semibold tracking-[-0.008em]">Samtale med {conversation.employee?.full_name}</h1>
               <p className="text-sm text-muted-foreground">
                 Spørsmål {currentIndex + 1} av {totalQuestions}
               </p>

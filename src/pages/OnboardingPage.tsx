@@ -205,7 +205,7 @@ export default function OnboardingPage() {
         {/* Header */}
         <div className="mb-8 text-center">
           <img src={crewplanLogo} alt="CrewPlan" className="mx-auto mb-4 h-10" />
-          <h1 className="text-2xl font-bold">Velkommen, {onboarding.full_name}!</h1>
+          <h1 className="text-xl font-semibold tracking-[-0.008em]">Velkommen, {onboarding.full_name}!</h1>
           <p className="text-muted-foreground">
             Fullfør registreringen din for å komme i gang
           </p>

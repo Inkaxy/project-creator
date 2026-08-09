@@ -68,7 +68,7 @@ export default function IKMatPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">IK-Mat / HACCP</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">IK-Mat / HACCP</h1>
             <p className="text-muted-foreground">
               {format(new Date(), "EEEE d. MMMM yyyy", { locale: nb })}
             </p>
@@ -94,7 +94,7 @@ export default function IKMatPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Temperatur i dag</p>
-                  <p className="text-2xl font-bold">{unitsLoggedToday}/{units.length}</p>
+                  <p className="text-2xl font-semibold">{unitsLoggedToday}/{units.length}</p>
                 </div>
               </div>
               <Progress value={tempProgress} className="mt-3 h-2" />
@@ -113,7 +113,7 @@ export default function IKMatPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Temp.avvik i dag</p>
-                  <p className="text-2xl font-bold">{deviationCount}</p>
+                  <p className="text-2xl font-semibold">{deviationCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -127,7 +127,7 @@ export default function IKMatPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Åpne avvik</p>
-                  <p className="text-2xl font-bold">{openDeviations}</p>
+                  <p className="text-2xl font-semibold">{openDeviations}</p>
                 </div>
               </div>
             </CardContent>
@@ -141,7 +141,7 @@ export default function IKMatPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Dokumenter</p>
-                  <p className="text-2xl font-bold">{docStats.active}</p>
+                  <p className="text-2xl font-semibold">{docStats.active}</p>
                 </div>
               </div>
             </CardContent>

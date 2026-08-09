@@ -43,7 +43,7 @@ export default function IKLoggingPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">IK-logging</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">IK-logging</h1>
             <p className="text-muted-foreground">
               Dokumenter og følg opp daglige kontroller
             </p>

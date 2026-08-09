@@ -102,7 +102,7 @@ export function SalaryTypeManager() {
                           <TableCell>{type.name}</TableCell>
                           <TableCell className="text-center">
                             {type.auto_calculate ? (
-                              <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Ja</Badge>
+                              <Badge variant="default" className="bg-success-light text-success-text">Ja</Badge>
                             ) : (
                               <Badge variant="secondary">Nei</Badge>
                             )}

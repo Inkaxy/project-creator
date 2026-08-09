@@ -249,9 +249,9 @@ export const getSeverityLabel = (severity: DisciplinarySeverity): string => {
 
 export const getSeverityColor = (severity: DisciplinarySeverity): string => {
   const colors: Record<DisciplinarySeverity, string> = {
-    low: 'bg-green-100 text-green-800',
-    medium: 'bg-yellow-100 text-yellow-800',
-    high: 'bg-red-100 text-red-800',
+    low: 'bg-success-light text-success-text border border-success-border',
+    medium: 'bg-warning-light text-warning-text border border-warning-border',
+    high: 'bg-destructive-light text-destructive-text border border-destructive-border',
   };
   return colors[severity];
 };
@@ -283,13 +283,13 @@ export const getStatusLabel = (status: CaseStatus): string => {
 
 export const getStatusColor = (status: CaseStatus): string => {
   const colors: Record<CaseStatus, string> = {
-    draft: 'bg-gray-100 text-gray-800',
-    pending_review: 'bg-blue-100 text-blue-800',
-    pending_acknowledgment: 'bg-yellow-100 text-yellow-800',
-    acknowledged: 'bg-green-100 text-green-800',
-    disputed: 'bg-red-100 text-red-800',
-    expired: 'bg-gray-100 text-gray-500',
-    withdrawn: 'bg-gray-100 text-gray-500',
+    draft: 'bg-muted text-foreground border border-border',
+    pending_review: 'bg-info-light text-info-text border border-info-border',
+    pending_acknowledgment: 'bg-warning-light text-warning-text border border-warning-border',
+    acknowledged: 'bg-success-light text-success-text border border-success-border',
+    disputed: 'bg-destructive-light text-destructive-text border border-destructive-border',
+    expired: 'bg-muted text-muted-foreground border border-border',
+    withdrawn: 'bg-muted text-muted-foreground border border-border',
   };
   return colors[status];
 };

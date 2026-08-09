@@ -158,7 +158,7 @@ export default function HandbookPage() {
           <div className="flex items-center gap-4">
             <BookOpen className="h-6 w-6 text-primary" />
             <div>
-              <h1 className="text-xl font-semibold">{handbook.title}</h1>
+              <h1 className="text-xl font-semibold tracking-[-0.008em]">{handbook.title}</h1>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <span>Versjon {handbook.version}</span>
                 {handbook.published_at && (

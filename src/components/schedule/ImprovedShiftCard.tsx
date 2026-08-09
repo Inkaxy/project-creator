@@ -77,15 +77,17 @@ export const ImprovedShiftCard = forwardRef<HTMLDivElement, ImprovedShiftCardPro
         onDragEnd={handleDragEnd}
         onClick={handleClick}
         className={cn(
-          "cursor-pointer rounded-lg transition-all hover:shadow-md group relative",
+          "cursor-pointer rounded-md transition-all group relative",
           compact ? "p-1.5 text-xs" : "p-2 text-sm",
           !shift.employee_id 
-            ? "border-2 border-dashed border-primary/50 bg-primary/5" 
+            ? "bg-shift-open-light border-l-[3px] border-l-shift-open border border-dashed border-shift-open" 
             : sickLeave
-              ? "bg-destructive/10 border-2 border-destructive/40"
+              ? "bg-shift-absence-light border-l-[3px] border-l-shift-absence"
               : shift.is_night_shift 
-                ? "bg-destructive/10 border border-destructive/20" 
-                : "bg-card border border-border",
+                ? "bg-shift-night-light border-l-[3px] border-l-shift-night" 
+                : Number(shift.planned_start?.slice(0, 2)) >= 16
+                  ? "bg-shift-evening-light border-l-[3px] border-l-shift-evening"
+                  : "bg-shift-day-light border-l-[3px] border-l-shift-day text-foreground",
           isSelected && "ring-2 ring-primary ring-offset-1",
           isAdminOrManager && "cursor-grab active:cursor-grabbing",
           isDragging && "opacity-50"
@@ -132,9 +134,9 @@ export const ImprovedShiftCard = forwardRef<HTMLDivElement, ImprovedShiftCardPro
             
             {/* Planned time */}
             <p className={cn(
-              "font-bold",
+              "font-semibold tabular-nums",
               compact ? "text-sm" : "text-base",
-              shift.is_night_shift ? "text-destructive" : "text-foreground"
+              "text-foreground"
             )}>
               {shift.planned_start?.slice(0, 5)} - {shift.planned_end?.slice(0, 5)}
             </p>
@@ -157,7 +159,7 @@ export const ImprovedShiftCard = forwardRef<HTMLDivElement, ImprovedShiftCardPro
                   style={{ backgroundColor: shift.functions.color || "#3B82F6" }}
                 />
                 <span className={cn(
-                  "text-muted-foreground truncate",
+                  "font-normal text-detail text-muted-foreground truncate",
                   compact ? "text-[10px]" : "text-xs"
                 )}>
                   {shift.functions.name}
@@ -179,7 +181,7 @@ export const ImprovedShiftCard = forwardRef<HTMLDivElement, ImprovedShiftCardPro
             <Users className="h-4 w-4" />
             <div>
               <p className="font-medium">Ledig vakt</p>
-              <p className="text-xs opacity-80">
+              <p className="text-xs tabular-nums opacity-80">
                 {shift.planned_start?.slice(0, 5)} - {shift.planned_end?.slice(0, 5)}
               </p>
             </div>

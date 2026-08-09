@@ -190,7 +190,7 @@ export function PayrollExportPanel({ selectedMonth }: Props) {
                   <TableCell className="text-right">{emp.totalHours.toFixed(2)}</TableCell>
                   <TableCell className="text-right">{emp.lines.length}</TableCell>
                   <TableCell className="text-right">
-                    <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                    <Badge variant="default" className="bg-success-light text-success-text">
                       <CheckCircle className="h-3 w-3 mr-1" />
                       Klar
                     </Badge>

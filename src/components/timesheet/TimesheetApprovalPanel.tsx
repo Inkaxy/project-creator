@@ -274,7 +274,7 @@ export function TimesheetApprovalPanel() {
     if (entry.status === "approved") return <Badge className="bg-success/10 text-success border-success/30">Godkjent</Badge>;
     if (entry.status === "rejected") return <Badge variant="destructive">Avvist</Badge>;
     if (entry.status === "draft") return <Badge variant="secondary">Kladd</Badge>;
-    if (entry.hasDeviation) return <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200 border-amber-500">Avvik</Badge>;
+    if (entry.hasDeviation) return <Badge className="bg-warning-light text-warning-text border-warning-border">Avvik</Badge>;
     return <Badge className="bg-primary/10 text-primary border-primary/30">Venter</Badge>;
   };
 
@@ -403,7 +403,7 @@ export function TimesheetApprovalPanel() {
                       <TableRow
                         className={cn(
                           "hover:bg-muted/50 transition-colors",
-                          entry.hasDeviation && isPending && "bg-amber-50/50 dark:bg-amber-950/20"
+                          entry.hasDeviation && isPending && "bg-warning-light"
                         )}
                       >
                         <TableCell>
@@ -501,7 +501,7 @@ export function TimesheetApprovalPanel() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="h-7 text-xs border-amber-500 text-amber-700 dark:text-amber-300"
+                              className="h-7 text-xs border-warning-border text-warning"
                               onClick={() => toggleRow(entry.id)}
                             >
                               <AlertTriangle className="h-3 w-3 mr-1" />
@@ -589,7 +589,7 @@ export function TimesheetApprovalPanel() {
             <span>Venter godkjenning</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-4 h-4 rounded bg-amber-100 dark:bg-amber-900/30 border-2 border-amber-500" />
+            <div className="w-4 h-4 rounded bg-warning-light border-2 border-warning-border" />
             <span>Avvik – klikk for å håndtere</span>
           </div>
           <div className="flex items-center gap-1">

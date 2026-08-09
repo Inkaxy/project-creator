@@ -150,7 +150,7 @@ export function AppSidebar() {
           <div key={section.title} className="mb-2">
             <button
               onClick={() => toggleSection(section.title)}
-              className="flex w-full items-center justify-between rounded-md px-2 py-2 text-xxs font-semibold uppercase tracking-[0.09em] text-neutral-400 transition-colors hover:bg-sidebar-accent"
+              className="flex w-full items-center justify-between rounded-md px-2 py-2 text-xxs font-semibold uppercase tracking-[0.09em] text-muted-foreground transition-colors hover:bg-sidebar-accent"
             >
               {section.title}
               {expandedSections.includes(section.title) ? (
@@ -176,7 +176,7 @@ export function AppSidebar() {
                           : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                       )}
                     >
-                      <item.icon className={cn("h-4 w-4", isActive ? "text-sidebar-primary" : "text-neutral-500")} />
+                      <item.icon className={cn("h-4 w-4", isActive ? "text-sidebar-primary" : "text-muted-foreground")} />
                       <span className="flex-1">{item.title}</span>
                       {item.badge && (
                         <Badge variant="secondary" className="h-5 min-w-5 justify-center rounded-full text-xs">

@@ -61,7 +61,7 @@ export default function EquipmentScanPage() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div data-density="comfortable" className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
           <Button
@@ -72,7 +72,7 @@ export default function EquipmentScanPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Skann QR-kode</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em]">Skann QR-kode</h1>
             <p className="text-muted-foreground">
               Skann QR-koden på utstyret for å se info eller melde avvik
             </p>
@@ -155,7 +155,7 @@ export default function EquipmentScanPage() {
                   )}
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-xl font-bold">{equipment.name}</h2>
+                      <h2 className="text-xl font-semibold">{equipment.name}</h2>
                       <Badge variant={equipment.status === "in_operation" ? "default" : "secondary"}>
                         {equipment.status === "in_operation" && "🟢 I drift"}
                         {equipment.status === "service_scheduled" && "🟡 Service planlagt"}

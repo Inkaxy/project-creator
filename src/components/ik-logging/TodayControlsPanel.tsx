@@ -113,7 +113,7 @@ export function TodayControlsPanel({ departmentId }: TodayControlsPanelProps) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Fullført i dag</p>
-                  <p className="text-2xl font-bold">
+                  <p className="text-2xl font-semibold">
                     {completed.length}/{templates.length}
                   </p>
                 </div>
@@ -129,7 +129,7 @@ export function TodayControlsPanel({ departmentId }: TodayControlsPanelProps) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Venter</p>
-                  <p className="text-2xl font-bold">{pending.length}</p>
+                  <p className="text-2xl font-semibold">{pending.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -143,7 +143,7 @@ export function TodayControlsPanel({ departmentId }: TodayControlsPanelProps) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Avvik i dag</p>
-                  <p className="text-2xl font-bold">
+                  <p className="text-2xl font-semibold">
                     {todayLogs.filter((l) => l.has_deviations).length}
                   </p>
                 </div>

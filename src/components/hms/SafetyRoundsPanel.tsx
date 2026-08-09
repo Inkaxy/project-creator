@@ -228,7 +228,7 @@ export function SafetyRoundsPanel() {
       ) : (
         <div className="grid gap-4">
           {safetyRounds.map((round) => (
-            <Card key={round.id} className="hover:shadow-md transition-shadow">
+            <Card key={round.id} className="hover:border-border-strong transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">

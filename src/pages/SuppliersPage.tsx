@@ -98,7 +98,7 @@ export default function SuppliersPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Leverandører</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em]">Leverandører</h1>
             <p className="text-muted-foreground">
               Administrer leverandører for utstyr og service
             </p>
@@ -130,7 +130,7 @@ export default function SuppliersPage() {
         ) : filteredSuppliers && filteredSuppliers.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredSuppliers.map((supplier) => (
-              <Card key={supplier.id} className="hover:shadow-md transition-shadow">
+              <Card key={supplier.id} className="hover:border-border-strong transition-shadow">
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -163,7 +163,7 @@ export default function SuppliersPage() {
                       </Button>
                     )}
                     {supplier.phone_service && (
-                      <Button size="sm" variant="outline" className="text-orange-600" asChild>
+                      <Button size="sm" variant="outline" className="text-warning-text" asChild>
                         <a href={`tel:${supplier.phone_service}`}>
                           <Phone className="mr-1 h-3 w-3" />
                           Service

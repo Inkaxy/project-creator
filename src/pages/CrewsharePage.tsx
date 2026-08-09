@@ -51,7 +51,7 @@ export default function CrewsharePage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Crewshare</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em]">Crewshare</h1>
             <p className="text-muted-foreground">
               Del personale med partnerbedrifter - trygt og enkelt
             </p>
@@ -76,7 +76,7 @@ export default function CrewsharePage() {
               <div className="flex items-center gap-2">
                 {poolSettings?.is_available_for_pooling ? (
                   <>
-                    <Badge variant="default" className="bg-green-500">Tilgjengelig</Badge>
+                    <Badge variant="default" className="bg-success">Tilgjengelig</Badge>
                     <span className="text-xs text-muted-foreground">for utleie</span>
                   </>
                 ) : (
@@ -95,7 +95,7 @@ export default function CrewsharePage() {
               <CalendarClock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{upcomingShifts.length}</div>
+              <div className="text-2xl font-semibold">{upcomingShifts.length}</div>
               <p className="text-xs text-muted-foreground">eksterne oppdrag</p>
             </CardContent>
           </Card>
@@ -106,7 +106,7 @@ export default function CrewsharePage() {
               <AlertTriangle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{pendingRequests.length}</div>
+              <div className="text-2xl font-semibold">{pendingRequests.length}</div>
               <p className="text-xs text-muted-foreground">krever din respons</p>
             </CardContent>
           </Card>
@@ -117,7 +117,7 @@ export default function CrewsharePage() {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">12%</div>
+              <div className="text-2xl font-semibold">12%</div>
               <p className="text-xs text-muted-foreground">
                 av {poolSettings?.max_pool_percentage || 50}% maks
               </p>

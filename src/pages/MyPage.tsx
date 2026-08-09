@@ -94,13 +94,13 @@ export default function MyPage() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div data-density="comfortable" className="space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-start sm:justify-between lg:pl-0">
           <div className="flex items-center gap-4">
             <AvatarWithInitials name={profile?.full_name || "Bruker"} size="lg" />
             <div>
-              <h1 className="text-3xl font-bold text-foreground">{profile?.full_name || "Bruker"}</h1>
+              <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">{profile?.full_name || "Bruker"}</h1>
               <p className="text-muted-foreground">
                 {profile?.employee_type || "Ansatt"}
               </p>
@@ -125,7 +125,7 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Timer denne uken</p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-semibold text-foreground">
                     {hoursThisWeek}/{hoursPlanned}t
                   </p>
                 </div>
@@ -140,7 +140,7 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Tidskonto</p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-semibold text-foreground">
                     {timeBalance >= 0 ? '+' : ''}{timeBalance.toFixed(1)}t
                   </p>
                 </div>
@@ -155,7 +155,7 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Natt-konto</p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-semibold text-foreground">
                     {nightBalance >= 0 ? '+' : ''}{nightBalance.toFixed(1)}t
                   </p>
                 </div>
@@ -170,7 +170,7 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Feriedager</p>
-                  <p className="text-xl font-bold text-foreground">{vacationDays} dager</p>
+                  <p className="text-xl font-semibold text-foreground">{vacationDays} dager</p>
                 </div>
               </div>
             </CardContent>
@@ -230,7 +230,7 @@ export default function MyPage() {
 
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Nåværende timelønn</span>
-                <span className="text-lg font-bold text-foreground">
+                <span className="text-lg font-semibold text-foreground">
                   {seniorityData.hourlyRate} kr/t
                 </span>
               </div>
@@ -301,12 +301,12 @@ export default function MyPage() {
               {courses.map((course, index) => (
                 <div
                   key={index}
-                  className="rounded-lg border border-border p-4 transition-shadow hover:shadow-md"
+                  className="rounded-lg border border-border p-4 transition-colors hover:border-border-strong"
                 >
                   <div className="mb-3 flex items-start justify-between">
                     <h4 className="font-medium text-foreground">{course.name}</h4>
                     {course.status === "completed" && (
-                      <Badge variant="default" className="bg-success">
+                      <Badge variant="outline" className="bg-success-light border-success-border text-success-text">
                         Fullført
                       </Badge>
                     )}

@@ -267,7 +267,7 @@ export function CreateRotationGroupModal({
               ))}
 
               {availableTemplates.length < rotationLength && (
-                <div className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-3 rounded-md">
+                <div className="text-sm text-warning-text bg-warning-light p-3 rounded-md">
                   ⚠️ Du har bare {availableTemplates.length} tilgjengelige maler.
                 </div>
               )}
