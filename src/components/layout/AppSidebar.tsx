@@ -34,7 +34,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { NotificationBell } from "@/components/layout/NotificationBell";
-import crewplanLogo from "@/assets/crewplan-logo-v2.png";
+import { Logo } from "@/components/Logo";
 
 interface NavSection {
   title: string;
@@ -141,8 +141,7 @@ export function AppSidebar() {
     <div className="flex h-full flex-col">
       {/* Logo */}
       <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-4">
-        <img src={crewplanLogo} alt="Crewplan" className="h-10 w-10" />
-        <span className="text-xl font-bold text-foreground">Crewplan</span>
+        <Logo />
       </div>
 
       {/* Navigation */}
@@ -151,7 +150,7 @@ export function AppSidebar() {
           <div key={section.title} className="mb-2">
             <button
               onClick={() => toggleSection(section.title)}
-              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:bg-sidebar-accent"
+              className="flex w-full items-center justify-between rounded-md px-2 py-2 text-xxs font-semibold uppercase tracking-[0.09em] text-neutral-400 transition-colors hover:bg-sidebar-accent"
             >
               {section.title}
               {expandedSections.includes(section.title) ? (
@@ -171,13 +170,13 @@ export function AppSidebar() {
                       to={item.href}
                       onClick={() => setMobileOpen(false)}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
+                        "flex items-center gap-3 rounded-md px-2 py-1.5 text-[0.84375rem] font-normal transition-colors",
                         isActive
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                          ? "border-l-2 border-sidebar-primary bg-sidebar-accent font-semibold text-sidebar-primary"
                           : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                       )}
                     >
-                      <item.icon className={cn("h-5 w-5", isActive && "text-primary")} />
+                      <item.icon className={cn("h-4 w-4", isActive ? "text-sidebar-primary" : "text-neutral-500")} />
                       <span className="flex-1">{item.title}</span>
                       {item.badge && (
                         <Badge variant="secondary" className="h-5 min-w-5 justify-center rounded-full text-xs">
@@ -255,7 +254,7 @@ export function AppSidebar() {
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 flex-shrink-0 border-r border-sidebar-border bg-sidebar lg:block">
+      <aside className="hidden w-64 flex-shrink-0 border-r border-sidebar-border bg-sidebar shadow-none lg:block">
         <SidebarContent />
       </aside>
     </>

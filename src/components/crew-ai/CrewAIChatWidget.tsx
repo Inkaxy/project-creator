@@ -48,12 +48,10 @@ export function CrewAIChatWidget() {
         <Button
           onClick={() => setIsOpen(true)}
           className={cn(
-            "fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50",
-            "bg-gradient-to-br from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70",
-            "text-primary-foreground",
-            "transition-all duration-300 hover:scale-110 hover:shadow-xl",
-            "flex items-center justify-center",
-            "border-2 border-primary-foreground/20"
+            "fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-overlay z-50",
+            "bg-ai-light border border-ai-border text-ai hover:bg-ai-light",
+            "transition-colors",
+            "flex items-center justify-center"
           )}
           size="icon"
           title="CrewAI - Din lederassistent"
