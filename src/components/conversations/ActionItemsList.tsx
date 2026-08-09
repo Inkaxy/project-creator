@@ -88,7 +88,7 @@ export function ActionItemsList({ conversationId, canManage }: ActionItemsListPr
                     </span>
                   )}
                   {action.due_date && (
-                    <span className={`flex items-center gap-1 text-xs ${isOverdue ? 'text-red-500' : 'text-muted-foreground'}`}>
+                    <span className={`flex items-center gap-1 text-xs ${isOverdue ? 'text-destructive-text' : 'text-muted-foreground'}`}>
                       {isOverdue && <AlertCircle className="h-3 w-3" />}
                       <Clock className="h-3 w-3" />
                       {format(new Date(action.due_date), 'dd.MM.yyyy', { locale: nb })}

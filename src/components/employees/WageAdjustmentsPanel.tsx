@@ -144,7 +144,7 @@ export function WageAdjustmentsPanel() {
               </Button>
             )}
             {exportedCount > 0 && (
-              <Button variant="outline" size="sm" onClick={handleMarkAllAsPaid} className="text-success-text hover:text-green-700">
+              <Button variant="outline" size="sm" onClick={handleMarkAllAsPaid} className="text-success-text hover:text-success-text">
                 <Check className="h-4 w-4 mr-2" />
                 Merk utbetalt ({exportedCount})
               </Button>
@@ -231,7 +231,7 @@ function AdjustmentCard({
               size="sm"
               onClick={() => onApprove(adjustment.id)}
               disabled={isPending}
-              className="text-success-text hover:text-green-700 hover:bg-green-50"
+              className="text-success-text hover:text-success-text hover:bg-success-light"
             >
               <Check className="h-4 w-4 mr-1" />
               Godkjenn
@@ -255,7 +255,7 @@ function AdjustmentCard({
             size="sm"
             onClick={() => onMarkAsPaid(adjustment.id)}
             disabled={isPending}
-            className="text-success-text hover:text-green-700 hover:bg-green-50"
+            className="text-success-text hover:text-success-text hover:bg-success-light"
           >
             <DollarSign className="h-4 w-4 mr-1" />
             Merk utbetalt

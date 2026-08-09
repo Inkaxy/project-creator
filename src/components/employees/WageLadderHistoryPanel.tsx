@@ -103,7 +103,7 @@ export function WageLadderHistoryPanel() {
                                 {formatCurrency(entry.new_hourly_rate)}
                               </span>
                               {difference && (
-                                <span className={`ml-2 ${isIncrease ? 'text-green-600' : 'text-amber-600'}`}>
+                                <span className={`ml-2 ${isIncrease ? 'text-success-text' : 'text-warning-text'}`}>
                                   ({isIncrease ? '+' : ''}{formatCurrency(difference)})
                                 </span>
                               )}

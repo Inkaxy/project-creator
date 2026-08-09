@@ -209,7 +209,7 @@ export function SelfCertQuotasPanel() {
                     </div>
                     <Progress 
                       value={Math.min(daysPct, 100)} 
-                      className={`h-2 ${isDanger ? '[&>div]:bg-destructive' : isWarning '[&>div]:bg-yellow-500' ''}`}
+                      className={`h-2 ${isDanger ? '[&>div]:bg-destructive' : isWarning ? '[&>div]:bg-warning' : ''}`}
                     />
                     <p className="text-xs text-muted-foreground">
                       {daysRemaining > 0 ? `${daysRemaining} dager igjen` : 'Ingen dager igjen'}
