@@ -324,9 +324,9 @@ export function EnhancedShiftDetailModal({
 
             {/* Actual clock time */}
             {hasClockData && (
-              <Card className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/20">
+              <Card className="border-success-border bg-success-light">
                 <CardContent className="pt-4">
-                  <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-400">
+                  <div className="flex items-center gap-2 text-sm text-success-text">
                     <Clock className="h-4 w-4" />
                     <span>
                       Stemplingsur: <strong>{shift.actual_start?.slice(0, 5) || "--:--"} - {shift.actual_end?.slice(0, 5) || "--:--"}</strong>

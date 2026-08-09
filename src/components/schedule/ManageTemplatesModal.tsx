@@ -274,7 +274,7 @@ export function ManageTemplatesModal({
                                   </Button>
                                 </CollapsibleTrigger>
                                 {template.is_default && (
-                                  <Star className="h-4 w-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+                                  <Star className="h-4 w-4 text-warning fill-warning flex-shrink-0" />
                                 )}
                                 <span className="font-medium truncate">
                                   {template.name}

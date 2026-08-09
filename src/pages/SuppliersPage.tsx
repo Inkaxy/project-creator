@@ -163,7 +163,7 @@ export default function SuppliersPage() {
                       </Button>
                     )}
                     {supplier.phone_service && (
-                      <Button size="sm" variant="outline" className="text-orange-600" asChild>
+                      <Button size="sm" variant="outline" className="text-warning-text" asChild>
                         <a href={`tel:${supplier.phone_service}`}>
                           <Phone className="mr-1 h-3 w-3" />
                           Service

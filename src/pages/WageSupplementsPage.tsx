@@ -195,7 +195,7 @@ export default function WageSupplementsPage() {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-sm font-medium">
-                <DollarSign className="h-4 w-4 text-green-600" />
+                <DollarSign className="h-4 w-4 text-success" />
                 Tillegg
               </CardTitle>
             </CardHeader>
@@ -207,7 +207,7 @@ export default function WageSupplementsPage() {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-sm font-medium">
-                <Receipt className="h-4 w-4 text-amber-600" />
+                <Receipt className="h-4 w-4 text-warning" />
                 Etterbetalinger
               </CardTitle>
             </CardHeader>

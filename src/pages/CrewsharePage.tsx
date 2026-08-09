@@ -76,7 +76,7 @@ export default function CrewsharePage() {
               <div className="flex items-center gap-2">
                 {poolSettings?.is_available_for_pooling ? (
                   <>
-                    <Badge variant="default" className="bg-green-500">Tilgjengelig</Badge>
+                    <Badge variant="default" className="bg-success">Tilgjengelig</Badge>
                     <span className="text-xs text-muted-foreground">for utleie</span>
                   </>
                 ) : (

@@ -438,7 +438,7 @@ export function RolloutTemplateModal({
                     </div>
                   </div>
                   {totals.conflicts > 0 && (
-                    <div className="mt-3 text-center text-sm text-yellow-600 dark:text-yellow-400">
+                    <div className="mt-3 text-center text-sm text-warning-text">
                       <AlertTriangle className="h-4 w-4 inline mr-1" />
                       {totals.conflicts} konflikter funnet
                     </div>

@@ -66,13 +66,13 @@ export function EmployeeExternalIdManager({ systemType }: Props) {
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-green-600">{employeesWithId.length}</div>
+            <div className="text-2xl font-bold text-success-text">{employeesWithId.length}</div>
             <div className="text-sm text-muted-foreground">Med ansattnummer</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-amber-600">{employeesWithoutId.length}</div>
+            <div className="text-2xl font-bold text-warning-text">{employeesWithoutId.length}</div>
             <div className="text-sm text-muted-foreground">Mangler ansattnummer</div>
           </CardContent>
         </Card>
@@ -80,15 +80,15 @@ export function EmployeeExternalIdManager({ systemType }: Props) {
 
       {/* Warning */}
       {employeesWithoutId.length > 0 && (
-        <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800">
+        <Card className="border-warning-border bg-warning-light">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-warning mt-0.5" />
               <div>
-                <p className="font-medium text-amber-800 dark:text-amber-200">
+                <p className="font-medium text-warning-text">
                   {employeesWithoutId.length} ansatte mangler {getSystemDisplayName(systemType)}-nummer
                 </p>
-                <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                <p className="text-sm text-warning-text mt-1">
                   Disse vil ikke inkluderes i lønnseksport før ansattnummer er registrert.
                 </p>
               </div>
@@ -153,7 +153,7 @@ export function EmployeeExternalIdManager({ systemType }: Props) {
                   </TableCell>
                   <TableCell>
                     {employee.externalId?.external_id ? (
-                      <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                      <Badge variant="default" className="bg-success-light text-success-text">
                         <CheckCircle className="h-3 w-3 mr-1" />
                         Koblet
                       </Badge>

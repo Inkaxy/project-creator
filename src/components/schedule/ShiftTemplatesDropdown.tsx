@@ -70,7 +70,7 @@ export function ShiftTemplatesDropdown({
               >
                 <div className="flex items-center gap-2">
                   {template.is_default && (
-                    <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                    <Star className="h-3 w-3 text-warning fill-warning" />
                   )}
                   <span className="truncate max-w-[120px]">{template.name}</span>
                 </div>

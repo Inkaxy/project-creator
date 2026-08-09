@@ -128,9 +128,9 @@ export function RolloutPreviewGrid({ preview }: RolloutPreviewGridProps) {
                     key={idx}
                     className={cn(
                       "text-[10px] p-1 rounded mb-0.5",
-                      shift.status === 'new' && "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800",
+                      shift.status === 'new' && "bg-success-light text-success-text border border-success-border",
                       shift.status === 'existing' && "bg-muted text-muted-foreground border border-border",
-                      shift.status === 'conflict' && "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-800"
+                      shift.status === 'conflict' && "bg-warning-light text-warning-text border border-warning-border"
                     )}
                   >
                     <div className="font-medium">
@@ -152,12 +152,12 @@ export function RolloutPreviewGrid({ preview }: RolloutPreviewGridProps) {
       {/* Legend */}
       <div className="p-2 bg-muted/30 flex gap-4 text-xs">
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-green-100 dark:bg-green-900/40 border border-green-200 dark:border-green-800" />
+          <div className="w-3 h-3 rounded bg-success-light border border-success-border" />
           <span>Ny ({preview.shiftCount})</span>
         </div>
         {preview.conflictCount > 0 && (
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-yellow-100 dark:bg-yellow-900/40 border border-yellow-200 dark:border-yellow-800" />
+            <div className="w-3 h-3 rounded bg-warning-light border border-warning-border" />
             <span>Konflikt ({preview.conflictCount})</span>
           </div>
         )}

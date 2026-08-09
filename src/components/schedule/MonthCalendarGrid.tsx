@@ -172,7 +172,7 @@ export function MonthCalendarGrid({
                     {dayAbsences.length > 0 && (
                       <Tooltip>
                         <TooltipTrigger>
-                          <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 bg-amber-500/10 text-amber-600 border-amber-500/20">
+                          <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 bg-warning-light text-warning border-warning-border">
                             <Palmtree className="h-2.5 w-2.5 mr-0.5" />
                             {dayAbsences.length}
                           </Badge>

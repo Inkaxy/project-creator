@@ -215,7 +215,7 @@ export function RolloutRotationModal({
                 checked={overwriteExisting}
                 onCheckedChange={(c) => setOverwriteExisting(!!c)}
               />
-              <Label htmlFor="overwrite" className="text-sm font-normal text-amber-600">
+              <Label htmlFor="overwrite" className="text-sm font-normal text-warning-text">
                 <AlertTriangle className="h-3 w-3 inline mr-1" />
                 Overskriv eksisterende vakter
               </Label>
@@ -233,7 +233,7 @@ export function RolloutRotationModal({
                       className={cn(
                         "flex items-center justify-between p-2 rounded text-sm",
                         week.hasHoliday 
-                          ? "bg-red-50 dark:bg-red-950/30" 
+                          ? "bg-destructive-light" 
                           : "bg-muted/50"
                       )}
                     >
