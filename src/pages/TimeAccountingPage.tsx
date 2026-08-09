@@ -515,7 +515,7 @@ function SummaryCard({ title, icon: Icon, current, compare }: { title: string; i
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="text-2xl font-bold text-foreground">{formatMinutes(current)}</p>
+          <p className="text-2xl font-semibold text-foreground">{formatMinutes(current)}</p>
           {diff != null && pct != null && (
             <div className={cn("flex items-center gap-1 text-xs font-medium", diff >= 0 ? "text-primary" : "text-destructive")}>
               {diff >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}

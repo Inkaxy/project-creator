@@ -155,7 +155,7 @@ export default function EquipmentScanPage() {
                   )}
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-xl font-bold">{equipment.name}</h2>
+                      <h2 className="text-xl font-semibold">{equipment.name}</h2>
                       <Badge variant={equipment.status === "in_operation" ? "default" : "secondary"}>
                         {equipment.status === "in_operation" && "🟢 I drift"}
                         {equipment.status === "service_scheduled" && "🟡 Service planlagt"}

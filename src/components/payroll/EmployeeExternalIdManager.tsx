@@ -60,19 +60,19 @@ export function EmployeeExternalIdManager({ systemType }: Props) {
       <div className="grid grid-cols-3 gap-4">
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold">{employees.length}</div>
+            <div className="text-2xl font-semibold">{employees.length}</div>
             <div className="text-sm text-muted-foreground">Totalt ansatte</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-success-text">{employeesWithId.length}</div>
+            <div className="text-2xl font-semibold text-success-text">{employeesWithId.length}</div>
             <div className="text-sm text-muted-foreground">Med ansattnummer</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-warning-text">{employeesWithoutId.length}</div>
+            <div className="text-2xl font-semibold text-warning-text">{employeesWithoutId.length}</div>
             <div className="text-sm text-muted-foreground">Mangler ansattnummer</div>
           </CardContent>
         </Card>

@@ -188,7 +188,7 @@ export default function WageSupplementsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{wageLadders.length}</p>
+              <p className="text-2xl font-semibold">{wageLadders.length}</p>
               <p className="text-xs text-muted-foreground">aktive stiger</p>
             </CardContent>
           </Card>
@@ -200,7 +200,7 @@ export default function WageSupplementsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{supplements.filter(s => s.is_active).length}</p>
+              <p className="text-2xl font-semibold">{supplements.filter(s => s.is_active).length}</p>
               <p className="text-xs text-muted-foreground">aktive tillegg</p>
             </CardContent>
           </Card>
@@ -212,7 +212,7 @@ export default function WageSupplementsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{pendingAdjustments.length}</p>
+              <p className="text-2xl font-semibold">{pendingAdjustments.length}</p>
               <p className="text-xs text-muted-foreground">venter godkjenning</p>
             </CardContent>
           </Card>
@@ -224,7 +224,7 @@ export default function WageSupplementsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">
+              <p className="text-2xl font-semibold">
                 {supplements.filter(s => s.applies_to === 'weekend' && s.is_active).length}
               </p>
               <p className="text-xs text-muted-foreground">aktive</p>
@@ -275,7 +275,7 @@ export default function WageSupplementsPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold">{activeCount}</p>
+                  <p className="text-2xl font-semibold">{activeCount}</p>
                   <p className="text-xs text-muted-foreground">aktive tillegg</p>
                 </CardContent>
               </Card>

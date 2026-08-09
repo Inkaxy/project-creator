@@ -296,7 +296,7 @@ function SectionExplorer({
                 <CardTitle className="text-base flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className={cn(
-                      "h-8 w-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors",
+                      "h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors",
                       isRead 
                         ? "bg-success text-success-foreground" 
                         : "bg-primary/10 text-primary"
@@ -410,7 +410,7 @@ function PracticeMode({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg leading-relaxed flex items-start gap-3">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary shrink-0">
               ?
             </div>
             <span>{currentQuestion.question}</span>
@@ -671,7 +671,7 @@ export function InteractiveLearning({
             <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-success/20 mb-4">
               <Trophy className="h-8 w-8 text-success" />
             </div>
-            <h3 className="text-xl font-bold mb-2">Du er klar for quizen!</h3>
+            <h3 className="text-xl font-semibold mb-2">Du er klar for quizen!</h3>
             <p className="text-muted-foreground mb-4">
               Du har gått gjennom alt læringsmaterialet. 
               {practiceScore !== null && (

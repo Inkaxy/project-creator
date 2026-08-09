@@ -107,7 +107,7 @@ export default function EquipmentPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{stat.title}</p>
-                  <p className={`text-2xl font-bold ${stat.color}`}>
+                  <p className={`text-2xl font-semibold ${stat.color}`}>
                     {statsLoading ? "..." : stat.value}
                   </p>
                 </div>

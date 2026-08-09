@@ -125,7 +125,7 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Timer denne uken</p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-semibold text-foreground">
                     {hoursThisWeek}/{hoursPlanned}t
                   </p>
                 </div>
@@ -140,7 +140,7 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Tidskonto</p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-semibold text-foreground">
                     {timeBalance >= 0 ? '+' : ''}{timeBalance.toFixed(1)}t
                   </p>
                 </div>
@@ -155,7 +155,7 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Natt-konto</p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-semibold text-foreground">
                     {nightBalance >= 0 ? '+' : ''}{nightBalance.toFixed(1)}t
                   </p>
                 </div>
@@ -170,7 +170,7 @@ export default function MyPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Feriedager</p>
-                  <p className="text-xl font-bold text-foreground">{vacationDays} dager</p>
+                  <p className="text-xl font-semibold text-foreground">{vacationDays} dager</p>
                 </div>
               </div>
             </CardContent>
@@ -230,7 +230,7 @@ export default function MyPage() {
 
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Nåværende timelønn</span>
-                <span className="text-lg font-bold text-foreground">
+                <span className="text-lg font-semibold text-foreground">
                   {seniorityData.hourlyRate} kr/t
                 </span>
               </div>

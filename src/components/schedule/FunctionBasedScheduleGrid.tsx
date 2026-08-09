@@ -211,7 +211,7 @@ export function FunctionBasedScheduleGrid({
                 )}
               </div>
               <p className={cn(
-                "font-bold",
+                "font-semibold",
                 isCompact ? "text-xs" : "text-lg",
                 isToday ? "text-primary" : "text-foreground"
               )}>

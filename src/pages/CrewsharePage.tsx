@@ -95,7 +95,7 @@ export default function CrewsharePage() {
               <CalendarClock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{upcomingShifts.length}</div>
+              <div className="text-2xl font-semibold">{upcomingShifts.length}</div>
               <p className="text-xs text-muted-foreground">eksterne oppdrag</p>
             </CardContent>
           </Card>
@@ -106,7 +106,7 @@ export default function CrewsharePage() {
               <AlertTriangle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{pendingRequests.length}</div>
+              <div className="text-2xl font-semibold">{pendingRequests.length}</div>
               <p className="text-xs text-muted-foreground">krever din respons</p>
             </CardContent>
           </Card>
@@ -117,7 +117,7 @@ export default function CrewsharePage() {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">12%</div>
+              <div className="text-2xl font-semibold">12%</div>
               <p className="text-xs text-muted-foreground">
                 av {poolSettings?.max_pool_percentage || 50}% maks
               </p>

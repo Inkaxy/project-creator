@@ -382,7 +382,7 @@ function ReadinessPreview({ readiness }: { readiness?: InspectionReadiness }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Total beredskap</p>
-              <p className="text-3xl font-bold">{readiness.overallScore}%</p>
+              <p className="text-3xl font-semibold">{readiness.overallScore}%</p>
             </div>
             <div className="flex gap-4">
               <div className="text-center">

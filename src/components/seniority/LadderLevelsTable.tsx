@@ -74,7 +74,7 @@ export function LadderLevelsTable({
                   </span>
                 </TableCell>
                 <TableCell className="text-right font-mono">
-                  <span className={cn(isCurrent && "text-primary font-bold")}>
+                  <span className={cn(isCurrent && "text-primary font-semibold")}>
                     {level.hourly_rate.toLocaleString("nb-NO")} kr/t
                   </span>
                 </TableCell>

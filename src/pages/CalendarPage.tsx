@@ -275,7 +275,7 @@ export default function CalendarPage() {
                                         isToday
                                           ? "bg-primary text-primary-foreground"
                                           : holidayName
-                                          ? "text-destructive font-bold"
+                                          ? "text-destructive font-semibold"
                                           : "text-foreground"
                                       )}
                                     >

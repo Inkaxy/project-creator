@@ -312,7 +312,7 @@ export default function KioskPage() {
             <p className="text-xs text-muted-foreground uppercase tracking-wider">
               {format(currentTime, "EEEE d. MMMM yyyy", { locale: nb })}
             </p>
-            <p className="text-4xl font-bold font-mono tracking-tight">
+            <p className="text-4xl font-semibold font-mono tracking-tight">
               {format(currentTime, settings?.show_clock_seconds ? "HH:mm:ss" : "HH:mm")}
             </p>
           </div>
@@ -523,7 +523,7 @@ export default function KioskPage() {
           </Button>
           
           <div className="text-center space-y-2">
-            <div className="flex h-20 w-20 mx-auto items-center justify-center rounded-full bg-primary text-primary-foreground text-2xl font-bold">
+            <div className="flex h-20 w-20 mx-auto items-center justify-center rounded-full bg-primary text-primary-foreground text-2xl font-semibold">
               {getInitials(selectedEmployee?.full_name || "")}
             </div>
             <h2 className="text-xl font-semibold">{selectedEmployee?.full_name}</h2>
@@ -535,7 +535,7 @@ export default function KioskPage() {
             {[0, 1, 2, 3].map((i) => (
               <div
                 key={i}
-                className={`h-12 w-12 rounded-xl border-2 flex items-center justify-center text-2xl font-bold transition-all ${
+                className={`h-12 w-12 rounded-xl border-2 flex items-center justify-center text-2xl font-semibold transition-all ${
                   pin[i] ? "border-primary bg-primary/10" : "border-border"
                 }`}
               >
@@ -591,11 +591,11 @@ export default function KioskPage() {
             </Button>
             
             <div className="text-center space-y-3">
-              <div className={`flex h-24 w-24 mx-auto items-center justify-center rounded-full text-3xl font-bold text-primary-foreground ${activeEntry ? "bg-success" : "bg-primary"}`}>
+              <div className={`flex h-24 w-24 mx-auto items-center justify-center rounded-full text-3xl font-semibold text-primary-foreground ${activeEntry ? "bg-success" : "bg-primary"}`}>
                 {getInitials(selectedEmployee?.full_name || "")}
               </div>
               <div>
-                <h2 className="text-2xl font-bold">{selectedEmployee?.full_name}</h2>
+                <h2 className="text-2xl font-semibold">{selectedEmployee?.full_name}</h2>
                 {shift && (
                   <p className="text-muted-foreground text-sm mt-1">
                     {shift.function?.name}
@@ -669,7 +669,7 @@ export default function KioskPage() {
             </div>
           )}
           <div>
-            <h2 className="text-3xl font-bold">{actionResult?.message}</h2>
+            <h2 className="text-3xl font-semibold">{actionResult?.message}</h2>
             <p className="text-muted-foreground mt-2">
               {selectedEmployee?.full_name} • {format(currentTime, "HH:mm")}
             </p>

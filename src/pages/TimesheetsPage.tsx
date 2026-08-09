@@ -465,7 +465,7 @@ export default function TimesheetsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Totalt timer</p>
-                <p className="text-2xl font-bold text-foreground">{totalHours.toFixed(1)}t</p>
+                <p className="text-2xl font-semibold text-foreground">{totalHours.toFixed(1)}t</p>
               </div>
             </CardContent>
           </Card>
@@ -476,7 +476,7 @@ export default function TimesheetsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Natt-timer</p>
-                <p className="text-2xl font-bold text-foreground">{nightHours.toFixed(1)}t</p>
+                <p className="text-2xl font-semibold text-foreground">{nightHours.toFixed(1)}t</p>
               </div>
             </CardContent>
           </Card>
@@ -487,7 +487,7 @@ export default function TimesheetsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Avvik</p>
-                <p className="text-2xl font-bold text-foreground">{deviationCount}</p>
+                <p className="text-2xl font-semibold text-foreground">{deviationCount}</p>
               </div>
             </CardContent>
           </Card>

@@ -80,7 +80,7 @@ export default function DeviationsPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Åpne</p>
-                  <p className="text-2xl font-bold">{stats?.byStatus?.open || 0}</p>
+                  <p className="text-2xl font-semibold">{stats?.byStatus?.open || 0}</p>
                 </div>
               </div>
             </CardContent>
@@ -94,7 +94,7 @@ export default function DeviationsPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Under behandling</p>
-                  <p className="text-2xl font-bold">{stats?.byStatus?.in_progress || 0}</p>
+                  <p className="text-2xl font-semibold">{stats?.byStatus?.in_progress || 0}</p>
                 </div>
               </div>
             </CardContent>
@@ -108,7 +108,7 @@ export default function DeviationsPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Lukket</p>
-                  <p className="text-2xl font-bold">{stats?.byStatus?.closed || 0}</p>
+                  <p className="text-2xl font-semibold">{stats?.byStatus?.closed || 0}</p>
                 </div>
               </div>
             </CardContent>
@@ -122,7 +122,7 @@ export default function DeviationsPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Totalt</p>
-                  <p className="text-2xl font-bold">{stats?.total || 0}</p>
+                  <p className="text-2xl font-semibold">{stats?.total || 0}</p>
                 </div>
               </div>
             </CardContent>

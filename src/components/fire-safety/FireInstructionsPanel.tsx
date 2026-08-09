@@ -84,15 +84,15 @@ export function FireInstructionsPanel() {
           <CardContent className="space-y-3">
             <div className="flex items-center justify-between p-3 rounded-lg bg-destructive/10 border border-destructive/20">
               <span className="font-medium">Brann</span>
-              <span className="text-2xl font-bold text-destructive">110</span>
+              <span className="text-2xl font-semibold text-destructive">110</span>
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-primary/10 border border-primary/20">
               <span className="font-medium">Politi</span>
-              <span className="text-2xl font-bold text-primary">112</span>
+              <span className="text-2xl font-semibold text-primary">112</span>
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-success/10 border border-success/20">
               <span className="font-medium">Ambulanse</span>
-              <span className="text-2xl font-bold text-success">113</span>
+              <span className="text-2xl font-semibold text-success">113</span>
             </div>
           </CardContent>
         </Card>
@@ -116,7 +116,7 @@ export function FireInstructionsPanel() {
                 "Vent på brannvesen",
               ].map((step, index) => (
                 <li key={index} className="flex items-start gap-3 text-sm">
-                  <span className="flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary text-xs font-bold shrink-0">
+                  <span className="flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary text-xs font-semibold shrink-0">
                     {index + 1}
                   </span>
                   <span className="pt-0.5">{step}</span>

@@ -164,7 +164,7 @@ export function MonthCalendarGrid({
                 >
                   <div className="flex items-center gap-1">
                     <span className={cn(
-                      "text-sm font-bold",
+                      "text-sm font-semibold",
                       isDateToday(day) ? "text-primary" : isCurrentMonth ? "text-foreground" : "text-muted-foreground"
                     )}>
                       {day.getDate()}

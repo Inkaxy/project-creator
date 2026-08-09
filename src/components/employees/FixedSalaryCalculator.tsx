@@ -612,7 +612,7 @@ export function FixedSalaryCalculator({
                   <Separator />
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Timelønn:</span>
-                    <span className="font-bold text-lg text-primary">
+                    <span className="font-semibold text-lg text-primary">
                       {effectiveLevel.hourlyRate.toFixed(2)} kr
                     </span>
                   </div>
@@ -653,7 +653,7 @@ export function FixedSalaryCalculator({
                 <div className="p-3 bg-muted rounded-lg">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Natt-tillegg ({getCompetenceLabel(competenceLevel)}):</span>
-                    <span className="font-bold text-primary">
+                    <span className="font-semibold text-primary">
                       {nightSupplement.amount.toFixed(2)} kr/t
                     </span>
                   </div>
@@ -912,7 +912,7 @@ export function FixedSalaryCalculator({
                                     </span>
                                   </TableCell>
                                   <TableCell className="text-right tabular-nums">
-                                    <span className={hasData ? "font-bold" : "text-muted-foreground"}>
+                                    <span className={hasData ? "font-semibold" : "text-muted-foreground"}>
                                       {hasData ? breakdown.totalHours.toFixed(2) : "0,00"}
                                     </span>
                                   </TableCell>
@@ -1010,13 +1010,13 @@ export function FixedSalaryCalculator({
                 <div className="space-y-2">
                   <div className="p-3 bg-primary/10 rounded-lg">
                     <p className="text-xs text-muted-foreground mb-1">Uten feriepenger:</p>
-                    <p className="text-xl font-bold text-primary">
+                    <p className="text-xl font-semibold text-primary">
                       {result.fixedMonthlySalary.toLocaleString("nb-NO", { maximumFractionDigits: 0 })} kr
                     </p>
                   </div>
                   <div className="p-3 bg-secondary/50 rounded-lg">
                     <p className="text-xs text-muted-foreground mb-1">Inkl. feriepenger (12%):</p>
-                    <p className="text-xl font-bold text-secondary-foreground">
+                    <p className="text-xl font-semibold text-secondary-foreground">
                       {result.fixedMonthlySalaryWithHoliday.toLocaleString("nb-NO", { maximumFractionDigits: 0 })} kr
                     </p>
                   </div>
@@ -1029,19 +1029,19 @@ export function FixedSalaryCalculator({
                 <div className="space-y-2">
                   <div className="p-3 bg-muted rounded-lg">
                     <p className="text-xs text-muted-foreground">Stillingsprosent:</p>
-                    <p className="text-lg font-bold">
+                    <p className="text-lg font-semibold">
                       {result.employmentPercentage.toFixed(1)}%
                     </p>
                   </div>
                   <div className="p-3 bg-muted rounded-lg">
                     <p className="text-xs text-muted-foreground">Effektiv timelønn:</p>
-                    <p className="text-lg font-bold">
+                    <p className="text-lg font-semibold">
                       {result.effectiveHourlyRate.toFixed(2)} kr/t
                     </p>
                   </div>
                   <div className="p-3 bg-muted rounded-lg">
                     <p className="text-xs text-muted-foreground">Natt-tillegg verdi:</p>
-                    <p className="text-lg font-bold">
+                    <p className="text-lg font-semibold">
                       {(result.nightPay - (result.totalNightHours * result.hourlyRate)).toLocaleString("nb-NO", { maximumFractionDigits: 0 })} kr/mnd
                     </p>
                   </div>

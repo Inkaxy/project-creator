@@ -349,17 +349,17 @@ export function RolloutTemplateModal({
                 <div className="rounded-md bg-muted/50 p-3">
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
-                      <div className="text-2xl font-bold">{totals.shifts}</div>
+                      <div className="text-2xl font-semibold">{totals.shifts}</div>
                       <div className="text-xs text-muted-foreground">Vakter</div>
                     </div>
                     <div>
-                      <div className="text-2xl font-bold">
+                      <div className="text-2xl font-semibold">
                         {Math.round(totals.hours)}t
                       </div>
                       <div className="text-xs text-muted-foreground">Timer</div>
                     </div>
                     <div>
-                      <div className="text-2xl font-bold">
+                      <div className="text-2xl font-semibold">
                         {Math.round(totals.cost).toLocaleString("nb-NO")} kr
                       </div>
                       <div className="text-xs text-muted-foreground">
@@ -419,21 +419,21 @@ export function RolloutTemplateModal({
                 <div className="rounded-md bg-muted/50 p-3">
                   <div className="grid grid-cols-4 gap-4 text-center">
                     <div>
-                      <div className="text-xl font-bold">{totals.shifts}</div>
+                      <div className="text-xl font-semibold">{totals.shifts}</div>
                       <div className="text-xs text-muted-foreground">Vakter</div>
                     </div>
                     <div>
-                      <div className="text-xl font-bold">{Math.round(totals.hours)}t</div>
+                      <div className="text-xl font-semibold">{Math.round(totals.hours)}t</div>
                       <div className="text-xs text-muted-foreground">Timer</div>
                     </div>
                     <div>
-                      <div className="text-xl font-bold">
+                      <div className="text-xl font-semibold">
                         {Math.round(totals.cost).toLocaleString("nb-NO")} kr
                       </div>
                       <div className="text-xs text-muted-foreground">Est. kostnad</div>
                     </div>
                     <div>
-                      <div className="text-xl font-bold">{numberOfWeeks}</div>
+                      <div className="text-xl font-semibold">{numberOfWeeks}</div>
                       <div className="text-xs text-muted-foreground">Uker</div>
                     </div>
                   </div>

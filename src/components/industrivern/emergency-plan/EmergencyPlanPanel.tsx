@@ -69,7 +69,7 @@ export function EmergencyPlanPanel() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Beredskapsplan</h2>
+          <h2 className="text-2xl font-semibold">Beredskapsplan</h2>
           <p className="text-muted-foreground">
             Varslingsplaner, tiltakskort og ressursoversikt
           </p>

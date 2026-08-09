@@ -466,7 +466,7 @@ export function TimesheetDetailModal({ open, onOpenChange, entry }: TimesheetDet
                 )}
               </div>
               <span className={cn(
-                "font-mono text-lg font-bold",
+                "font-mono text-lg font-semibold",
                 deviationMin > 0 ? "text-success" : deviationMin < 0 ? "text-destructive" : "text-muted-foreground"
               )}>
                 {deviationMin > 0 ? "+" : ""}{deviationMin}m

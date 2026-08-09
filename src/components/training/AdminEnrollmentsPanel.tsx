@@ -106,7 +106,7 @@ export function AdminEnrollmentsPanel({ enrollments }: AdminEnrollmentsPanelProp
                 <Users className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{totalEnrollments}</p>
+                <p className="text-2xl font-semibold">{totalEnrollments}</p>
                 <p className="text-sm text-muted-foreground">Totale påmeldinger</p>
               </div>
             </div>
@@ -119,7 +119,7 @@ export function AdminEnrollmentsPanel({ enrollments }: AdminEnrollmentsPanelProp
                 <GraduationCap className="h-6 w-6 text-success" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{completedEnrollments}</p>
+                <p className="text-2xl font-semibold">{completedEnrollments}</p>
                 <p className="text-sm text-muted-foreground">Fullførte</p>
               </div>
             </div>
@@ -132,7 +132,7 @@ export function AdminEnrollmentsPanel({ enrollments }: AdminEnrollmentsPanelProp
                 <AlertCircle className="h-6 w-6 text-warning" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{expiringCerts.length}</p>
+                <p className="text-2xl font-semibold">{expiringCerts.length}</p>
                 <p className="text-sm text-muted-foreground">Sertifikater utløper</p>
               </div>
             </div>

@@ -64,7 +64,7 @@ export function IndustrivernEquipmentPanel() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Beredskapsutstyr</h2>
+          <h2 className="text-2xl font-semibold">Beredskapsutstyr</h2>
           <p className="text-muted-foreground">
             Utstyr og verneutstyr for industrivernet
           </p>
@@ -82,7 +82,7 @@ export function IndustrivernEquipmentPanel() {
             <div className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-success" />
               <div>
-                <p className="text-2xl font-bold">{stats?.ok || 0}</p>
+                <p className="text-2xl font-semibold">{stats?.ok || 0}</p>
                 <p className="text-sm text-muted-foreground">OK</p>
               </div>
             </div>
@@ -93,7 +93,7 @@ export function IndustrivernEquipmentPanel() {
             <div className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-warning" />
               <div>
-                <p className="text-2xl font-bold">{stats?.needsInspection || 0}</p>
+                <p className="text-2xl font-semibold">{stats?.needsInspection || 0}</p>
                 <p className="text-sm text-muted-foreground">Trenger kontroll</p>
               </div>
             </div>
@@ -104,7 +104,7 @@ export function IndustrivernEquipmentPanel() {
             <div className="flex items-center gap-2">
               <Wrench className="h-5 w-5 text-warning" />
               <div>
-                <p className="text-2xl font-bold">{stats?.needsService || 0}</p>
+                <p className="text-2xl font-semibold">{stats?.needsService || 0}</p>
                 <p className="text-sm text-muted-foreground">Trenger service</p>
               </div>
             </div>
@@ -115,7 +115,7 @@ export function IndustrivernEquipmentPanel() {
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-destructive" />
               <div>
-                <p className="text-2xl font-bold">{stats?.defective || 0}</p>
+                <p className="text-2xl font-semibold">{stats?.defective || 0}</p>
                 <p className="text-sm text-muted-foreground">Defekt</p>
               </div>
             </div>

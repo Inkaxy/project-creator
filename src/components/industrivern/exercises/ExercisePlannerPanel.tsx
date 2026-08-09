@@ -65,7 +65,7 @@ export function ExercisePlannerPanel() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Øvelser</h2>
+          <h2 className="text-2xl font-semibold">Øvelser</h2>
           <p className="text-muted-foreground">
             Planlegg og dokumenter industrivernøvelser
           </p>
@@ -84,7 +84,7 @@ export function ExercisePlannerPanel() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-4">
-              <div className="text-3xl font-bold">
+              <div className="text-3xl font-semibold">
                 {h1Completed} <span className="text-lg font-normal text-muted-foreground">/ 1</span>
               </div>
               {h1Completed >= 1 ? (
@@ -102,7 +102,7 @@ export function ExercisePlannerPanel() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-4">
-              <div className="text-3xl font-bold">
+              <div className="text-3xl font-semibold">
                 {h2Completed} <span className="text-lg font-normal text-muted-foreground">/ 1</span>
               </div>
               {h2Completed >= 1 ? (

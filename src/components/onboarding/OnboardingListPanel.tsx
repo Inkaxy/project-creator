@@ -211,7 +211,7 @@ export function OnboardingListPanel() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeOnboardings.length}</div>
+            <div className="text-2xl font-semibold">{activeOnboardings.length}</div>
           </CardContent>
         </Card>
         <Card>
@@ -221,7 +221,7 @@ export function OnboardingListPanel() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{completedOnboardings.length}</div>
+            <div className="text-2xl font-semibold">{completedOnboardings.length}</div>
           </CardContent>
         </Card>
         <Card>
@@ -231,7 +231,7 @@ export function OnboardingListPanel() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3 dager</div>
+            <div className="text-2xl font-semibold">3 dager</div>
           </CardContent>
         </Card>
       </div>

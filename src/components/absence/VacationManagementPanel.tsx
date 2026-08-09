@@ -257,7 +257,7 @@ export const VacationManagementPanel = () => {
                 <Palmtree className="h-5 w-5 text-success" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
+                <p className="text-2xl font-semibold">
                   {vacationAccounts?.reduce((s, a) => s + a.balance + a.carried_over, 0) || 0}
                 </p>
                 <p className="text-xs text-muted-foreground">Totalt tildelt</p>
@@ -272,7 +272,7 @@ export const VacationManagementPanel = () => {
                 <Palmtree className="h-5 w-5 text-info" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
+                <p className="text-2xl font-semibold">
                   {vacationAccounts?.reduce((s, a) => s + a.used, 0) || 0}
                 </p>
                 <p className="text-xs text-muted-foreground">Brukt</p>
@@ -287,7 +287,7 @@ export const VacationManagementPanel = () => {
                 <Palmtree className="h-5 w-5 text-warning" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
+                <p className="text-2xl font-semibold">
                   {vacationAccounts?.reduce(
                     (s, a) => s + (a.balance + a.carried_over - a.used),
                     0

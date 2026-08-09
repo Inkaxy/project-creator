@@ -94,7 +94,7 @@ export function CopyWeekModal({
           <div className="flex items-center gap-4">
             <div className="flex-1 rounded-lg border bg-muted/30 p-3 text-center">
               <p className="text-xs font-medium text-muted-foreground">Fra</p>
-              <p className="text-lg font-bold">
+              <p className="text-lg font-semibold">
                 Uke {getWeekNumber(sourceWeekStart)}
               </p>
               <p className="text-xs text-muted-foreground">

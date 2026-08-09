@@ -466,7 +466,7 @@ function QuizSection({
               <XCircle className="h-8 w-8" />
             )}
           </div>
-          <h3 className="text-xl font-bold mb-2">
+          <h3 className="text-xl font-semibold mb-2">
             {passed ? "Gratulerer!" : "Prøv igjen"}
           </h3>
           <p className="text-muted-foreground mb-4">
@@ -710,7 +710,7 @@ function ModuleContentRenderer({ module }: { module: CourseModule }) {
               <Card key={index}>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base flex items-center gap-2">
-                    <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                    <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
                       {index + 1}
                     </div>
                     {section.title}

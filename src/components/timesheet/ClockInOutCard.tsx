@@ -254,7 +254,7 @@ export function ClockInOutCard() {
                 {isClockedIn ? (
                   <>
                     <p className="text-sm text-muted-foreground">Du er stemplet inn</p>
-                    <p className="text-2xl font-bold text-foreground font-mono">
+                    <p className="text-2xl font-semibold text-foreground font-mono">
                       {elapsedTime}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
@@ -357,7 +357,7 @@ export function ClockInOutCard() {
                 </div>
                 <div className="flex justify-between text-sm mt-1">
                   <span className="text-muted-foreground">Total tid:</span>
-                  <span className="font-bold">{elapsedTime}</span>
+                  <span className="font-semibold">{elapsedTime}</span>
                 </div>
               </div>
             )}

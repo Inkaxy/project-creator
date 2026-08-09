@@ -107,7 +107,7 @@ export function InspectionReadinessWidget({ inspectionType, onGenerateReport }: 
           {isLoading ? (
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           ) : readiness ? (
-            <span className={cn("text-2xl font-bold", getScoreColor(readiness.overallScore))}>
+            <span className={cn("text-2xl font-semibold", getScoreColor(readiness.overallScore))}>
               {readiness.overallScore}%
             </span>
           ) : null}
@@ -234,7 +234,7 @@ export function AllInspectionsWidget({ onOpenKontrollknappen }: { onOpenKontroll
                   <p className="text-sm font-medium">{config.title}</p>
                   <div className="flex items-center gap-2">
                     {getStatusIcon(data?.overallScore)}
-                    <span className="text-lg font-bold">
+                    <span className="text-lg font-semibold">
                       {data?.overallScore ?? "-"}%
                     </span>
                   </div>
