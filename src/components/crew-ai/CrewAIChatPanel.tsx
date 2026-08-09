@@ -322,7 +322,7 @@ export function CrewAIChatPanel({ module, contextId, onClose }: CrewAIChatPanelP
   };
 
   return (
-    <Card className="flex flex-col h-[600px] max-h-[calc(100vh-8rem)] shadow-2xl border-2">
+    <Card className="flex flex-col h-[600px] max-h-[calc(100vh-8rem)] shadow-modal border-ai-border">
       {/* Header */}
       <CardHeader className="flex-shrink-0 pb-2 pt-3 px-4 border-b">
         <div className="flex items-center justify-between">
