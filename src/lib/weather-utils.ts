@@ -29,11 +29,11 @@ export const weatherLabels = {
 };
 
 export const weatherColors = {
-  sunny: "text-amber-500",
+  sunny: "text-warning",
   cloudy: "text-muted-foreground",
-  rainy: "text-blue-500",
-  snowy: "text-blue-300",
-  windy: "text-slate-500",
+  rainy: "text-info",
+  snowy: "text-info",
+  windy: "text-muted-foreground",
 };
 
 /**
