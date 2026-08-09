@@ -27,13 +27,13 @@ export function IndustrivernEquipmentPanel() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "ok":
-        return <CheckCircle className="h-4 w-4 text-green-600" />;
+        return <CheckCircle className="h-4 w-4 text-success" />;
       case "needs_inspection":
-        return <Clock className="h-4 w-4 text-yellow-600" />;
+        return <Clock className="h-4 w-4 text-warning" />;
       case "needs_service":
-        return <Wrench className="h-4 w-4 text-orange-600" />;
+        return <Wrench className="h-4 w-4 text-warning" />;
       case "defective":
-        return <XCircle className="h-4 w-4 text-red-600" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
       default:
         return null;
     }
@@ -42,11 +42,11 @@ export function IndustrivernEquipmentPanel() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "ok":
-        return <Badge className="bg-green-100 text-green-800">OK</Badge>;
+        return <Badge className="bg-success-light text-success-text border border-success-border">OK</Badge>;
       case "needs_inspection":
-        return <Badge className="bg-yellow-100 text-yellow-800">Trenger kontroll</Badge>;
+        return <Badge className="bg-warning-light text-warning-text border border-warning-border">Trenger kontroll</Badge>;
       case "needs_service":
-        return <Badge className="bg-orange-100 text-orange-800">Trenger service</Badge>;
+        return <Badge className="bg-warning-light text-warning-text border border-warning-border">Trenger service</Badge>;
       case "defective":
         return <Badge variant="destructive">Defekt</Badge>;
       case "retired":
@@ -80,7 +80,7 @@ export function IndustrivernEquipmentPanel() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
+              <CheckCircle className="h-5 w-5 text-success" />
               <div>
                 <p className="text-2xl font-bold">{stats?.ok || 0}</p>
                 <p className="text-sm text-muted-foreground">OK</p>
@@ -91,7 +91,7 @@ export function IndustrivernEquipmentPanel() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-yellow-600" />
+              <Clock className="h-5 w-5 text-warning" />
               <div>
                 <p className="text-2xl font-bold">{stats?.needsInspection || 0}</p>
                 <p className="text-sm text-muted-foreground">Trenger kontroll</p>
@@ -102,7 +102,7 @@ export function IndustrivernEquipmentPanel() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
-              <Wrench className="h-5 w-5 text-orange-600" />
+              <Wrench className="h-5 w-5 text-warning" />
               <div>
                 <p className="text-2xl font-bold">{stats?.needsService || 0}</p>
                 <p className="text-sm text-muted-foreground">Trenger service</p>
@@ -113,7 +113,7 @@ export function IndustrivernEquipmentPanel() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
+              <AlertTriangle className="h-5 w-5 text-destructive" />
               <div>
                 <p className="text-2xl font-bold">{stats?.defective || 0}</p>
                 <p className="text-sm text-muted-foreground">Defekt</p>
@@ -178,7 +178,7 @@ export function IndustrivernEquipmentPanel() {
                 {item.next_inspection_date && (
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className={new Date(item.next_inspection_date) < new Date() ? "text-red-600" : "text-muted-foreground"}>
+                    <span className={new Date(item.next_inspection_date) < new Date() ? "text-destructive-text" : "text-muted-foreground"}>
                       Neste kontroll: {format(new Date(item.next_inspection_date), "d. MMM yyyy", { locale: nb })}
                     </span>
                   </div>

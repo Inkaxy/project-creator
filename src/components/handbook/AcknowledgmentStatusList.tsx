@@ -62,7 +62,7 @@ export function AcknowledgmentStatusList({ handbookId, version }: Acknowledgment
     switch (status) {
       case "acknowledged":
         return (
-          <Badge variant="default" className="gap-1 bg-green-600">
+          <Badge variant="default" className="gap-1 bg-success">
             <CheckCircle className="h-3 w-3" />
             Signert
           </Badge>
@@ -92,8 +92,8 @@ export function AcknowledgmentStatusList({ handbookId, version }: Acknowledgment
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-green-500/10">
-                <CheckCircle className="h-5 w-5 text-green-500" />
+              <div className="p-2 rounded-full bg-success-light border border-success-border">
+                <CheckCircle className="h-5 w-5 text-success" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{stats.acknowledged}</p>
@@ -105,8 +105,8 @@ export function AcknowledgmentStatusList({ handbookId, version }: Acknowledgment
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-amber-500/10">
-                <Clock className="h-5 w-5 text-amber-500" />
+              <div className="p-2 rounded-full bg-warning-light border border-warning-border">
+                <Clock className="h-5 w-5 text-warning" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{stats.pending}</p>
@@ -118,8 +118,8 @@ export function AcknowledgmentStatusList({ handbookId, version }: Acknowledgment
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-red-500/10">
-                <AlertTriangle className="h-5 w-5 text-red-500" />
+              <div className="p-2 rounded-full bg-destructive-light border border-destructive-border">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{stats.outdated}</p>

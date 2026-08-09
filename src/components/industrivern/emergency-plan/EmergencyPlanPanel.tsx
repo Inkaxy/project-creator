@@ -41,7 +41,7 @@ export function EmergencyPlanPanel() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-green-100 text-green-800">Aktiv</Badge>;
+        return <Badge className="bg-success-light text-success-text border border-success-border">Aktiv</Badge>;
       case "draft":
         return <Badge variant="secondary">Utkast</Badge>;
       case "archived":
@@ -250,7 +250,7 @@ export function EmergencyPlanPanel() {
                       <ul className="space-y-1">
                         {card.immediate_actions.slice(0, 3).map((action, idx) => (
                           <li key={idx} className="text-sm flex items-start gap-2">
-                            <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            <CheckCircle className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
                             {action}
                           </li>
                         ))}

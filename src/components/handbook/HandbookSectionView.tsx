@@ -125,10 +125,10 @@ export function HandbookSectionView({
         )}
         
         {requiresAcknowledgment && !isAcknowledged && onAcknowledge && (
-          <Card className="border-amber-500/50 bg-amber-500/10">
+          <Card className="border-warning-border bg-warning-light">
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
                 <div className="flex-1">
                   <p className="font-medium mb-2">Denne seksjonen krever bekreftelse</p>
                   <p className="text-sm text-muted-foreground mb-4">

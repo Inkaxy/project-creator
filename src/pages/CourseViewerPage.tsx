@@ -683,9 +683,9 @@ function ModuleContentRenderer({ module }: { module: CourseModule }) {
         
         {/* Key Points */}
         {content.keyPoints && content.keyPoints.length > 0 && (
-          <Card className="border-amber-200 bg-amber-50/50 dark:border-amber-900 dark:bg-amber-950/20">
+          <Card className="border-warning-border bg-warning-light">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold flex items-center gap-2 text-amber-700 dark:text-amber-400">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2 text-warning-text">
                 <Star className="h-4 w-4" />
                 Hovedpunkter å huske
               </CardTitle>
@@ -694,7 +694,7 @@ function ModuleContentRenderer({ module }: { module: CourseModule }) {
               <ul className="space-y-2">
                 {content.keyPoints.map((point, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-amber-600 dark:text-amber-500 shrink-0 mt-0.5" />
+                    <CheckCircle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
                     <span className="text-foreground">{point}</span>
                   </li>
                 ))}

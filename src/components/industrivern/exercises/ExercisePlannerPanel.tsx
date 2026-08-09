@@ -51,7 +51,7 @@ export function ExercisePlannerPanel() {
       case "planned":
         return <Badge variant="secondary">Planlagt</Badge>;
       case "completed":
-        return <Badge className="bg-green-100 text-green-800">Gjennomført</Badge>;
+        return <Badge className="bg-success-light text-success-text border border-success-border">Gjennomført</Badge>;
       case "cancelled":
         return <Badge variant="destructive">Avlyst</Badge>;
       case "postponed":
@@ -88,7 +88,7 @@ export function ExercisePlannerPanel() {
                 {h1Completed} <span className="text-lg font-normal text-muted-foreground">/ 1</span>
               </div>
               {h1Completed >= 1 ? (
-                <Badge className="bg-green-100 text-green-800">Oppfylt</Badge>
+                <Badge className="bg-success-light text-success-text border border-success-border">Oppfylt</Badge>
               ) : (
                 <Badge variant="secondary">I prosess</Badge>
               )}
@@ -106,7 +106,7 @@ export function ExercisePlannerPanel() {
                 {h2Completed} <span className="text-lg font-normal text-muted-foreground">/ 1</span>
               </div>
               {h2Completed >= 1 ? (
-                <Badge className="bg-green-100 text-green-800">Oppfylt</Badge>
+                <Badge className="bg-success-light text-success-text border border-success-border">Oppfylt</Badge>
               ) : new Date().getMonth() < 6 ? (
                 <Badge variant="outline">Ikke startet</Badge>
               ) : (
@@ -231,7 +231,7 @@ export function ExercisePlannerPanel() {
                   className="flex items-center justify-between p-3 rounded-lg border"
                 >
                   <div className="flex items-center gap-3">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <CheckCircle className="h-5 w-5 text-success" />
                     <div>
                       <span className="font-medium">{exercise.title}</span>
                       <p className="text-sm text-muted-foreground">

@@ -91,7 +91,7 @@ export function AcknowledgmentModal({
                 <div className="space-y-2">
                   {chaptersRequiringAck.map(chapter => (
                     <div key={chapter.id} className="flex items-center gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <CheckCircle className="h-4 w-4 text-success" />
                       <span>{chapter.title}</span>
                     </div>
                   ))}

@@ -26,19 +26,19 @@ export function IndustrivernDashboard() {
   const { data: expiringQuals, isLoading: loadingQuals } = useExpiringQualifications(60);
 
   const getComplianceColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
+    if (score >= 80) return "text-success-text";
+    if (score >= 60) return "text-warning-text";
+    return "text-destructive-text";
   };
 
   const getStatusIcon = (status: "ok" | "warning" | "error") => {
     switch (status) {
       case "ok":
-        return <CheckCircle2 className="h-4 w-4 text-green-600" />;
+        return <CheckCircle2 className="h-4 w-4 text-success" />;
       case "warning":
-        return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
+        return <AlertTriangle className="h-4 w-4 text-warning" />;
       case "error":
-        return <AlertTriangle className="h-4 w-4 text-red-600" />;
+        return <AlertTriangle className="h-4 w-4 text-destructive" />;
     }
   };
 
@@ -162,7 +162,7 @@ export function IndustrivernDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-yellow-600" />
+              <AlertTriangle className="h-5 w-5 text-warning" />
               Krever oppmerksomhet
             </CardTitle>
             <CardDescription>Varsler og påminnelser</CardDescription>
@@ -175,13 +175,13 @@ export function IndustrivernDashboard() {
               ) : expiringQuals && expiringQuals.length > 0 ? (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm font-medium">
-                    <Clock className="h-4 w-4 text-yellow-600" />
+                    <Clock className="h-4 w-4 text-warning" />
                     Kvalifikasjoner som utløper snart
                   </div>
                   {expiringQuals.slice(0, 3).map((qual: any) => (
                     <div key={qual.id} className="ml-6 text-sm text-muted-foreground">
                       {qual.profiles?.full_name} - {qual.industrivern_qualifications?.name}
-                      <span className="ml-2 text-yellow-600">
+                      <span className="ml-2 text-warning-text">
                         ({format(new Date(qual.expires_date), "d. MMM", { locale: nb })})
                       </span>
                     </div>
@@ -189,7 +189,7 @@ export function IndustrivernDashboard() {
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  <CheckCircle2 className="h-4 w-4 text-success" />
                   Ingen utløpende kvalifikasjoner
                 </div>
               )}

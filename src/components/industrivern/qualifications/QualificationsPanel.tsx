@@ -34,9 +34,9 @@ export function QualificationsPanel() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "valid":
-        return <Badge className="bg-green-100 text-green-800">Gyldig</Badge>;
+        return <Badge className="bg-success-light text-success-text border border-success-border">Gyldig</Badge>;
       case "expiring_soon":
-        return <Badge className="bg-yellow-100 text-yellow-800">Utløper snart</Badge>;
+        return <Badge className="bg-warning-light text-warning-text border border-warning-border">Utløper snart</Badge>;
       case "expired":
         return <Badge variant="destructive">Utløpt</Badge>;
       case "revoked":
@@ -68,9 +68,9 @@ export function QualificationsPanel() {
 
       {/* Expiring Qualifications Alert */}
       {!loadingExpiring && expiringQuals && expiringQuals.length > 0 && (
-        <Card className="border-yellow-200 bg-yellow-50">
+        <Card className="border-warning-border bg-warning-light">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2 text-yellow-800">
+            <CardTitle className="text-lg flex items-center gap-2 text-warning-text">
               <AlertTriangle className="h-5 w-5" />
               Kvalifikasjoner som utløper snart
             </CardTitle>
@@ -84,7 +84,7 @@ export function QualificationsPanel() {
                     <span className="text-muted-foreground mx-2">·</span>
                     <span>{qual.industrivern_qualifications?.name}</span>
                   </div>
-                  <Badge variant="outline" className="text-yellow-700">
+                  <Badge variant="outline" className="text-warning-text">
                     <Clock className="h-3 w-3 mr-1" />
                     {format(new Date(qual.expires_date), "d. MMM yyyy", { locale: nb })}
                   </Badge>
@@ -205,11 +205,11 @@ export function QualificationsPanel() {
                             className="flex items-center gap-1 text-sm bg-muted rounded-full px-2 py-1"
                           >
                             {q.status === "valid" ? (
-                              <CheckCircle className="h-3 w-3 text-green-600" />
+                              <CheckCircle className="h-3 w-3 text-success" />
                             ) : q.status === "expiring_soon" ? (
-                              <Clock className="h-3 w-3 text-yellow-600" />
+                              <Clock className="h-3 w-3 text-warning" />
                             ) : (
-                              <XCircle className="h-3 w-3 text-red-600" />
+                              <XCircle className="h-3 w-3 text-destructive" />
                             )}
                             {q.industrivern_qualifications?.name}
                           </div>

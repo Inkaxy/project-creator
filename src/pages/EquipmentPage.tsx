@@ -47,22 +47,22 @@ export default function EquipmentPage() {
       title: "Service forfaller",
       value: stats?.serviceDue || 0,
       icon: AlertTriangle,
-      color: stats?.serviceDue ? "text-yellow-600" : "text-muted-foreground",
-      bgColor: stats?.serviceDue ? "bg-yellow-50 dark:bg-yellow-950" : "bg-muted",
+      color: stats?.serviceDue ? "text-warning-text" : "text-muted-foreground",
+      bgColor: stats?.serviceDue ? "bg-warning-light border border-warning-border" : "bg-muted",
     },
     {
       title: "Åpne avvik",
       value: stats?.openDeviations || 0,
       icon: AlertCircle,
-      color: stats?.openDeviations ? "text-red-600" : "text-muted-foreground",
-      bgColor: stats?.openDeviations ? "bg-red-50 dark:bg-red-950" : "bg-muted",
+      color: stats?.openDeviations ? "text-destructive-text" : "text-muted-foreground",
+      bgColor: stats?.openDeviations ? "bg-destructive-light border border-destructive-border" : "bg-muted",
     },
     {
       title: "Under reparasjon",
       value: stats?.underRepair || 0,
       icon: Wrench,
-      color: stats?.underRepair ? "text-orange-600" : "text-muted-foreground",
-      bgColor: stats?.underRepair ? "bg-orange-50 dark:bg-orange-950" : "bg-muted",
+      color: stats?.underRepair ? "text-warning-text" : "text-muted-foreground",
+      bgColor: stats?.underRepair ? "bg-warning-light border border-warning-border" : "bg-muted",
     },
   ];
 

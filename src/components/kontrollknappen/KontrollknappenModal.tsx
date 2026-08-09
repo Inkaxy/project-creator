@@ -46,28 +46,28 @@ const INSPECTION_TYPES = [
     id: "mattilsynet" as InspectionType, 
     title: "Mattilsynet", 
     icon: ClipboardCheck, 
-    color: "text-green-600",
+    color: "text-success-text",
     description: "IK-Mat, HACCP, temperatur, hygiene"
   },
   { 
     id: "arbeidstilsynet" as InspectionType, 
     title: "Arbeidstilsynet", 
     icon: Shield, 
-    color: "text-blue-600",
+    color: "text-info-text",
     description: "HMS, vernerunder, risikovurdering"
   },
   { 
     id: "branntilsyn" as InspectionType, 
     title: "Branntilsyn", 
     icon: Flame, 
-    color: "text-orange-600",
+    color: "text-warning-text",
     description: "Brannøvelser, utstyr, instrukser"
   },
   { 
     id: "skjenkekontroll" as InspectionType, 
     title: "Skjenkekontroll", 
     icon: Wine, 
-    color: "text-purple-600",
+    color: "text-ai-text",
     description: "Bevilling, kunnskapsprøve, rutiner"
   },
 ];

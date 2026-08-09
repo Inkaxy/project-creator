@@ -461,18 +461,18 @@ function PracticeMode({
           {showFeedback && (
             <div className={cn(
               "mt-4 p-4 rounded-lg",
-              isCorrect ? "bg-success/10 border border-success/20" : "bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-900"
+              isCorrect ? "bg-success/10 border border-success/20" : "bg-warning-light border border-warning-border"
             )}>
               <div className="flex items-start gap-3">
                 {isCorrect ? (
                   <CheckCircle className="h-5 w-5 text-success shrink-0 mt-0.5" />
                 ) : (
-                  <Lightbulb className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <Lightbulb className="h-5 w-5 text-warning shrink-0 mt-0.5" />
                 )}
                 <div>
                   <p className={cn(
                     "font-medium",
-                    isCorrect ? "text-success" : "text-amber-700 dark:text-amber-400"
+                    isCorrect ? "text-success" : "text-warning-text"
                   )}>
                     {isCorrect ? "Riktig!" : "Ikke helt riktig"}
                   </p>
