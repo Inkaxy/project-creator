@@ -195,7 +195,7 @@ export default function TimesheetsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 pl-12 sm:flex-row sm:items-center sm:justify-between lg:pl-0">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Timelister</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">Timelister</h1>
             <p className="text-muted-foreground">
               Uke {weekNumber}, {format(currentWeekStart, "d. MMM", { locale: nb })} - {format(currentWeekEnd, "d. MMM yyyy", { locale: nb })}
             </p>

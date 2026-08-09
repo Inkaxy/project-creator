@@ -167,7 +167,7 @@ export default function TrainingPage() {
             <GraduationCap className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Opplæring</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em]">Opplæring</h1>
             <p className="text-muted-foreground">
               Kurs, sertifikater og kompetanseutvikling
             </p>

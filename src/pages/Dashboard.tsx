@@ -32,7 +32,7 @@ export default function Dashboard() {
       <div className="space-y-8">
         {/* Header */}
         <div className="pl-12 lg:pl-0">
-          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">Dashboard</h1>
           <p className="text-muted-foreground">
             Oversikt over Bakeri Sentrum • Søndag 19. januar 2026
           </p>

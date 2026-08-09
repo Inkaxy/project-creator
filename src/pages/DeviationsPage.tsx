@@ -59,7 +59,7 @@ export default function DeviationsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Avvikshåndtering</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">Avvikshåndtering</h1>
             <p className="text-muted-foreground">Oversikt over alle meldte avvik</p>
           </div>
           <Button asChild>

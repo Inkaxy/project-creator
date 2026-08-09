@@ -22,7 +22,7 @@ export default function DisciplinaryCasesPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Disiplinærsaker</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">Disiplinærsaker</h1>
             <p className="text-muted-foreground">
               Håndter og følg opp disiplinærsaker
             </p>

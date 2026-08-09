@@ -119,7 +119,7 @@ export default function EquipmentDetailPage() {
               )}
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-bold">{equipment.name}</h1>
+                  <h1 className="text-xl font-semibold tracking-[-0.008em]">{equipment.name}</h1>
                   {getStatusBadge(equipment.status)}
                 </div>
                 <p className="text-muted-foreground">

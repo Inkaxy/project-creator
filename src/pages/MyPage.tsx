@@ -100,7 +100,7 @@ export default function MyPage() {
           <div className="flex items-center gap-4">
             <AvatarWithInitials name={profile?.full_name || "Bruker"} size="lg" />
             <div>
-              <h1 className="text-3xl font-bold text-foreground">{profile?.full_name || "Bruker"}</h1>
+              <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">{profile?.full_name || "Bruker"}</h1>
               <p className="text-muted-foreground">
                 {profile?.employee_type || "Ansatt"}
               </p>

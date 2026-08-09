@@ -72,7 +72,7 @@ export default function EquipmentScanPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Skann QR-kode</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em]">Skann QR-kode</h1>
             <p className="text-muted-foreground">
               Skann QR-koden på utstyret for å se info eller melde avvik
             </p>

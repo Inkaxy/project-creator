@@ -1016,7 +1016,7 @@ export default function ApprovalsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pl-12 lg:pl-0">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Godkjenninger</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">Godkjenninger</h1>
             <p className="text-muted-foreground">
               Behandle søknader og forespørsler fra ansatte
             </p>

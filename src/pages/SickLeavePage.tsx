@@ -65,7 +65,7 @@ const SickLeavePage = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">Sykefravær</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em]">Sykefravær</h1>
             <p className="text-muted-foreground">
               Administrer sykefravær, oppfølging og arbeidsgiverperiode
             </p>

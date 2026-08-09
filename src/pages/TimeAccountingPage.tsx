@@ -265,7 +265,7 @@ export default function TimeAccountingPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Timeregnskap</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">Timeregnskap</h1>
             <p className="text-muted-foreground">Oversikt over stemplede timer per avdeling og ansatt</p>
           </div>
         </div>

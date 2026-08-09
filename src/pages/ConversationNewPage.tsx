@@ -96,7 +96,7 @@ export default function ConversationNewPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Planlegg samtale</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em]">Planlegg samtale</h1>
             <p className="text-muted-foreground">
               Steg {currentStep} av {steps.length}: {steps[currentStep - 1].title}
             </p>

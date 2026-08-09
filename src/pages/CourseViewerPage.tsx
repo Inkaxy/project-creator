@@ -180,7 +180,7 @@ export default function CourseViewerPage() {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <div>
-              <h1 className="text-2xl font-bold">{course.title}</h1>
+              <h1 className="text-xl font-semibold tracking-[-0.008em]">{course.title}</h1>
               <div className="flex items-center gap-3 mt-1">
                 {course.category && (
                   <Badge variant="outline">{course.category}</Badge>

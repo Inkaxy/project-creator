@@ -68,7 +68,7 @@ export default function IKMatPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">IK-Mat / HACCP</h1>
+            <h1 className="text-xl font-semibold tracking-[-0.008em] text-foreground">IK-Mat / HACCP</h1>
             <p className="text-muted-foreground">
               {format(new Date(), "EEEE d. MMMM yyyy", { locale: nb })}
             </p>
