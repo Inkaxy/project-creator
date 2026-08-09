@@ -259,7 +259,7 @@ function MessageBubble({ message }: { message: CrewAIMessage }) {
       isUser ? "justify-end" : "justify-start"
     )}>
       {!isUser && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-ai-light border border-ai-border text-ai flex items-center justify-center">
           <Bot className="h-4 w-4 text-primary" />
         </div>
       )}
@@ -327,7 +327,7 @@ export function CrewAIChatPanel({ module, contextId, onClose }: CrewAIChatPanelP
       <CardHeader className="flex-shrink-0 pb-2 pt-3 px-4 border-b">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-ai-light border border-ai-border text-ai flex items-center justify-center">
               <Bot className="h-5 w-5 text-primary" />
             </div>
             <div>
@@ -365,7 +365,7 @@ export function CrewAIChatPanel({ module, contextId, onClose }: CrewAIChatPanelP
           {/* Welcome message */}
           {messages.length === 0 && (
             <div className="text-center py-4">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 rounded-full bg-ai-light border border-ai-border text-ai flex items-center justify-center mx-auto mb-3">
                 <Bot className="h-7 w-7 text-primary" />
               </div>
               <h4 className="font-medium mb-1">Hei! Jeg er CrewAI 👋</h4>
@@ -408,7 +408,7 @@ export function CrewAIChatPanel({ module, contextId, onClose }: CrewAIChatPanelP
           {/* Loading indicator */}
           {isLoading && messages[messages.length - 1]?.role === "user" && (
             <div className="flex gap-2 mb-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-ai-light border border-ai-border text-ai flex items-center justify-center">
                 <Bot className="h-4 w-4 text-primary" />
               </div>
               <div className="bg-muted rounded-lg px-3 py-2 flex items-center gap-2">
