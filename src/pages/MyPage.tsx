@@ -306,7 +306,7 @@ export default function MyPage() {
                   <div className="mb-3 flex items-start justify-between">
                     <h4 className="font-medium text-foreground">{course.name}</h4>
                     {course.status === "completed" && (
-                      <Badge variant="default" className="bg-success">
+                      <Badge variant="outline" className="bg-success-light border-success-border text-success-text">
                         Fullført
                       </Badge>
                     )}
