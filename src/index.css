@@ -40,7 +40,7 @@
     --primary-foreground: 0 0% 100%;
     --primary-light: 210 55% 96%;
     --primary-muted: 215 91% 91%;
-    --primary-border: 208 57% 75%;
+    --primary-border: 208 60% 55%;
     --primary-text: 208 100% 35%;
     --primary-text-strong: 216 100% 17%;
 
@@ -51,25 +51,25 @@
     --success: 146 100% 27%;
     --success-foreground: 0 0% 100%;
     --success-light: 133 87% 94%;
-    --success-border: 133 46% 77%;
+    --success-border: 146 55% 40%;
     --success-text: 137 100% 21%;
 
     --warning: 24 100% 40%;
     --warning-foreground: 0 0% 100%;
     --warning-light: 38 100% 95%;
-    --warning-border: 38 100% 72%;
+    --warning-border: 24 70% 51%;
     --warning-text: 23 100% 31%;
 
     --destructive: 0 75% 43%;
     --destructive-foreground: 0 0% 100%;
     --destructive-light: 0 58% 96%;
-    --destructive-border: 0 65% 86%;
+    --destructive-border: 0 60% 62%;
     --destructive-text: 0 75% 41%;
 
     --info: 202 39% 44%;
     --info-foreground: 0 0% 100%;
     --info-light: 206 70% 96%;
-    --info-border: 205 35% 76%;
+    --info-border: 202 45% 52%;
     --info-text: 202 60% 30%;
 
     --shift-day: 208 100% 36%;    --shift-day-light: 210 55% 96%;
@@ -132,7 +132,7 @@
     --primary-foreground: 220 30% 4%;
     --primary-light: 213 53% 15%;
     --primary-muted: 213 45% 22%;
-    --primary-border: 211 40% 38%;
+    --primary-border: 211 45% 45%;
     --primary-text: 210 75% 70%;
     --primary-text-strong: 210 80% 82%;
 
@@ -141,16 +141,16 @@
     --ring: 210 71% 58%;
 
     --success: 137 47% 53%;  --success-foreground: 220 30% 4%;
-    --success-light: 140 40% 12%; --success-border: 140 30% 30%; --success-text: 137 50% 68%;
+    --success-light: 140 40% 12%; --success-border: 137 40% 36%; --success-text: 137 50% 68%;
 
     --warning: 24 72% 56%;   --warning-foreground: 220 30% 4%;
-    --warning-light: 24 45% 13%; --warning-border: 24 40% 32%; --warning-text: 28 75% 70%;
+    --warning-light: 24 45% 13%; --warning-border: 24 45% 42%; --warning-text: 28 75% 70%;
 
     --destructive: 0 68% 62%; --destructive-foreground: 220 30% 4%;
-    --destructive-light: 0 40% 14%; --destructive-border: 0 35% 34%; --destructive-text: 0 70% 76%;
+    --destructive-light: 0 40% 14%; --destructive-border: 0 45% 49%; --destructive-text: 0 70% 76%;
 
     --info: 202 45% 58%; --info-foreground: 220 30% 4%;
-    --info-light: 202 40% 14%; --info-border: 202 30% 34%; --info-text: 202 55% 74%;
+    --info-light: 202 40% 14%; --info-border: 202 40% 42%; --info-text: 202 55% 74%;
 
     --shift-day: 210 71% 58%;     --shift-day-light: 213 53% 15%;
     --shift-evening: 202 45% 58%; --shift-evening-light: 202 40% 14%;

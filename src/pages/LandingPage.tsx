@@ -574,7 +574,6 @@ export default function LandingPage() {
       <section id="om-oss" className="py-20 sm:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="relative overflow-hidden bg-primary text-primary-foreground">
-            <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_50%,transparent_75%)]" />
             <CardContent className="relative py-16 px-8 sm:px-16 text-center">
               <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl mb-4">
                 Klar til å forenkle hverdagen?
