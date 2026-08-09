@@ -23,7 +23,7 @@ import {
   Briefcase,
   AlertCircle,
 } from "lucide-react";
-import crewplanLogo from "@/assets/crewplan-logo-v2.png";
+import { Logo } from "@/components/Logo";
 import { useKioskSettings } from "@/hooks/useKioskSettings";
 
 interface KioskEmployee {
@@ -303,11 +303,15 @@ export default function KioskPage() {
       {/* Header */}
       <header className="flex-shrink-0 px-6 py-4 border-b bg-card flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <img 
-            src={settings?.company_logo_url || crewplanLogo} 
-            alt={settings?.company_name || "Crewplan"} 
-            className="h-10 w-10 object-contain" 
-          />
+          {settings?.company_logo_url ? (
+            <img 
+              src={settings.company_logo_url} 
+              alt={settings?.company_name || "Crewplan"} 
+              className="h-12 w-12 object-contain" 
+            />
+          ) : (
+            <Logo size="lg" showWordmark={false} />
+          )}
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider">
               {format(currentTime, "EEEE d. MMMM yyyy", { locale: nb })}

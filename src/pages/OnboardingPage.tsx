@@ -20,7 +20,7 @@ import { Loader2, CheckCircle, User, FileText, KeyRound } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useOnboardingByToken, useUpdateOnboarding } from "@/hooks/useOnboardings";
 import { toast } from "sonner";
-import crewplanLogo from "@/assets/crewplan-logo-v2.png";
+import { Logo } from "@/components/Logo";
 
 // Step 1: Personal info schema
 const personalInfoSchema = z.object({
@@ -204,7 +204,7 @@ export default function OnboardingPage() {
       <div className="mx-auto max-w-2xl">
         {/* Header */}
         <div className="mb-8 text-center">
-          <img src={crewplanLogo} alt="CrewPlan" className="mx-auto mb-4 h-10" />
+          <Logo className="mx-auto mb-4 justify-center" />
           <h1 className="text-xl font-semibold tracking-[-0.008em]">Velkommen, {onboarding.full_name}!</h1>
           <p className="text-muted-foreground">
             Fullfør registreringen din for å komme i gang
