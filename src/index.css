@@ -2,128 +2,184 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Crewplan Design System - Workforce Management for Hospitality */
+/* CrewPlan Designsystem «Fjord» */
 
 @layer base {
   :root {
-    /* Core colors - Emerald/Teal palette */
-    --background: 0 0% 100%;
-    --foreground: 220 13% 18%;
-
+    --background: 210 11% 96%;
+    --surface-sunken: 220 9% 93%;
     --card: 0 0% 100%;
-    --card-foreground: 220 13% 18%;
-
+    --card-foreground: 218 23% 16%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 18%;
+    --popover-foreground: 218 23% 16%;
+    --foreground: 218 23% 16%;
 
-    /* Primary - Emerald/Teal (#10B981) */
-    --primary: 160 84% 39%;
+    --neutral-50: 210 11% 96%;
+    --neutral-100: 220 9% 93%;
+    --neutral-200: 220 11% 89%;
+    --neutral-300: 213 10% 83%;
+    --neutral-400: 218 10% 55%;
+    --neutral-500: 218 9% 48%;
+    --neutral-600: 218 11% 41%;
+    --neutral-700: 217 13% 33%;
+    --neutral-900: 218 23% 16%;
+
+    --muted: 210 11% 96%;
+    --muted-foreground: 218 11% 41%;
+    --secondary: 220 9% 93%;
+    --secondary-foreground: 217 13% 33%;
+
+    --border: 213 10% 83%;
+    --border-subtle: 220 11% 89%;
+    --border-strong: 218 10% 55%;
+    --input: 213 10% 83%;
+
+    --primary: 208 100% 36%;
+    --primary-hover: 208 100% 29%;
+    --primary-active: 208 100% 23%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 151 81% 96%;
-    --primary-hover: 161 94% 30%;
+    --primary-light: 210 55% 96%;
+    --primary-muted: 215 91% 91%;
+    --primary-border: 208 57% 75%;
+    --primary-text: 208 100% 35%;
+    --primary-text-strong: 216 100% 17%;
 
-    /* Secondary */
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 220 13% 26%;
+    --accent: 210 55% 96%;
+    --accent-foreground: 208 100% 35%;
+    --ring: 218 23% 16%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 14% 46%;
-
-    --accent: 151 81% 96%;
-    --accent-foreground: 160 84% 30%;
-
-    /* Danger - Red (#EF4444) */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --destructive-light: 0 86% 97%;
-
-    /* Warning - Amber (#F59E0B) */
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-    --warning-light: 48 96% 89%;
-
-    /* Info - Purple for AI */
-    --ai-gradient-start: 262 83% 58%;
-    --ai-gradient-end: 330 81% 60%;
-
-    /* Success */
-    --success: 142 76% 36%;
+    --success: 146 100% 27%;
     --success-foreground: 0 0% 100%;
-    --success-light: 142 76% 96%;
+    --success-light: 133 87% 94%;
+    --success-border: 133 46% 77%;
+    --success-text: 137 100% 21%;
 
-    --border: 214 20% 91%;
-    --input: 214 20% 91%;
-    --ring: 160 84% 39%;
+    --warning: 24 100% 40%;
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 38 100% 95%;
+    --warning-border: 38 100% 72%;
+    --warning-text: 23 100% 31%;
 
-    --radius: 0.75rem;
+    --destructive: 0 75% 43%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-light: 0 58% 96%;
+    --destructive-border: 0 65% 86%;
+    --destructive-text: 0 75% 41%;
 
-    /* Sidebar */
-    --sidebar-background: 210 20% 98%;
-    --sidebar-foreground: 220 13% 26%;
-    --sidebar-primary: 160 84% 39%;
+    --info: 202 39% 44%;
+    --info-foreground: 0 0% 100%;
+    --info-light: 206 70% 96%;
+    --info-border: 205 35% 76%;
+    --info-text: 202 60% 30%;
+
+    --shift-day: 208 100% 36%;    --shift-day-light: 210 55% 96%;
+    --shift-evening: 202 39% 44%; --shift-evening-light: 206 70% 96%;
+    --shift-night: 218 23% 16%;   --shift-night-light: 220 9% 93%;
+    --shift-open: 24 100% 40%;    --shift-open-light: 38 100% 95%;
+    --shift-absence: 218 10% 55%; --shift-absence-light: 220 11% 89%;
+    --night: 218 23% 16%;         --night-light: 220 9% 93%;
+
+    --ai: 202 39% 44%;  --ai-light: 206 70% 96%;  --ai-border: 205 35% 76%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 217 13% 33%;
+    --sidebar-primary: 208 100% 36%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 151 81% 96%;
-    --sidebar-accent-foreground: 160 84% 30%;
-    --sidebar-border: 214 20% 91%;
-    --sidebar-ring: 160 84% 39%;
+    --sidebar-accent: 210 55% 96%;
+    --sidebar-accent-foreground: 208 100% 36%;
+    --sidebar-border: 220 11% 89%;
+    --sidebar-ring: 218 23% 16%;
 
-    /* Night shift color */
-    --night: 0 84% 60%;
-    --night-light: 0 86% 97%;
+    --radius: 0.5rem;
+
+    /* tetthet – default */
+    --control-h: 2.25rem; --row-h: 2.5rem; --cell-py: 0.5rem; --cell-px: 0.75rem;
+    --card-pad: 1rem; --text-body: 0.875rem;
   }
 
   .dark {
-    --background: 220 13% 8%;
-    --foreground: 210 20% 98%;
+    --background: 220 30% 4%;
+    --surface-sunken: 220 30% 4%;
+    --card: 218 30% 12%;
+    --card-foreground: 220 7% 92%;
+    --popover: 218 28% 17%;
+    --popover-foreground: 220 7% 92%;
+    --foreground: 220 7% 92%;
 
-    --card: 220 13% 10%;
-    --card-foreground: 210 20% 98%;
+    --neutral-50: 215 38% 9%;
+    --neutral-100: 218 30% 12%;
+    --neutral-200: 218 28% 17%;
+    --neutral-300: 216 18% 25%;
+    --neutral-400: 218 10% 45%;
+    --neutral-500: 218 10% 58%;
+    --neutral-600: 218 10% 69%;
+    --neutral-700: 220 7% 80%;
+    --neutral-900: 220 7% 92%;
 
-    --popover: 220 13% 10%;
-    --popover-foreground: 210 20% 98%;
+    --muted: 218 28% 17%;
+    --muted-foreground: 218 10% 69%;
+    --secondary: 218 28% 17%;
+    --secondary-foreground: 220 7% 92%;
 
-    --primary: 160 84% 45%;
-    --primary-foreground: 220 13% 8%;
-    --primary-light: 160 50% 15%;
-    --primary-hover: 160 84% 55%;
+    --border: 216 18% 25%;
+    --border-subtle: 218 28% 17%;
+    --border-strong: 218 10% 45%;
+    --input: 216 18% 25%;
 
-    --secondary: 220 13% 15%;
-    --secondary-foreground: 210 20% 98%;
+    --primary: 210 71% 58%;
+    --primary-hover: 210 71% 66%;
+    --primary-active: 210 71% 72%;
+    --primary-foreground: 220 30% 4%;
+    --primary-light: 213 53% 15%;
+    --primary-muted: 213 45% 22%;
+    --primary-border: 211 40% 38%;
+    --primary-text: 210 75% 70%;
+    --primary-text-strong: 210 80% 82%;
 
-    --muted: 220 13% 15%;
-    --muted-foreground: 215 14% 60%;
+    --accent: 213 53% 15%;
+    --accent-foreground: 210 75% 70%;
+    --ring: 210 71% 58%;
 
-    --accent: 160 50% 15%;
-    --accent-foreground: 160 84% 60%;
+    --success: 137 47% 53%;  --success-foreground: 220 30% 4%;
+    --success-light: 140 40% 12%; --success-border: 140 30% 30%; --success-text: 137 50% 68%;
 
-    --destructive: 0 62% 45%;
-    --destructive-foreground: 0 0% 100%;
-    --destructive-light: 0 50% 15%;
+    --warning: 24 72% 56%;   --warning-foreground: 220 30% 4%;
+    --warning-light: 24 45% 13%; --warning-border: 24 40% 32%; --warning-text: 28 75% 70%;
 
-    --warning: 38 92% 45%;
-    --warning-foreground: 0 0% 100%;
-    --warning-light: 38 50% 15%;
+    --destructive: 0 68% 62%; --destructive-foreground: 220 30% 4%;
+    --destructive-light: 0 40% 14%; --destructive-border: 0 35% 34%; --destructive-text: 0 70% 76%;
 
-    --success: 142 76% 40%;
-    --success-foreground: 0 0% 100%;
-    --success-light: 142 50% 15%;
+    --info: 202 45% 58%; --info-foreground: 220 30% 4%;
+    --info-light: 202 40% 14%; --info-border: 202 30% 34%; --info-text: 202 55% 74%;
 
-    --border: 220 13% 18%;
-    --input: 220 13% 18%;
-    --ring: 160 84% 45%;
+    --shift-day: 210 71% 58%;     --shift-day-light: 213 53% 15%;
+    --shift-evening: 202 45% 58%; --shift-evening-light: 202 40% 14%;
+    --shift-night: 218 10% 69%;   --shift-night-light: 218 28% 17%;
+    --shift-open: 24 72% 56%;     --shift-open-light: 24 45% 13%;
+    --shift-absence: 218 10% 45%; --shift-absence-light: 218 28% 17%;
+    --night: 218 10% 69%;         --night-light: 218 28% 17%;
 
-    --sidebar-background: 220 13% 8%;
-    --sidebar-foreground: 210 20% 90%;
-    --sidebar-primary: 160 84% 45%;
-    --sidebar-primary-foreground: 220 13% 8%;
-    --sidebar-accent: 160 50% 15%;
-    --sidebar-accent-foreground: 160 84% 60%;
-    --sidebar-border: 220 13% 15%;
-    --sidebar-ring: 160 84% 45%;
+    --ai: 202 45% 58%; --ai-light: 202 40% 14%; --ai-border: 202 30% 34%;
 
-    --night: 0 84% 50%;
-    --night-light: 0 50% 15%;
+    --sidebar-background: 215 38% 9%;
+    --sidebar-foreground: 218 10% 69%;
+    --sidebar-primary: 210 71% 58%;
+    --sidebar-primary-foreground: 220 30% 4%;
+    --sidebar-accent: 213 53% 15%;
+    --sidebar-accent-foreground: 210 75% 70%;
+    --sidebar-border: 216 18% 25%;
+    --sidebar-ring: 210 71% 58%;
   }
+}
+
+/* Tetthet */
+[data-density="compact"] { --control-h: 2rem; --row-h: 2rem; --cell-py: 0.25rem; --cell-px: 0.5rem; --card-pad: 0.75rem; --text-body: 0.78125rem; }
+[data-density="comfortable"] { --control-h: 3rem; --row-h: 3.25rem; --cell-py: 0.875rem; --cell-px: 1rem; --card-pad: 1.25rem; --text-body: 1rem; }
+
+/* Skygge kun for svevende lag */
+:root {
+  --shadow-overlay: 0 0 1px rgba(0,0,0,.14), 0 2px 4px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.12);
+  --shadow-modal: 0 0 1px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.16), 0 12px 24px rgba(0,0,0,.16);
 }
 
 @layer base {
@@ -133,5 +189,19 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "cv05" 1;
+    font-size: var(--text-body);
+    -webkit-font-smoothing: antialiased;
   }
+
+  :focus-visible { outline: 3px solid hsl(var(--ring)); outline-offset: 2px; }
+  td :focus-visible, th :focus-visible { outline-offset: -3px; }
+  .tabular, [data-numeric] { font-variant-numeric: tabular-nums; }
+
+  @media (hover: hover) and (pointer: fine) {
+    tbody tr[data-row]:hover { background: hsl(var(--surface-sunken)); }
+  }
+
+  @media print { table, [data-print-keep] { break-inside: avoid; } }
 }
