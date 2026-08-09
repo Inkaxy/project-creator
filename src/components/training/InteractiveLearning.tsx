@@ -409,7 +409,7 @@ function PracticeMode({
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg leading-relaxed flex items-start gap-3">
+          <CardTitle className="text-base leading-relaxed flex items-start gap-3">
             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary shrink-0">
               ?
             </div>

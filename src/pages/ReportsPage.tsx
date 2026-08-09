@@ -319,7 +319,7 @@ export default function ReportsPage() {
             <div className="grid gap-6 lg:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Arbeidstidssammendrag</CardTitle>
+                  <CardTitle className="text-base">Arbeidstidssammendrag</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -343,7 +343,7 @@ export default function ReportsPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Fraværsfordeling</CardTitle>
+                  <CardTitle className="text-base">Fraværsfordeling</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {Object.entries(absenceStats.byType).length > 0 ? (

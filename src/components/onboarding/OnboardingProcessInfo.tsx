@@ -64,7 +64,7 @@ export function OnboardingProcessInfo() {
     <Card>
       <CardHeader className="cursor-pointer pb-3" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">Slik fungerer onboarding</CardTitle>
+          <CardTitle className="text-base">Slik fungerer onboarding</CardTitle>
           <Button variant="ghost" size="icon">
             {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </Button>

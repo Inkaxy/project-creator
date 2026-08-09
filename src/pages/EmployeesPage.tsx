@@ -139,7 +139,7 @@ export default function EmployeesPage() {
               {/* Employee List */}
               <Card className={selectedEmployee ? "lg:col-span-2" : "lg:col-span-4"}>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">
+                  <CardTitle className="text-base">
                     Alle ansatte
                     <Badge variant="secondary" className="ml-2">
                       {filteredEmployees.length}

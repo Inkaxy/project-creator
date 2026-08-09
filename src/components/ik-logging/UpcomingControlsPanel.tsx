@@ -73,7 +73,7 @@ export function UpcomingControlsPanel({ departmentId }: UpcomingControlsPanelPro
       {/* Week overview */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-base">
             <Calendar className="h-5 w-5 text-primary" />
             Denne uken
           </CardTitle>
@@ -115,7 +115,7 @@ export function UpcomingControlsPanel({ departmentId }: UpcomingControlsPanelPro
       {dailyTemplates.length > 0 && (
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Daglige kontroller</CardTitle>
+            <CardTitle className="text-base">Daglige kontroller</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {dailyTemplates.map((template) => (
@@ -153,7 +153,7 @@ export function UpcomingControlsPanel({ departmentId }: UpcomingControlsPanelPro
       {weeklyTemplates.length > 0 && (
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Ukentlige kontroller</CardTitle>
+            <CardTitle className="text-base">Ukentlige kontroller</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {weeklyTemplates.map((template) => (
@@ -185,7 +185,7 @@ export function UpcomingControlsPanel({ departmentId }: UpcomingControlsPanelPro
       {monthlyTemplates.length > 0 && (
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Månedlige kontroller</CardTitle>
+            <CardTitle className="text-base">Månedlige kontroller</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {monthlyTemplates.map((template) => (

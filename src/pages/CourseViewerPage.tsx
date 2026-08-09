@@ -307,7 +307,7 @@ export default function CourseViewerPage() {
                         </>
                       )}
                     </div>
-                    <CardTitle className="text-xl">{currentModule.title}</CardTitle>
+                    <CardTitle className="text-base">{currentModule.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     {/* Module content rendering based on content_type */}
@@ -516,7 +516,7 @@ function QuizSection({
       
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg leading-relaxed">{question.question}</CardTitle>
+          <CardTitle className="text-base leading-relaxed">{question.question}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {question.options.map((option, optionIndex) => {

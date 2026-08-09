@@ -237,7 +237,7 @@ export default function ConversationConductPage() {
                   </Badge>
                 )}
               </div>
-              <CardTitle className="text-xl">
+              <CardTitle className="text-base">
                 {currentResponse.question?.question_text}
               </CardTitle>
               {currentResponse.question?.description && (

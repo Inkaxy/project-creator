@@ -46,7 +46,7 @@ export function IKDocumentList({ selectedFolder }: IKDocumentListProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg flex items-center gap-2">
+        <CardTitle className="text-base flex items-center gap-2">
           <FileText className="h-5 w-5" />
           {selectedFolder ? `${selectedFolder.code}. ${selectedFolder.name}` : "Alle dokumenter"}
         </CardTitle>

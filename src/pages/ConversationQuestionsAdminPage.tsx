@@ -284,7 +284,7 @@ export default function ConversationQuestionsAdminPage() {
                       )}
                       <span className="text-2xl">{category.icon}</span>
                       <div>
-                        <CardTitle className="text-lg">{category.name}</CardTitle>
+                        <CardTitle className="text-base">{category.name}</CardTitle>
                         {category.description && (
                           <p className="text-sm text-muted-foreground">{category.description}</p>
                         )}

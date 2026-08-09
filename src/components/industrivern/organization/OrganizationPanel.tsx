@@ -86,7 +86,7 @@ export function OrganizationPanel() {
         <TabsContent value="chart">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Organisasjonskart</CardTitle>
+              <CardTitle className="text-base">Organisasjonskart</CardTitle>
               <CardDescription>
                 Visuell oversikt over industrivernorganisasjonen
               </CardDescription>
@@ -109,7 +109,7 @@ export function OrganizationPanel() {
               {sortedRoles.map((role) => (
                 <Card key={role}>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">
+                    <CardTitle className="text-base">
                       {INDUSTRIVERN_ROLE_LABELS[role]}
                     </CardTitle>
                     <CardDescription>

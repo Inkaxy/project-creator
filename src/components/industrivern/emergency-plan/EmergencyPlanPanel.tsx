@@ -183,7 +183,7 @@ export function EmergencyPlanPanel() {
               {alertPlans.map((plan) => (
                 <Card key={plan.id}>
                   <CardHeader>
-                    <CardTitle className="text-lg capitalize">
+                    <CardTitle className="text-base capitalize">
                       {plan.incident_type.replace(/_/g, " ")}
                     </CardTitle>
                     {plan.notify_neighbors && (
@@ -237,7 +237,7 @@ export function EmergencyPlanPanel() {
               {actionCards.map((card) => (
                 <Card key={card.id}>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">{card.title}</CardTitle>
+                    <CardTitle className="text-base">{card.title}</CardTitle>
                     <CardDescription className="capitalize">
                       {card.incident_type.replace(/_/g, " ")}
                     </CardDescription>
@@ -303,7 +303,7 @@ export function EmergencyPlanPanel() {
                   <Card key={resource.id}>
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg">{resource.name}</CardTitle>
+                        <CardTitle className="text-base">{resource.name}</CardTitle>
                         <Badge variant={resource.resource_type === "internal" ? "secondary" : "outline"}>
                           {resource.resource_type === "internal" ? "Intern" : "Ekstern"}
                         </Badge>
