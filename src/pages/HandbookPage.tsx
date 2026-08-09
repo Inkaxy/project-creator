@@ -189,8 +189,8 @@ export default function HandbookPage() {
         
         {/* Show acknowledgment banner if needed */}
         {handbook.status === "published" && !hasAcknowledgedHandbook && chaptersRequiringAck.length > 0 && (
-          <div className="bg-amber-500/10 border-b border-amber-500/20 px-6 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+          <div className="bg-warning-light border-b border-warning-border px-6 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-warning-text">
               <AlertTriangle className="h-5 w-5" />
               <span>Du har ikke signert den oppdaterte personalhåndboken</span>
             </div>
@@ -201,7 +201,7 @@ export default function HandbookPage() {
         )}
         
         {hasAcknowledgedHandbook && (
-          <div className="bg-green-500/10 border-b border-green-500/20 px-6 py-3 flex items-center gap-2 text-green-700 dark:text-green-400">
+          <div className="bg-success-light border-b border-success-border px-6 py-3 flex items-center gap-2 text-success-text">
             <CheckCircle className="h-5 w-5" />
             <span>Du har signert personalhåndboken (versjon {handbook.version})</span>
           </div>

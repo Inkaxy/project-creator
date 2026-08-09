@@ -154,14 +154,14 @@ export function EquipmentDeviationModal({
                   <p className="text-xs text-muted-foreground">Bør fikses snart</p>
                 </Label>
               </div>
-              <div className="flex items-center space-x-2 rounded-md border border-orange-200 bg-orange-50 p-3 dark:border-orange-800 dark:bg-orange-950">
+              <div className="flex items-center space-x-2 rounded-md border border-warning-border bg-warning-light p-3">
                 <RadioGroupItem value="high" id="high" />
                 <Label htmlFor="high" className="flex-1 cursor-pointer">
                   <span className="font-medium">Høy</span>
                   <p className="text-xs text-muted-foreground">Påvirker drift</p>
                 </Label>
               </div>
-              <div className="flex items-center space-x-2 rounded-md border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-950">
+              <div className="flex items-center space-x-2 rounded-md border border-destructive-border bg-destructive-light p-3">
                 <RadioGroupItem value="critical" id="critical" />
                 <Label htmlFor="critical" className="flex-1 cursor-pointer">
                   <span className="font-medium">Kritisk</span>

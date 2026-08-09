@@ -120,13 +120,13 @@ export function ChecklistFillModal({
   const getCategoryColor = (category: string | null) => {
     switch (category) {
       case "temperature":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+        return "bg-info-light text-info-text border border-info-border";
       case "opening":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+        return "bg-success-light text-success-text border border-success-border";
       case "closing":
-        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
+        return "bg-warning-light text-warning-text border border-warning-border";
       case "cleaning":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
+        return "bg-ai-light text-ai border border-ai-border";
       default:
         return "bg-muted text-muted-foreground";
     }

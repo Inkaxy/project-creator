@@ -101,16 +101,16 @@ export function HandbookTableOfContents({
                           {section.title}
                         </span>
                         {section.requires_acknowledgment && !isAcknowledged && (
-                          <AlertCircle className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                          <AlertCircle className="h-3.5 w-3.5 text-warning shrink-0" />
                         )}
                         {isNew && (
-                          <span className="h-2 w-2 rounded-full bg-red-500 shrink-0" title="Nytt innhold" />
+                          <span className="h-2 w-2 rounded-full bg-destructive shrink-0" title="Nytt innhold" />
                         )}
                         {isUpdated && !isNew && (
-                          <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" title="Oppdatert" />
+                          <span className="h-2 w-2 rounded-full bg-warning shrink-0" title="Oppdatert" />
                         )}
                         {isAcknowledged && (
-                          <span className="text-xs text-green-600">✓</span>
+                          <span className="text-xs text-success-text">✓</span>
                         )}
                       </button>
                     );
@@ -123,11 +123,11 @@ export function HandbookTableOfContents({
         
         <div className="pt-4 border-t mt-4 space-y-1 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-red-500" />
+            <span className="h-2 w-2 rounded-full bg-destructive" />
             <span>= Nytt innhold</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-amber-500" />
+            <span className="h-2 w-2 rounded-full bg-warning" />
             <span>= Oppdatert</span>
           </div>
         </div>

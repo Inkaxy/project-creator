@@ -233,7 +233,7 @@ export function HandbookEditor({
                             <Scale className="h-3 w-3 text-muted-foreground" />
                           )}
                           {section.requires_acknowledgment && (
-                            <AlertTriangle className="h-3 w-3 text-amber-500" />
+                            <AlertTriangle className="h-3 w-3 text-warning" />
                           )}
                           <Button
                             variant="ghost"

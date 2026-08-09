@@ -51,7 +51,7 @@ function getExpiryBadge(expiresAt: string | null) {
   }
   if (daysUntil <= 30) {
     return (
-      <Badge className="bg-yellow-100 text-yellow-800 gap-1">
+      <Badge className="bg-warning-light text-warning-text gap-1 border border-warning-border">
         <AlertCircle className="h-3 w-3" />
         Utløper om {daysUntil} dager
       </Badge>

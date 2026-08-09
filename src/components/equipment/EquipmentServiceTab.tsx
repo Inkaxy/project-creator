@@ -26,19 +26,19 @@ function getDueBadge(nextDue: string | null) {
     return <Badge variant="destructive">Om {daysUntil} dager</Badge>;
   }
   if (daysUntil <= 30) {
-    return <Badge className="bg-yellow-100 text-yellow-800">Om {daysUntil} dager</Badge>;
+    return <Badge className="bg-warning-light text-warning-text border border-warning-border">Om {daysUntil} dager</Badge>;
   }
   return <Badge variant="secondary">Om {daysUntil} dager</Badge>;
 }
 
 function getServiceTypeBadge(type: string) {
   const typeMap: Record<string, { label: string; className: string }> = {
-    planned: { label: "Planlagt", className: "bg-blue-100 text-blue-800" },
-    preventive: { label: "Forebyggende", className: "bg-green-100 text-green-800" },
-    repair: { label: "Reparasjon", className: "bg-orange-100 text-orange-800" },
-    warranty: { label: "Garanti", className: "bg-purple-100 text-purple-800" },
-    calibration: { label: "Kalibrering", className: "bg-cyan-100 text-cyan-800" },
-    certification: { label: "Sertifisering", className: "bg-indigo-100 text-indigo-800" },
+    planned: { label: "Planlagt", className: "bg-info-light text-info-text border border-info-border" },
+    preventive: { label: "Forebyggende", className: "bg-success-light text-success-text border border-success-border" },
+    repair: { label: "Reparasjon", className: "bg-warning-light text-warning-text border border-warning-border" },
+    warranty: { label: "Garanti", className: "bg-ai-light text-ai border border-ai-border" },
+    calibration: { label: "Kalibrering", className: "bg-info-light text-info-text border border-info-border" },
+    certification: { label: "Sertifisering", className: "bg-info-light text-info-text border border-info-border" },
   };
   const config = typeMap[type] || { label: type, className: "" };
   return <Badge className={config.className}>{config.label}</Badge>;

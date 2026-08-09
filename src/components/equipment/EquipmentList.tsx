@@ -42,10 +42,10 @@ function getStatusBadge(status: string) {
 
 function getCriticalityBadge(criticality: string) {
   const criticalityMap: Record<string, { label: string; className: string }> = {
-    low: { label: "Lav", className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" },
-    medium: { label: "Medium", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200" },
-    high: { label: "Høy", className: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200" },
-    critical: { label: "Kritisk", className: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200" },
+    low: { label: "Lav", className: "bg-success-light text-success-text border border-success-border" },
+    medium: { label: "Medium", className: "bg-warning-light text-warning-text border border-warning-border" },
+    high: { label: "Høy", className: "bg-warning-light text-warning-text border border-warning-border" },
+    critical: { label: "Kritisk", className: "bg-destructive-light text-destructive-text border border-destructive-border" },
   };
   const config = criticalityMap[criticality] || criticalityMap.medium;
   return <Badge className={config.className}>{config.label}</Badge>;

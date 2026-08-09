@@ -32,26 +32,26 @@ const TYPE_CONFIG = {
   mattilsynet: { 
     title: "Mattilsynet", 
     icon: ClipboardCheck, 
-    color: "text-green-600",
-    bgColor: "bg-green-50"
+    color: "text-success-text",
+    bgColor: "bg-success-light border border-success-border"
   },
   arbeidstilsynet: { 
     title: "Arbeidstilsynet", 
     icon: Shield, 
-    color: "text-blue-600",
-    bgColor: "bg-blue-50"
+    color: "text-info-text",
+    bgColor: "bg-info-light border border-info-border"
   },
   branntilsyn: { 
     title: "Branntilsyn", 
     icon: Flame, 
-    color: "text-orange-600",
-    bgColor: "bg-orange-50"
+    color: "text-warning-text",
+    bgColor: "bg-warning-light border border-warning-border"
   },
   skjenkekontroll: { 
     title: "Skjenkekontroll", 
     icon: Wine, 
-    color: "text-purple-600",
-    bgColor: "bg-purple-50"
+    color: "text-ai",
+    bgColor: "bg-ai-light border border-ai-border"
   },
 };
 
