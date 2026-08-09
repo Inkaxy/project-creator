@@ -135,7 +135,7 @@ export function ControlSetupPanel({ departmentId }: ControlSetupPanelProps) {
         {Object.entries(groupedByDepartment).map(([deptId, group]) => (
           <Card key={deptId}>
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
+              <CardTitle className="flex items-center gap-2 text-base">
                 <div
                   className="h-3 w-3 rounded-full"
                   style={{ backgroundColor: group.color || "#888" }}

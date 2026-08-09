@@ -111,7 +111,7 @@ export function ChecklistsPanel({
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="flex items-center gap-2 text-base">
               <ClipboardCheck className="h-5 w-5 text-primary" />
               IK-Mat Sjekklister
             </CardTitle>

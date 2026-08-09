@@ -505,7 +505,7 @@ export default function LandingPage() {
                   </div>
                 )}
                 <CardHeader className="text-center pb-2">
-                  <CardTitle className="text-xl">{tier.name}</CardTitle>
+                  <CardTitle className="text-base">{tier.name}</CardTitle>
                   <CardDescription>{tier.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 pt-6">

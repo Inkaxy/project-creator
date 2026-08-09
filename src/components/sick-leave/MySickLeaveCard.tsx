@@ -81,7 +81,7 @@ export function MySickLeaveCard() {
     <>
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-base">
             <Thermometer className="h-5 w-5 text-destructive" />
             Sykefravær
           </CardTitle>

@@ -135,7 +135,7 @@ export default function AuthPage() {
         <CardHeader className="space-y-4 text-center">
           <Logo size="lg" showWordmark={false} className="mx-auto justify-center" />
           <div>
-            <CardTitle className="text-2xl font-semibold">Crewplan</CardTitle>
+            <CardTitle className="text-base font-semibold">Crewplan</CardTitle>
             <CardDescription className="mt-2">
               {isLogin ? 'Logg inn på din konto' : 'Opprett en ny konto'}
             </CardDescription>

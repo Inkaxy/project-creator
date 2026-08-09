@@ -169,7 +169,7 @@ export function TodayControlsPanel({ departmentId }: TodayControlsPanelProps) {
         {pending.length > 0 && (
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
+              <CardTitle className="flex items-center gap-2 text-base">
                 <Clock className="h-5 w-5 text-warning" />
                 Venter på utfylling
               </CardTitle>
@@ -222,7 +222,7 @@ export function TodayControlsPanel({ departmentId }: TodayControlsPanelProps) {
         {completed.length > 0 && (
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
+              <CardTitle className="flex items-center gap-2 text-base">
                 <CheckCircle2 className="h-5 w-5 text-success" />
                 Fullført i dag
               </CardTitle>

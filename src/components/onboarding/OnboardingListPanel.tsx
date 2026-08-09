@@ -65,7 +65,7 @@ export function OnboardingListPanel() {
     <>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-lg">
+          <CardTitle className="text-base">
             Pågående onboardinger
             <Badge variant="secondary" className="ml-2">
               {activeOnboardings.length}

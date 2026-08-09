@@ -196,7 +196,7 @@ export function HMSRolesPanel() {
           return (
             <Card key={role.id}>
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
+                <CardTitle className="flex items-center gap-2 text-base">
                   <div className="p-2 rounded-lg bg-primary/10 text-primary">
                     {role.icon}
                   </div>

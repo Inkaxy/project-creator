@@ -70,7 +70,7 @@ export function QualificationsPanel() {
       {!loadingExpiring && expiringQuals && expiringQuals.length > 0 && (
         <Card className="border-warning-border bg-warning-light">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2 text-warning-text">
+            <CardTitle className="text-base flex items-center gap-2 text-warning-text">
               <AlertTriangle className="h-5 w-5" />
               Kvalifikasjoner som utløper snart
             </CardTitle>

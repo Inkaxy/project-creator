@@ -76,7 +76,7 @@ export function FireInstructionsPanel() {
         {/* Emergency Contacts */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-destructive" />
               Nødnumre
             </CardTitle>
@@ -100,7 +100,7 @@ export function FireInstructionsPanel() {
         {/* Checklist */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-success" />
               Ved brann
             </CardTitle>
